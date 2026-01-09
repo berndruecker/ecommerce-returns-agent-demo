@@ -1,0 +1,221 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "Magento Connector",
+  "id": "service-task-template",
+  "version": 1,
+  "description": "Connect to Magento eCommerce System",
+  "appliesTo": ["bpmn:Task"],
+  "elementType": { "value": "bpmn:ServiceTask" },
+  "category": { "id": "templates", "name": "Templates" },
+  "groups": [
+    {
+      "id": "templated-properties",
+      "label": "Templated properties",
+      "openByDefault": true
+    },
+    {
+      "id": "io-mapping",
+      "label": "I/O Mapping Example",
+      "openByDefault": true
+    }
+  ],
+  "properties": [
+    {
+      "id": "taskType",
+      "label": "Task Type",
+      "type": "Hidden",
+      "value": "magento-connector",
+      "binding": {
+        "type": "zeebe:taskDefinition",
+        "property": "type"
+      }
+    },
+    {
+      "id": "resultVariable",
+      "label": "Result Variable",
+      "type": "String",
+      "value": "magentoResponse",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "resultVariable"
+      },
+      "description": "Workflow variable name to store the connector response"
+    },
+    {
+      "id": "operation",
+      "label": "Operation",
+      "type": "Dropdown",
+      "choices": [
+        { "name": "List recent orders", "value": "listOrders" },
+        { "name": "Product search", "value": "productSearch" },
+        { "name": "Create RMA", "value": "createRma" },
+        { "name": "Create cart", "value": "createCart" },
+        { "name": "Add item to cart", "value": "addCartItem" },
+        { "name": "Apply store credit", "value": "applyStoreCredit" },
+        { "name": "Place order", "value": "placeOrder" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "apiBaseUrl",
+      "label": "API Base URL (optional)",
+      "type": "String",
+      "description": "Override MAGENTO_API_BASE; defaults to http://localhost:8100/commerce",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "apiBaseUrl"
+      }
+    },
+
+    {
+      "id": "listOrdersCustomerId",
+      "label": "Customer ID",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "customerId" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "listOrders" }
+    },
+    {
+      "id": "listOrdersLimit",
+      "label": "Limit",
+      "type": "String",
+      "value": "5",
+      "binding": { "type": "zeebe:input", "name": "limit" },
+      "condition": { "property": "operation", "equals": "listOrders" }
+    },
+
+    {
+      "id": "productSearchCategory",
+      "label": "Category",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "category" },
+      "condition": { "property": "operation", "equals": "productSearch" }
+    },
+    {
+      "id": "productSearchWifiMin",
+      "label": "WiFi Minimum",
+      "type": "String",
+      "description": "Minimum WiFi standard (e.g., 6)",
+      "binding": { "type": "zeebe:input", "name": "wifiMin" },
+      "condition": { "property": "operation", "equals": "productSearch" }
+    },
+    {
+      "id": "productSearchTags",
+      "label": "Tags",
+      "type": "String",
+      "description": "Comma-separated tags (e.g., gaming,low-latency)",
+      "binding": { "type": "zeebe:input", "name": "tags" },
+      "condition": { "property": "operation", "equals": "productSearch" }
+    },
+
+    {
+      "id": "createRmaOrderId",
+      "label": "Order ID",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "orderId" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "createRma" }
+    },
+    {
+      "id": "createRmaCustomerId",
+      "label": "Customer ID",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "customerId" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "createRma" }
+    },
+    {
+      "id": "createRmaSku",
+      "label": "SKU",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "sku" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "createRma" }
+    },
+    {
+      "id": "createRmaReason",
+      "label": "Reason",
+      "type": "Text",
+      "binding": { "type": "zeebe:input", "name": "reason" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "createRma" }
+    },
+
+    {
+      "id": "createCartCustomerId",
+      "label": "Customer ID",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "customerId" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "createCart" }
+    },
+
+    {
+      "id": "addCartItemCartId",
+      "label": "Cart ID",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "cartId" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "addCartItem" }
+    },
+    {
+      "id": "addCartItemSku",
+      "label": "SKU",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "sku" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "addCartItem" }
+    },
+    {
+      "id": "addCartItemQuantity",
+      "label": "Quantity",
+      "type": "String",
+      "value": "1",
+      "binding": { "type": "zeebe:input", "name": "quantity" },
+      "condition": { "property": "operation", "equals": "addCartItem" }
+    },
+
+    {
+      "id": "applyStoreCreditCartId",
+      "label": "Cart ID",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "cartId" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "applyStoreCredit" }
+    },
+    {
+      "id": "applyStoreCreditAmount",
+      "label": "Amount",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "amount" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "applyStoreCredit" }
+    },
+
+    {
+      "id": "placeOrderCartId",
+      "label": "Cart ID",
+      "type": "String",
+      "binding": { "type": "zeebe:input", "name": "cartId" },
+      "constraints": { "notEmpty": true },
+      "condition": { "property": "operation", "equals": "placeOrder" }
+    },
+    {
+      "id": "placeOrderPaymentMethod",
+      "label": "Payment Method",
+      "type": "String",
+      "value": "credit_card",
+      "binding": { "type": "zeebe:input", "name": "paymentMethod" },
+      "condition": { "property": "operation", "equals": "placeOrder" }
+    }
+  ],
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+"
+  }
+}

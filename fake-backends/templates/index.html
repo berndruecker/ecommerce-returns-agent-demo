@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Returns Agent Demo - Backend Systems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .api-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .api-link:hover {
+            background: #5568d3;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .entity {
+            background: #f7fafc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .entity:last-child {
+            margin-bottom: 0;
+        }
+        
+        .entity-header {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        
+        .entity-detail {
+            display: flex;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        
+        .entity-label {
+            font-weight: 600;
+            color: #555;
+            min-width: 120px;
+        }
+        
+        .entity-value {
+            color: #333;
+            flex: 1;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-delivered {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .status-active {
+            background: #4299e1;
+            color: white;
+        }
+        
+        .status-discontinued {
+            background: #ed8936;
+            color: white;
+        }
+        
+        .status-clearance {
+            background: #e53e3e;
+            color: white;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #e6fffa;
+            color: #234e52;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-right: 5px;
+            margin-bottom: 3px;
+        }
+        
+        .systems-list {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .systems-list h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .system {
+            background: #f7fafc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #764ba2;
+        }
+        
+        .system h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+        
+        .endpoint {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            background: white;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            color: #2d3748;
+        }
+        
+        .method {
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛍️ E-Commerce Returns Agent Demo</h1>
+            <p class="subtitle">Mock Backend Systems for AI Agent Demonstration</p>
+            <a href="/docs" class="api-link" target="_blank">📚 View API Documentation</a>
+        </header>
+        
+        <div class="grid">
+            <!-- Customers -->
+            <div class="card">
+                <h2>👤 Customers</h2>
+                {% for customer in customers %}
+                <div class="entity">
+                    <div class="entity-header">{{ customer.name }}</div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Customer ID:</span>
+                        <span class="entity-value">{{ customer.customer_id }}</span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Email:</span>
+                        <span class="entity-value">{{ customer.email }}</span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Phone:</span>
+                        <span class="entity-value">{{ customer.phone }}</span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Address:</span>
+                        <span class="entity-value">{{ customer.address.street }}, {{ customer.address.city }}, {{ customer.address.state }} {{ customer.address.postal_code }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Recent Orders -->
+            <div class="card">
+                <h2>📦 Recent Orders</h2>
+                {% for order in orders[:3] %}
+                <div class="entity">
+                    <div class="entity-header">{{ order.order_id }}</div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Customer:</span>
+                        <span class="entity-value">{{ order.customer_id }}</span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Status:</span>
+                        <span class="entity-value">
+                            <span class="status-badge status-delivered">{{ order.status }}</span>
+                        </span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Order Date:</span>
+                        <span class="entity-value">{{ order.order_date.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                    {% if order.delivery_date %}
+                    <div class="entity-detail">
+                        <span class="entity-label">Delivery Date:</span>
+                        <span class="entity-value">{{ order.delivery_date.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="entity-detail">
+                        <span class="entity-label">Items:</span>
+                        <span class="entity-value">
+                            {% for item in order.items %}
+                            {{ item.product_name }} ({{ item.sku }}){% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Total:</span>
+                        <span class="entity-value">${{ "%.2f"|format(order.total) }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Products -->
+        <div class="card" style="margin-bottom: 20px;">
+            <h2>🛒 Available Products</h2>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                {% for product in products %}
+                <div class="entity">
+                    <div class="entity-header">{{ product.name }}</div>
+                    <div class="entity-detail">
+                        <span class="entity-label">SKU:</span>
+                        <span class="entity-value">{{ product.sku }}</span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Price:</span>
+                        <span class="entity-value">${{ "%.2f"|format(product.price) }}</span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Status:</span>
+                        <span class="entity-value">
+                            {% if product.lifecycle_status == 'active' %}
+                            <span class="status-badge status-active">{{ product.lifecycle_status }}</span>
+                            {% elif product.lifecycle_status == 'discontinued' %}
+                            <span class="status-badge status-discontinued">{{ product.lifecycle_status }}</span>
+                            {% else %}
+                            <span class="status-badge status-clearance">{{ product.lifecycle_status }}</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% if product.wifi_standard %}
+                    <div class="entity-detail">
+                        <span class="entity-label">WiFi:</span>
+                        <span class="entity-value">WiFi {{ product.wifi_standard }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="entity-detail">
+                        <span class="entity-label">Stock:</span>
+                        <span class="entity-value">{{ product.stock_quantity }} units</span>
+                    </div>
+                    <div class="entity-detail">
+                        <span class="entity-label">Tags:</span>
+                        <span class="entity-value">
+                            {% for tag in product.tags %}
+                            <span class="tag">{{ tag }}</span>
+                            {% endfor %}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Available Systems -->
+        <div class="systems-list">
+            <h2>🔌 Available Backend Systems</h2>
+            
+            <div class="system">
+                <h3>🛒 Magento (Commerce Platform)</h3>
+                <div class="endpoint"><span class="method">GET</span> /commerce/customers/{customerId}/orders</div>
+                <div class="endpoint"><span class="method">GET</span> /commerce/catalog/products</div>
+                <div class="endpoint"><span class="method">POST</span> /commerce/rmas</div>
+                <div class="endpoint"><span class="method">POST</span> /commerce/carts</div>
+                <div class="endpoint"><span class="method">POST</span> /commerce/carts/{cartId}/items</div>
+                <div class="endpoint"><span class="method">POST</span> /commerce/carts/{cartId}/discounts/store-credit</div>
+                <div class="endpoint"><span class="method">POST</span> /commerce/orders</div>
+            </div>
+            
+            <div class="system">
+                <h3>🏭 SAP (ERP / Inventory)</h3>
+                <div class="endpoint"><span class="method">GET</span> /erp/skus/{sku}/return-eligibility</div>
+                <div class="endpoint"><span class="method">GET</span> /erp/skus/{sku}</div>
+                <div class="endpoint"><span class="method">GET</span> /erp/availability</div>
+            </div>
+            
+            <div class="system">
+                <h3>📦 Manhattan WMS (Warehouse & Fulfillment)</h3>
+                <div class="endpoint"><span class="method">GET</span> /wms/fulfillment/eligibility</div>
+                <div class="endpoint"><span class="method">POST</span> /wms/returns/expected</div>
+                <div class="endpoint"><span class="method">POST</span> /wms/shipments/release</div>
+            </div>
+            
+            <div class="system">
+                <h3>📜 Returns Policy Service</h3>
+                <div class="endpoint"><span class="method">POST</span> /policy/returns/evaluate</div>
+            </div>
+            
+            <div class="system">
+                <h3>🚚 Returns Provider (Logistics)</h3>
+                <div class="endpoint"><span class="method">POST</span> /returns/labels</div>
+            </div>
+            
+            <div class="system">
+                <h3>💳 Payments</h3>
+                <div class="endpoint"><span class="method">POST</span> /payments/credits</div>
+                <div class="endpoint"><span class="method">POST</span> /payments/charges</div>
+            </div>
+            
+            <div class="system">
+                <h3>📧 Notifications</h3>
+                <div class="endpoint"><span class="method">POST</span> /notify/email</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
