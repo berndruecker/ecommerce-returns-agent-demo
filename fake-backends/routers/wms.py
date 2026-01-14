@@ -58,7 +58,7 @@ async def create_expected_return(
     qty: int = Query(1),
     customer_id: str = Query(None),
     reason: str = Query(None),
-    overrides: list[str] = Query(None),
+    overrides: str = Query(None),
     caseId: str = Query(None),
     approvalCode: str = Query(None)
 ):
@@ -85,10 +85,20 @@ async def create_expected_return(
     lifecycle = (product.lifecycle_status.lower() if product and product.lifecycle_status else "")
     is_eol = sku == "RTR-HS-BASIC" or lifecycle in {"clearance", "discontinued", "eol"}
 
-    # Normalize overrides to a list
+    # Normalize overrides to a list - handle JSON array string or plain string
     normalized_overrides: list[str] = []
     if overrides:
-        normalized_overrides = overrides if isinstance(overrides, list) else [str(overrides)]
+        import json
+        # Try to parse as JSON array first (e.g., '["ITEM1","ITEM2"]')
+        if overrides.startswith('['):
+            try:
+                parsed = json.loads(overrides)
+                normalized_overrides = parsed if isinstance(parsed, list) else [str(parsed)]
+            except json.JSONDecodeError:
+                normalized_overrides = [overrides]
+        else:
+            # Plain string, might be comma-separated
+            normalized_overrides = [overrides]
 
     # For EOL/clearance SKUs, require caseId + approvalCode + override flag
     if is_eol:

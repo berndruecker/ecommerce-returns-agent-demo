@@ -23,7 +23,7 @@
           <zeebe:input source="=5000" target="provider.bedrock.model.parameters.maxTokens" />
           <zeebe:input source="=0.2" target="provider.bedrock.model.parameters.temperature" />
           <zeebe:input source="=0.1" target="provider.bedrock.model.parameters.topP" />
-          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;# Core behavior&#10;&#10;Start every return conversation by identifying the customer and finding their most recent relevant order.&#10;&#10;Prefer extraction of identifiers (customer id, order id, product, delivery date) through tool usage before asking the customer to provide information.&#10;&#10;Do not ask for an order number unless you are unable to identify the customer or find matching orders.&#10;&#10;# Identifier handling&#10;&#10;When identifying the customer, first look for available identifiers in the process variable supportCase.communicationContext. Use supportCase.communicationContext.mobilePhone and/or supportCase.communicationContext.emailAddress if present.&#10;&#10;Only ask the customer for an identifier if neither of these values is available or usable.&#10;&#10;# Conversation policy&#10;&#10;If the customer intent is a return, attempt customer identification using the identifiers from supportcase.communicationContext before asking any questions.&#10;&#10;If customer identification is not possible, ask for exactly one missing identifier (either email or mobile phone), not multiple at once.&#10;&#10;Once the customer is identified, load recent orders and look for likely matches based on product type and recency.&#10;&#10;Summarize the most likely order in clear, human-readable terms (item, approximate delivery date, price) and ask the customer to confirm it.&#10;&#10;Do not proceed with return approval, eligibility checks, or creation of return artifacts until the customer confirms the correct item.&#10;&#10;# Reasoning rules&#10;&#10;Never invent customers, orders, prices, delivery dates, or eligibility decisions.&#10;&#10;If multiple orders could match, present up to two options and ask the customer to choose.&#10;&#10;If no matching order is found, ask a targeted follow-up question (for example whether the purchase was made with a different email or as a guest).&#10;&#10;# Interaction style&#10;&#10;Be friendly, concise, and confident.&#10;&#10;Do not expose internal variables, system names, API calls, or technical details to the customer.&#10;&#10;Present findings as helpful statements (“I see a router delivered about 12 days ago for $150 — is that the one you want to return?”).&#10;&#10;# Customer communication rule&#10;&#10;You must never send customer-facing text as your final response directly.&#10;&#10;Whenever you need to ask the customer a question or send a message to the customer, you MUST call the tool Ask_Customer.&#10;&#10;The only time you may finish without calling Ask_Customer is when you are explicitly returning internal notes for the process (e.g., tool summaries) and no customer message is required.&#10;&#10;# Interaction protocol&#10;&#10;When you have identified a likely order, you MUST call Ask_Customer with exactly one clear confirmation question:&#10;“I see a router delivered on &#60;date&#62; for &#60;price&#62;. Is this the one you want to return?”&#10;&#10;After calling Ask_Customer, stop. Do not add any additional customer text outside the tool call.&#10;&#10;# Recommendation rule&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. To do that, use tools to search for a better router that matches the described needs. &#10;&#10;verify it is in stock and eligible for shipment,&#10;&#10;then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown, skip the recommendation and proceed with the return.&#10;&#34;" target="data.systemPrompt.prompt" />
+          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;# Core behavior&#10;&#10;Start every return conversation by identifying the customer and finding their most recent relevant order.&#10;&#10;Prefer extraction of identifiers (customer id, order id, product, delivery date) through tool usage before asking the customer to provide information.&#10;&#10;Do not ask for an order number unless you are unable to identify the customer or find matching orders.&#10;&#10;# Identifier handling&#10;&#10;When identifying the customer, first look for available identifiers in the process variable supportCase.communicationContext. Use supportCase.communicationContext.mobilePhone and/or supportCase.communicationContext.emailAddress if present.&#10;&#10;Only ask the customer for an identifier if neither of these values is available or usable.&#10;&#10;# Conversation policy&#10;&#10;If the customer intent is a return, attempt customer identification using the identifiers from supportcase.communicationContext before asking any questions.&#10;&#10;If customer identification is not possible, ask for exactly one missing identifier (either email or mobile phone), not multiple at once.&#10;&#10;Once the customer is identified, load recent orders and look for likely matches based on product type and recency.&#10;&#10;Summarize the most likely order in clear, human-readable terms (item, approximate delivery date, price) and ask the customer to confirm it.&#10;&#10;Do not proceed with return approval, eligibility checks, or creation of return artifacts until the customer confirms the correct item.&#10;&#10;# Reasoning rules&#10;&#10;Never invent customers, orders, prices, delivery dates, or eligibility decisions.&#10;&#10;If multiple orders could match, present up to two options and ask the customer to choose.&#10;&#10;If no matching order is found, ask a targeted follow-up question (for example whether the purchase was made with a different email or as a guest).&#10;&#10;# Interaction style&#10;&#10;Be friendly, concise, and confident.&#10;&#10;Do not expose internal variables, system names, API calls, or technical details to the customer.&#10;&#10;Present findings as helpful statements (“I see a router delivered about 12 days ago for $150 — is that the one you want to return?”).&#10;&#10;# Customer communication rule&#10;&#10;You must never send customer-facing text as your final response directly.&#10;&#10;Whenever you need to ask the customer a question or send a message to the customer, you MUST call the tool Ask_Customer.&#10;&#10;The only time you may finish without calling Ask_Customer is when you are explicitly returning internal notes for the process (e.g., tool summaries) and no customer message is required.&#10;&#10;# Interaction protocol&#10;&#10;When you have identified a likely order, you MUST call Ask_Customer with exactly one clear confirmation question:&#10;“I see a router delivered on &#60;date&#62; for &#60;price&#62;. Is this the one you want to return?”&#10;&#10;After calling Ask_Customer, stop. Do not add any additional customer text outside the tool call.&#10;&#10;# Recommendation rule&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. &#10;&#10;If you find a product, verify it is in stock and eligible for shipment, then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown (or product search is unavailable), do not apologize and do not mention recommendations. Proceed directly with the return flow.&#10;&#34;" target="data.systemPrompt.prompt" />
           <zeebe:input source="=supportCase.request" target="data.userPrompt.prompt" />
           <zeebe:input target="agentContext" />
           <zeebe:input source="in-process" target="data.memory.storage.type" />
@@ -86,102 +86,85 @@
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Tool_Magento_SearchProducts" name="Search products" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+      <bpmn:serviceTask id="Tool_Magento_CreateRMA" name="Create RMA" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
             <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
-            <zeebe:input source="productSearch" target="operation" />
-            <zeebe:input source="=fromAi(toolCall.searchQuery)" target="query" />
-            <zeebe:input source="=fromAi(toolCall.category)" target="category" />
-            <zeebe:input source="=fromAi(toolCall.tags)" target="tags" />
-          </zeebe:ioMapping>
-          <zeebe:taskHeaders>
-            <zeebe:header key="resultVariable" value="rawMagentoProductSearchResponse" />
-            <zeebe:header key="resultExpression" value="=if response.body = null or count(response.body) = 0 then&#10;{&#10;  products: [],&#10;  toolCallResult: {&#10;    status: &#34;no_products&#34;,&#10;    message: &#34;No products found matching the search criteria.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  products: response.body,&#10;  toolCallResult: {&#10;    status: &#34;products_found&#34;,&#10;    count: count(response.body),&#10;    products: response.body,&#10;    message: &#34;Found &#34; + string(count(response.body)) + &#34; product(s) matching the search.&#34;&#10;  }&#10;}" />
-          </zeebe:taskHeaders>
-        </bpmn:extensionElements>
-      </bpmn:serviceTask>
-      <bpmn:serviceTask id="Activity_1epjsfg" name="Create RMA" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="magento-connector" />
-          <zeebe:ioMapping>
-            <zeebe:input source="magentoResponse" target="resultVariable" />
             <zeebe:input source="createRma" target="operation" />
-            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
             <zeebe:input source="=fromAi(toolCall.orderId)" target="orderId" />
             <zeebe:input source="=fromAi(toolCall.customerId)" target="customerId" />
             <zeebe:input source="=fromAi(toolCall.sku)" target="sku" />
             <zeebe:input source="=fromAi(toolCall.reason, &#34;Return reason&#34;)" target="reason" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
-            <zeebe:header key="resultVariable" value="rawMagentoCreateRmaResponse" />
             <zeebe:header key="resultExpression" value="=if response.body = null or response.body.rma_id = null then&#10;{&#10;  rma: null,&#10;  toolCallResult: {&#10;    status: &#34;failed&#34;,&#10;    message: &#34;Failed to create RMA. Please try again or contact support.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  rma: response.body,&#10;  toolCallResult: {&#10;    status: &#34;created&#34;,&#10;    rmaId: response.body.rma_id,&#10;    trackingNumber: response.body.tracking_number,&#10;    message: &#34;RMA created successfully with ID &#34; + response.body.rma_id + &#34;. Tracking number: &#34; + response.body.tracking_number&#10;  }&#10;}&#10;" />
+            <zeebe:header key="resultVariable" value="rawMagentoCreateRmaResponse" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Activity_0tv7v12" name="Create cart" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+      <bpmn:serviceTask id="Tool_Magento_CreateCart" name="Create cart" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="createCart" target="operation" />
             <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="createCart" target="operation" />
             <zeebe:input source="=fromAi(toolCall.customerId)" target="customerId" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
-            <zeebe:header key="resultVariable" value="rawMagentoCreateCartResponse" />
             <zeebe:header key="resultExpression" value="=if response.body = null or response.body.cart_id = null then&#10;{&#10;  cart: null,&#10;  toolCallResult: {&#10;    status: &#34;failed&#34;,&#10;    message: &#34;Failed to create cart. Please try again.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  cart: response.body,&#10;  toolCallResult: {&#10;    status: &#34;created&#34;,&#10;    cartId: response.body.cart_id,&#10;    message: &#34;Cart created successfully with ID &#34; + response.body.cart_id + &#34;. You can now add items to it.&#34;&#10;  }&#10;}&#10;" />
+            <zeebe:header key="resultVariable" value="rawMagentoCreateCartResponse" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Activity_1wqou7l" name="Add item to cart" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+      <bpmn:serviceTask id="Tool_Magento_AddItemToCart" name="Add item to cart" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="addCartItem" target="operation" />
             <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="addCartItem" target="operation" />
             <zeebe:input source="=fromAi(toolCall.cartId)" target="cartId" />
             <zeebe:input source="=fromAi(toolCall.sku)" target="sku" />
             <zeebe:input source="1" target="quantity" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
-            <zeebe:header key="resultVariable" value="rawMagentoAddCartItemResponse" />
             <zeebe:header key="resultExpression" value="=if response.body = null or response.body.cart_id = null then&#10;{&#10;  cartItem: null,&#10;  toolCallResult: {&#10;    status: &#34;failed&#34;,&#10;    message: &#34;Failed to add item to cart. Please check the SKU and try again.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  cartItem: response.body,&#10;  toolCallResult: {&#10;    status: &#34;added&#34;,&#10;    cartId: response.body.cart_id,&#10;    itemCount: count(response.body.items),&#10;    message: &#34;Item added successfully to cart. Cart now has &#34; + string(count(response.body.items)) + &#34; item(s).&#34;&#10;  }&#10;}&#10;" />
+            <zeebe:header key="resultVariable" value="rawMagentoAddCartItemResponse" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Activity_0wp86ys" name="Apply store credit" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+      <bpmn:serviceTask id="Tool_Magento_ApplyStoreCredit" name="Apply store credit" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="applyStoreCredit" target="operation" />
             <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="applyStoreCredit" target="operation" />
             <zeebe:input source="=fromAi(toolCall.cartId)" target="cartId" />
             <zeebe:input source="=fromAi(toolCall.amount)" target="amount" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
-            <zeebe:header key="resultVariable" value="rawMagentoApplyStoreCreditResponse" />
             <zeebe:header key="resultExpression" value="=if response.body != null and response.body.get(&#34;cart_id&#34;) != null then&#10;{&#10;  storeCredit: response.body,&#10;  toolCallResult: {&#10;    status: &#34;applied&#34;,&#10;    appliedAmount: response.body.store_credit_applied,&#10;    cartId: response.body.cart_id,&#10;    message: &#34;Store credit of $&#34; + string(response.body.store_credit_applied) + &#34; applied successfully.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  storeCredit: null,&#10;  toolCallResult: {&#10;    status: &#34;failed&#34;,&#10;    message: &#34;Failed to apply store credit. Please verify the amount and cart ID.&#34;&#10;  }&#10;}&#10;" />
+            <zeebe:header key="resultVariable" value="rawMagentoApplyStoreCreditResponse" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Activity_0ti1s59" name="Place order" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+      <bpmn:serviceTask id="Tool_Magento_PlaceOrder" name="Place order" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="placeOrder" target="operation" />
             <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="placeOrder" target="operation" />
             <zeebe:input source="=fromAi(toolCall.cartId)" target="cartId" />
             <zeebe:input source="credit_card" target="paymentMethod" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
-            <zeebe:header key="resultVariable" value="rawMagentoPlaceOrderResponse" />
             <zeebe:header key="resultExpression" value="=if response.body = null or response.body.order_id = null then&#10;{&#10;  order: null,&#10;  toolCallResult: {&#10;    status: &#34;failed&#34;,&#10;    message: &#34;Failed to place order. Please verify cart contents and payment method.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  order: response.body,&#10;  toolCallResult: {&#10;    status: &#34;placed&#34;,&#10;    orderId: response.body.order_id,&#10;    orderTotal: response.body.order_total,&#10;    estimatedDelivery: response.body.estimated_delivery_date,&#10;    message: &#34;Order placed successfully! Order ID: &#34; + response.body.order_id + &#34;. Total: $&#34; + string(response.body.order_total) + &#34;. Estimated delivery: &#34; + response.body.estimated_delivery_date&#10;  }&#10;}&#10;" />
+            <zeebe:header key="resultVariable" value="rawMagentoPlaceOrderResponse" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
@@ -250,7 +233,7 @@
           </zeebe:ioMapping>
         </bpmn:extensionElements>
       </bpmn:callActivity>
-      <bpmn:serviceTask id="Activity_02rnnqd" name="Create expected return" zeebe:modelerTemplate="manhattan-wms-connector-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iNjY0LjAwMDAwMHB0IiBoZWlnaHQ9IjM4NC4wMDAwMDBwdCIgdmlld0JveD0iMCAwIDY2NC4wMDAwMDAgMzg0LjAwMDAwMCIKIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIG1lZXQiPgoKPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMzg0LjAwMDAwMCkgc2NhbGUoMC4xMDAwMDAsLTAuMTAwMDAwKSIKZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSJub25lIj4KPHBhdGggZD0iTTI3NDAgMTkzMCBjLTQyMSAtNTc5IC03NjcgLTEwNTcgLTc2OCAtMTA2MiAtMiAtNSA5MCAtNyAyMTQgLTYKbDIxOCAzIDI5NCA0MTAgYzE2MSAyMjYgNDEwIDU3MyA1NTMgNzczIGwyNTkgMzYzIC0yIDI4NSAtMyAyODYgLTc2NSAtMTA1MnoiLz4KPHBhdGggZD0iTTQ1NjQgMjg5NyBjLTI4IC00MCAtMTM0IC0xODcgLTIzNSAtMzI3IC05ODcgLTEzNjIgLTEyMzkgLTE3MTEKLTEyMzkgLTE3MTUgMCAtMyA5OCAtNCAyMTcgLTMgbDIxNyAzIDU1MyA3NzMgNTUzIDc3NCAwIDI4NCBjMCAxNTYgLTMgMjg0IC03CjI4NCAtNSAtMSAtMzEgLTMzIC01OSAtNzN6Ii8+CjxwYXRoIGQ9Ik0zMDI1IDE1MzYgYy0yNjkgLTM2OCAtNDkxIC02NzMgLTQ5MyAtNjc4IC0yIC00IDkzIC04IDIxMSAtOCBsMjE1CjAgMjkgMzggYzE2IDIwIDE0MyAxOTUgMjgxIDM4OSBsMjUyIDM1MiAtMiAyODggLTMgMjg5IC00OTAgLTY3MHoiLz4KPHBhdGggZD0iTTQxOTAgMTU4MyBjLTI1MCAtMzQ0IC00NzIgLTY1MCAtNDkzIC02ODAgbC0zOSAtNTMgMjE4IDIgMjE4IDMgMjc4CjM4OCAyNzggMzg4IC0yIDI4OSAtMyAyODggLTQ1NSAtNjI1eiIvPgo8cGF0aCBkPSJNNDQ0NyAxMTY4IGwtMjI3IC0zMTMgMjI2IC0zIGMxMjUgLTEgMjI5IC0xIDIzMSAxIDIgMiAyIDE0NCAxIDMxNgpsLTMgMzEyIC0yMjggLTMxM3oiLz4KPC9nPgo8L3N2Zz4K">
+      <bpmn:serviceTask id="Tool_Manhatten_CreateExpectedReturn" name="Create expected return" zeebe:modelerTemplate="manhattan-wms-connector-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iNjY0LjAwMDAwMHB0IiBoZWlnaHQ9IjM4NC4wMDAwMDBwdCIgdmlld0JveD0iMCAwIDY2NC4wMDAwMDAgMzg0LjAwMDAwMCIKIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIG1lZXQiPgoKPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMzg0LjAwMDAwMCkgc2NhbGUoMC4xMDAwMDAsLTAuMTAwMDAwKSIKZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSJub25lIj4KPHBhdGggZD0iTTI3NDAgMTkzMCBjLTQyMSAtNTc5IC03NjcgLTEwNTcgLTc2OCAtMTA2MiAtMiAtNSA5MCAtNyAyMTQgLTYKbDIxOCAzIDI5NCA0MTAgYzE2MSAyMjYgNDEwIDU3MyA1NTMgNzczIGwyNTkgMzYzIC0yIDI4NSAtMyAyODYgLTc2NSAtMTA1MnoiLz4KPHBhdGggZD0iTTQ1NjQgMjg5NyBjLTI4IC00MCAtMTM0IC0xODcgLTIzNSAtMzI3IC05ODcgLTEzNjIgLTEyMzkgLTE3MTEKLTEyMzkgLTE3MTUgMCAtMyA5OCAtNCAyMTcgLTMgbDIxNyAzIDU1MyA3NzMgNTUzIDc3NCAwIDI4NCBjMCAxNTYgLTMgMjg0IC03CjI4NCAtNSAtMSAtMzEgLTMzIC01OSAtNzN6Ii8+CjxwYXRoIGQ9Ik0zMDI1IDE1MzYgYy0yNjkgLTM2OCAtNDkxIC02NzMgLTQ5MyAtNjc4IC0yIC00IDkzIC04IDIxMSAtOCBsMjE1CjAgMjkgMzggYzE2IDIwIDE0MyAxOTUgMjgxIDM4OSBsMjUyIDM1MiAtMiAyODggLTMgMjg5IC00OTAgLTY3MHoiLz4KPHBhdGggZD0iTTQxOTAgMTU4MyBjLTI1MCAtMzQ0IC00NzIgLTY1MCAtNDkzIC02ODAgbC0zOSAtNTMgMjE4IDIgMjE4IDMgMjc4CjM4OCAyNzggMzg4IC0yIDI4OSAtMyAyODggLTQ1NSAtNjI1eiIvPgo8cGF0aCBkPSJNNDQ0NyAxMTY4IGwtMjI3IC0zMTMgMjI2IC0zIGMxMjUgLTEgMjI5IC0xIDIzMSAxIDIgMiAyIDE0NCAxIDMxNgpsLTMgMzEyIC0yMjggLTMxM3oiLz4KPC9nPgo8L3N2Zz4K">
         <bpmn:documentation># Create Expected Return (WMS)
 Purpose: Register the return in the warehouse upfront so the item is accepted when it arrives. This prevents warehouse rejections, especially for end-of-life (EOL), discontinued, or clearance items.
 
@@ -293,19 +276,35 @@ If SKU is active and eligible, use:
             <zeebe:input source="=fromAi(toolCall.overrideFlagsAsArray)" target="overrides" />
             <zeebe:input source="=fromAi(toolCall.caseId)" target="caseId" />
             <zeebe:input source="=fromAi(toolCall.approvalCode)" target="approvalCode" />
-            <zeebe:input source="=if operation = &#34;checkFulfillmentEligibility&#34; then baseUrl + &#34;/fulfillment/eligibility?sku=&#34; + fulfillmentSku + &#34;&#38;postalCode=&#34; + postalCode else if operation = &#34;createExpectedReturn&#34; then baseUrl + &#34;/returns/expected?rmaId=&#34; + rmaId + &#34;&#38;sku=&#34; + returnSku + &#34;&#38;qty=&#34; + string(number(qty)) + (if overrides instance of list then if count(overrides) &#62; 0 then &#34;&#38;overrides=&#34; + string(overrides[1]) else &#34;&#34; else if overrides != null then &#34;&#38;overrides=&#34; + string(overrides) else &#34;&#34;) + (if caseId != null then &#34;&#38;caseId=&#34; + caseId else &#34;&#34;) + (if approvalCode != null then &#34;&#38;approvalCode=&#34; + approvalCode else &#34;&#34;) else if operation = &#34;releaseShipment&#34; then baseUrl + &#34;/shipments/release?order_id=&#34; + shipmentOrderId + &#34;&#38;shipping_method=&#34; + shippingMethod else baseUrl" target="url" />
+            <zeebe:input source="=if operation = &#34;checkFulfillmentEligibility&#34; then baseUrl + &#34;/fulfillment/eligibility?sku=&#34; + fulfillmentSku + &#34;&#38;postalCode=&#34; + postalCode else if operation = &#34;createExpectedReturn&#34; then baseUrl + &#34;/returns/expected?rmaId=&#34; + rmaId + &#34;&#38;sku=&#34; + returnSku + &#34;&#38;qty=&#34; + string(number(qty)) + (if overrides != null and overrides != &#34;&#34; and overrides != &#34;[]&#34; and string(overrides) != &#34;[]&#34; then &#34;&#38;overrides=&#34; + string(overrides) else &#34;&#34;) + (if caseId != null and caseId != &#34;&#34; then &#34;&#38;caseId=&#34; + caseId else &#34;&#34;) + (if approvalCode != null and approvalCode != &#34;&#34; then &#34;&#38;approvalCode=&#34; + approvalCode else &#34;&#34;) else if operation = &#34;releaseShipment&#34; then baseUrl + &#34;/shipments/release?order_id=&#34; + shipmentOrderId + &#34;&#38;shipping_method=&#34; + shippingMethod else baseUrl" target="url" />
             <zeebe:input source="=if operation = &#34;checkFulfillmentEligibility&#34; then &#34;get&#34; else &#34;post&#34;" target="method" />
             <zeebe:input source="=null" target="body" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
             <zeebe:header key="resultVariable" value="wmsResponse" />
-            <zeebe:header key="resultExpression" value="={&#10;  wmsRawResponseBody: response.body,&#10;  toolCallResult: response.body&#10;}" />
-            <zeebe:header key="errorExpression" value="=if error.code = &#34;404&#34; then bpmnError(&#34;WMS_NOT_FOUND&#34;, &#34;Resource not found in WMS&#34;) else if error.code = &#34;400&#34; then bpmnError(&#34;WMS_INVALID_REQUEST&#34;, &#34;Invalid request to WMS&#34;) else null" />
+            <zeebe:header key="resultExpression" value="=if response.body.status = &#34;error&#34; then {toolCallResult: {status: &#34;error&#34;, errorCode: response.body.errorCode, message: response.body.message}} else {toolCallResult: {status: &#34;success&#34;, data: response.body}}" />
+            <zeebe:header key="errorExpression" value="=if error.code = &#34;404&#34; then bpmnError(&#34;WMS_NOT_FOUND&#34;, &#34;Resource not found in WMS&#34;) else null" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="Activity_15xd324" name="Search available products" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="magento-connector" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="productSearch" target="operation" />
+            <zeebe:input source="=fromAi(toolCall.searchQuery)" target="query" />
+            <zeebe:input source="=fromAi(toolCall.category)" target="category" />
+            <zeebe:input source="=fromAi(toolCall.tags)" target="tags" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="resultVariable" value="magentoResponse" />
+            <zeebe:header key="resultExpression" value="=if response.body = null or count(response.body) = 0 then&#10;{&#10;  products: [],&#10;  toolCallResult: {&#10;    status: &#34;no_products&#34;,&#10;    message: &#34;No products found matching the search criteria.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  products: response.body,&#10;  toolCallResult: {&#10;    status: &#34;products_found&#34;,&#10;    count: count(response.body),&#10;    products: response.body,&#10;    message: &#34;Found &#34; + string(count(response.body)) + &#34; product(s) matching the search.&#34;&#10;  }&#10;}" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
     </bpmn:adHocSubProcess>
-    <bpmn:sequenceFlow id="Flow_0eqjm89" sourceRef="StartEvent_1" targetRef="Activity_18uvy4l" />
+    <bpmn:sequenceFlow id="Flow_0eqjm89" sourceRef="StartEvent_1" targetRef="Event_0nyk35b" />
     <bpmn:endEvent id="Event_0il4izb">
       <bpmn:incoming>Flow_1sm4gwc</bpmn:incoming>
     </bpmn:endEvent>
@@ -359,43 +358,33 @@ If SKU is active and eligible, use:
       <bpmn:messageEventDefinition id="MessageEventDefinition_1bfeor5" messageRef="Message_1r1v4qd" />
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0ekpsfu" sourceRef="Event_0aolqb7" targetRef="SubProcess_EcommerceAgent" />
-    <bpmn:serviceTask id="Activity_18uvy4l" name="TEST" zeebe:modelerTemplate="manhattan-wms-connector-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iNjY0LjAwMDAwMHB0IiBoZWlnaHQ9IjM4NC4wMDAwMDBwdCIgdmlld0JveD0iMCAwIDY2NC4wMDAwMDAgMzg0LjAwMDAwMCIKIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIG1lZXQiPgoKPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMzg0LjAwMDAwMCkgc2NhbGUoMC4xMDAwMDAsLTAuMTAwMDAwKSIKZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSJub25lIj4KPHBhdGggZD0iTTI3NDAgMTkzMCBjLTQyMSAtNTc5IC03NjcgLTEwNTcgLTc2OCAtMTA2MiAtMiAtNSA5MCAtNyAyMTQgLTYKbDIxOCAzIDI5NCA0MTAgYzE2MSAyMjYgNDEwIDU3MyA1NTMgNzczIGwyNTkgMzYzIC0yIDI4NSAtMyAyODYgLTc2NSAtMTA1MnoiLz4KPHBhdGggZD0iTTQ1NjQgMjg5NyBjLTI4IC00MCAtMTM0IC0xODcgLTIzNSAtMzI3IC05ODcgLTEzNjIgLTEyMzkgLTE3MTEKLTEyMzkgLTE3MTUgMCAtMyA5OCAtNCAyMTcgLTMgbDIxNyAzIDU1MyA3NzMgNTUzIDc3NCAwIDI4NCBjMCAxNTYgLTMgMjg0IC03CjI4NCAtNSAtMSAtMzEgLTMzIC01OSAtNzN6Ii8+CjxwYXRoIGQ9Ik0zMDI1IDE1MzYgYy0yNjkgLTM2OCAtNDkxIC02NzMgLTQ5MyAtNjc4IC0yIC00IDkzIC04IDIxMSAtOCBsMjE1CjAgMjkgMzggYzE2IDIwIDE0MyAxOTUgMjgxIDM4OSBsMjUyIDM1MiAtMiAyODggLTMgMjg5IC00OTAgLTY3MHoiLz4KPHBhdGggZD0iTTQxOTAgMTU4MyBjLTI1MCAtMzQ0IC00NzIgLTY1MCAtNDkzIC02ODAgbC0zOSAtNTMgMjE4IDIgMjE4IDMgMjc4CjM4OCAyNzggMzg4IC0yIDI4OSAtMyAyODggLTQ1NSAtNjI1eiIvPgo8cGF0aCBkPSJNNDQ0NyAxMTY4IGwtMjI3IC0zMTMgMjI2IC0zIGMxMjUgLTEgMjI5IC0xIDIzMSAxIDIgMiAyIDE0NCAxIDMxNgpsLTMgMzEyIC0yMjggLTMxM3oiLz4KPC9nPgo8L3N2Zz4K">
-      <bpmn:documentation>TEST</bpmn:documentation>
+    <bpmn:endEvent id="Event_0nyk35b">
+      <bpmn:incoming>Flow_0eqjm89</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Tool_Magento_SearchProducts" name="Search products" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:taskDefinition type="magento-connector" />
         <zeebe:ioMapping>
-          <zeebe:input source="=if secrets.DEMO_BACKEND_BASE_URL != null then secrets.DEMO_BACKEND_BASE_URL + &#34;/wms&#34; else &#34;http://localhost:8100/wms&#34;" target="baseUrl" />
-          <zeebe:input source="createExpectedReturn" target="operation" />
-          <zeebe:input source="=&#34;1&#34;" target="rmaId" />
-          <zeebe:input source="=&#34;2&#34;" target="returnSku" />
-          <zeebe:input source="=1" target="qty" />
-          <zeebe:input source="=&#34;ALLOW_CLEARANCE_RETURN&#34;" target="overrides" />
-          <zeebe:input source="=&#34;12233&#34;" target="caseId" />
-          <zeebe:input source="=&#34;EXC-RETURN-OK&#34;" target="approvalCode" />
-          <zeebe:input source="=if operation = &#34;createExpectedReturn&#34; then baseUrl + &#34;/returns/expected?rmaId=&#34; + rmaId + &#34;&#38;sku=&#34; + returnSku + &#34;&#38;qty=&#34; + string(qty) + (if overrides instance of list then if count(overrides) &#62; 0 then &#34;&#38;overrides=&#34; + string(overrides[1]) else &#34;&#34; else if overrides != null then &#34;&#38;overrides=&#34; + string(overrides) else &#34;&#34;) + (if caseId != null then &#34;&#38;caseId=&#34; + caseId else &#34;&#34;) + (if approvalCode != null then &#34;&#38;approvalCode=&#34; + approvalCode else &#34;&#34;) else if operation = &#34;releaseShipment&#34; then baseUrl + &#34;/shipments/release?order_id=&#34; + shipmentOrderId + &#34;&#38;shipping_method=&#34; + shippingMethod else baseUrl" target="url" />
-          <zeebe:input source="post" target="method" />
-          <zeebe:input source="=null" target="body" />
+          <zeebe:input source="magentoResponse" target="resultVariable" />
+          <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+          <zeebe:input source="productSearch" target="operation" />
+          <zeebe:input source="=fromAi(toolCall.searchQuery)" target="query" />
+          <zeebe:input source="=fromAi(toolCall.category)" target="category" />
+          <zeebe:input source="=fromAi(toolCall.tags)" target="tags" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultVariable" value="wmsResponse" />
-          <zeebe:header key="resultExpression" value="={&#10;  wmsRawResponseBody: response.body,&#10;  toolCallResult: response.body&#10;}" />
-          <zeebe:header key="errorExpression" value="=if error.code = &#34;404&#34; then bpmnError(&#34;WMS_NOT_FOUND&#34;, &#34;Resource not found in WMS&#34;) else if error.code = &#34;400&#34; then bpmnError(&#34;WMS_INVALID_REQUEST&#34;, &#34;Invalid request to WMS&#34;) else null" />
+          <zeebe:header key="resultVariable" value="rawMagentoProductSearchResponse" />
+          <zeebe:header key="resultExpression" value="=if response.body = null or count(response.body) = 0 then&#10;{&#10;  products: [],&#10;  toolCallResult: {&#10;    status: &#34;no_products&#34;,&#10;    message: &#34;No products found matching the search criteria.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  products: response.body,&#10;  toolCallResult: {&#10;    status: &#34;products_found&#34;,&#10;    count: count(response.body),&#10;    products: response.body,&#10;    message: &#34;Found &#34; + string(count(response.body)) + &#34; product(s) matching the search.&#34;&#10;  }&#10;}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0eqjm89</bpmn:incoming>
-      <bpmn:outgoing>Flow_11jjskc</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_0nyk35b">
-      <bpmn:incoming>Flow_11jjskc</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_11jjskc" sourceRef="Activity_18uvy4l" targetRef="Event_0nyk35b" />
   </bpmn:process>
   <bpmn:message id="Message_1io25dr" name="io.camunda.chat.message.6f459df0-d0eb-4b54-b299-ddc2a1fdc0d7" zeebe:modelerTemplate="io.camunda.chat.messageStart.6f459df0-d0eb-4b54-b299-ddc2a1fdc0d7.v1" />
   <bpmn:message id="Message_1r1v4qd" name="WhatsApp2" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ecommerce-agent">
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="152" y="342" width="36" height="36" />
+        <dc:Bounds x="362" y="622" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1gvmxab_di" bpmnElement="SubProcess_EcommerceAgent" isExpanded="true">
         <dc:Bounds x="760" y="140" width="500" height="940" />
@@ -406,27 +395,23 @@ If SKU is active and eligible, use:
       <bpmndi:BPMNShape id="Activity_1wk09jl_di" bpmnElement="Tool_Magento_ListRecentOrders">
         <dc:Bounds x="790" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0cza8ci" bpmnElement="Tool_Magento_SearchProducts">
-        <dc:Bounds x="790" y="450" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0gqsaip" bpmnElement="Activity_1epjsfg">
+      <bpmndi:BPMNShape id="BPMNShape_0gqsaip" bpmnElement="Tool_Magento_CreateRMA">
         <dc:Bounds x="790" y="540" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_115kmd0" bpmnElement="Activity_0tv7v12">
+      <bpmndi:BPMNShape id="BPMNShape_115kmd0" bpmnElement="Tool_Magento_CreateCart">
         <dc:Bounds x="790" y="640" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_05s82vk" bpmnElement="Activity_1wqou7l">
+      <bpmndi:BPMNShape id="BPMNShape_05s82vk" bpmnElement="Tool_Magento_AddItemToCart">
         <dc:Bounds x="790" y="730" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1dfr57p" bpmnElement="Activity_0wp86ys">
+      <bpmndi:BPMNShape id="BPMNShape_1dfr57p" bpmnElement="Tool_Magento_ApplyStoreCredit">
         <dc:Bounds x="790" y="830" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1g7lnxd" bpmnElement="Activity_0ti1s59">
+      <bpmndi:BPMNShape id="BPMNShape_1g7lnxd" bpmnElement="Tool_Magento_PlaceOrder">
         <dc:Bounds x="790" y="920" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -442,8 +427,12 @@ If SKU is active and eligible, use:
         <dc:Bounds x="940" y="730" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1t80u8s_di" bpmnElement="Activity_02rnnqd">
+      <bpmndi:BPMNShape id="Activity_1t80u8s_di" bpmnElement="Tool_Manhatten_CreateExpectedReturn">
         <dc:Bounds x="940" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t87ykw_di" bpmnElement="Activity_15xd324">
+        <dc:Bounds x="790" y="450" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0il4izb_di" bpmnElement="Event_0il4izb">
@@ -465,18 +454,16 @@ If SKU is active and eligible, use:
           <dc:Bounds x="155" y="145" width="51" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_12e0xuh" bpmnElement="Activity_18uvy4l">
-        <dc:Bounds x="390" y="510" width="100" height="80" />
+      <bpmndi:BPMNShape id="Event_0nyk35b_di" bpmnElement="Event_0nyk35b">
+        <dc:Bounds x="542" y="622" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0cza8ci" bpmnElement="Tool_Magento_SearchProducts">
+        <dc:Bounds x="1530" y="980" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0nyk35b_di" bpmnElement="Event_0nyk35b">
-        <dc:Bounds x="692" y="532" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0eqjm89_di" bpmnElement="Flow_0eqjm89">
-        <di:waypoint x="188" y="360" />
-        <di:waypoint x="289" y="360" />
-        <di:waypoint x="289" y="530" />
-        <di:waypoint x="390" y="530" />
+        <di:waypoint x="398" y="640" />
+        <di:waypoint x="542" y="640" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1sm4gwc_di" bpmnElement="Flow_1sm4gwc">
         <di:waypoint x="1260" y="240" />
@@ -495,10 +482,6 @@ If SKU is active and eligible, use:
         <di:waypoint x="479" y="120" />
         <di:waypoint x="479" y="170" />
         <di:waypoint x="760" y="170" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_11jjskc_di" bpmnElement="Flow_11jjskc">
-        <di:waypoint x="490" y="550" />
-        <di:waypoint x="692" y="550" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
