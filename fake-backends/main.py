@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.cors import CORSMiddleware
 import uvicorn
 
-from routers import commerce, erp, wms, policy, returns_provider, payments, notifications
+from routers import commerce, erp, wms, policy, returns_provider, payments, notifications, admin
 from data_store import data_store
 
 
@@ -61,6 +61,7 @@ app.include_router(policy.router, prefix="/policy", tags=["Returns Policy"])
 app.include_router(returns_provider.router, prefix="/returns", tags=["Returns Provider"])
 app.include_router(payments.router, prefix="/payments", tags=["Payments"])
 app.include_router(notifications.router, prefix="/notify", tags=["Notifications"])
+app.include_router(admin.router, prefix="/admin", tags=["Admin"]) 
 
 # Templates for homepage
 templates = Jinja2Templates(directory="templates")

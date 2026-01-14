@@ -1,0 +1,331 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "Manhattan WMS Connector",
+  "id": "manhattan-wms-connector-template",
+  "version": 1,
+  "description": "Connect to Manhattan Warehouse Management System",
+  "appliesTo": ["bpmn:Task"],
+  "elementType": { "value": "bpmn:ServiceTask" },
+  "category": { "id": "connectors", "name": "Connectors" },
+  "groups": [
+    {
+      "id": "endpoint",
+      "label": "HTTP Endpoint",
+      "openByDefault": false
+    },
+    {
+      "id": "authentication",
+      "label": "Authentication",
+      "openByDefault": false
+    },
+    {
+      "id": "operation",
+      "label": "WMS Operation",
+      "openByDefault": true
+    },
+    {
+      "id": "output",
+      "label": "Response Mapping",
+      "openByDefault": false
+    },
+    {
+      "id": "errors",
+      "label": "Error Handling",
+      "openByDefault": false
+    }
+  ],
+  "properties": [
+    {
+      "id": "taskDefinitionType",
+      "value": "io.camunda:http-json:1",
+      "group": "endpoint",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "baseUrl",
+      "label": "Base URL",
+      "description": "Manhattan WMS API base URL",
+      "type": "String",
+      "group": "endpoint",
+      "feel": "optional",
+      "value": "http://localhost:8100/wms",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "baseUrl"
+      }
+    },
+    {
+      "id": "operation",
+      "label": "Operation",
+      "description": "Select the WMS operation to perform",
+      "type": "Dropdown",
+      "group": "operation",
+      "value": "createExpectedReturn",
+      "choices": [
+        { "name": "Check Fulfillment Eligibility", "value": "checkFulfillmentEligibility" },
+        { "name": "Create Expected Return", "value": "createExpectedReturn" },
+        { "name": "Release Shipment", "value": "releaseShipment" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "operation"
+      }
+    },
+
+    {
+      "id": "fulfillmentSku",
+      "label": "SKU",
+      "description": "Product SKU to check",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "fulfillmentSku"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "checkFulfillmentEligibility"
+      }
+    },
+    {
+      "id": "postalCode",
+      "label": "Postal Code",
+      "description": "Destination postal code",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "postalCode"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "checkFulfillmentEligibility"
+      }
+    },
+
+    {
+      "id": "rmaId",
+      "label": "RMA ID",
+      "description": "Return Merchandise Authorization ID",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "rmaId"
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "createExpectedReturn"
+      }
+    },
+    {
+      "id": "returnSku",
+      "label": "SKU",
+      "description": "Product SKU being returned",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "returnSku"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "createExpectedReturn"
+      }
+    },
+    {
+      "id": "qty",
+      "label": "Quantity",
+      "description": "Number of items being returned",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "value": "1",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "qty"
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "createExpectedReturn"
+      }
+    },
+    {
+      "id": "overrides",
+      "label": "Overrides",
+      "description": "Override flags (e.g., [\"ALLOW_CLEARANCE_RETURN\", \"BYPASS_RESELL_CHECK\"])",
+      "type": "Text",
+      "group": "operation",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "overrides"
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "createExpectedReturn"
+      }
+    },
+    {
+      "id": "caseId",
+      "label": "Case ID",
+      "description": "Reference case ID for tracking",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "caseId"
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "createExpectedReturn"
+      }
+    },
+    {
+      "id": "approvalCode",
+      "label": "Approval Code",
+      "description": "Exception approval code (e.g., EXC-RETURN-OK)",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "approvalCode"
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "createExpectedReturn"
+      }
+    },
+
+    {
+      "id": "shipmentOrderId",
+      "label": "Order ID",
+      "description": "Order ID to release shipment for",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "shipmentOrderId"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "releaseShipment"
+      }
+    },
+    {
+      "id": "shippingMethod",
+      "label": "Shipping Method",
+      "description": "Shipping method (STANDARD, SAME_DAY, OVERNIGHT)",
+      "type": "String",
+      "group": "operation",
+      "feel": "optional",
+      "value": "STANDARD",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "shippingMethod"
+      },
+      "condition": {
+        "property": "operation",
+        "equals": "releaseShipment"
+      }
+    },
+
+    {
+      "id": "url",
+      "label": "URL",
+      "type": "Hidden",
+      "value": "=if operation = \"checkFulfillmentEligibility\" then baseUrl + \"/fulfillment/eligibility?sku=\" + fulfillmentSku + \"&postalCode=\" + postalCode else if operation = \"createExpectedReturn\" then baseUrl + \"/returns/expected?rmaId=\" + rmaId + \"&sku=\" + returnSku + \"&qty=\" + string(number(qty)) + (if overrides instance of list then if count(overrides) > 0 then \"&overrides=\" + string(overrides[1]) else \"\" else if overrides != null then \"&overrides=\" + string(overrides) else \"\") + (if caseId != null then \"&caseId=\" + caseId else \"\") + (if approvalCode != null then \"&approvalCode=\" + approvalCode else \"\") else if operation = \"releaseShipment\" then baseUrl + \"/shipments/release?order_id=\" + shipmentOrderId + \"&shipping_method=\" + shippingMethod else baseUrl",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "url"
+      }
+    },
+    {
+      "id": "method",
+      "label": "Method",
+      "group": "endpoint",
+      "type": "Hidden",
+      "value": "=if operation = \"checkFulfillmentEligibility\" then \"get\" else \"post\"",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "method"
+      }
+    },
+    {
+      "id": "body",
+      "label": "Body",
+      "group": "endpoint",
+      "type": "Hidden",
+      "value": "=null",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "body"
+      }
+    },
+
+    {
+      "id": "resultVariable",
+      "label": "Result Variable",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "type": "String",
+      "value": "wmsResponse",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultVariable"
+      }
+    },
+    {
+      "id": "resultExpression",
+      "label": "Result Expression",
+      "description": "Expression to transform the response",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "value": "={toolCallResult: response.body}",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    },
+
+    {
+      "id": "errorExpression",
+      "label": "Error Expression",
+      "description": "Expression to handle errors",
+      "group": "errors",
+      "type": "Text",
+      "feel": "required",
+      "value": "=if error.code = \"404\" then bpmnError(\"WMS_NOT_FOUND\", \"Resource not found in WMS\") else if error.code = \"400\" then bpmnError(\"WMS_INVALID_REQUEST\", \"Invalid request to WMS\") else null",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "errorExpression"
+      }
+    }
+  ],
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iNjY0LjAwMDAwMHB0IiBoZWlnaHQ9IjM4NC4wMDAwMDBwdCIgdmlld0JveD0iMCAwIDY2NC4wMDAwMDAgMzg0LjAwMDAwMCIKIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIG1lZXQiPgoKPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMzg0LjAwMDAwMCkgc2NhbGUoMC4xMDAwMDAsLTAuMTAwMDAwKSIKZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSJub25lIj4KPHBhdGggZD0iTTI3NDAgMTkzMCBjLTQyMSAtNTc5IC03NjcgLTEwNTcgLTc2OCAtMTA2MiAtMiAtNSA5MCAtNyAyMTQgLTYKbDIxOCAzIDI5NCA0MTAgYzE2MSAyMjYgNDEwIDU3MyA1NTMgNzczIGwyNTkgMzYzIC0yIDI4NSAtMyAyODYgLTc2NSAtMTA1MnoiLz4KPHBhdGggZD0iTTQ1NjQgMjg5NyBjLTI4IC00MCAtMTM0IC0xODcgLTIzNSAtMzI3IC05ODcgLTEzNjIgLTEyMzkgLTE3MTEKLTEyMzkgLTE3MTUgMCAtMyA5OCAtNCAyMTcgLTMgbDIxNyAzIDU1MyA3NzMgNTUzIDc3NCAwIDI4NCBjMCAxNTYgLTMgMjg0IC03CjI4NCAtNSAtMSAtMzEgLTMzIC01OSAtNzN6Ii8+CjxwYXRoIGQ9Ik0zMDI1IDE1MzYgYy0yNjkgLTM2OCAtNDkxIC02NzMgLTQ5MyAtNjc4IC0yIC00IDkzIC04IDIxMSAtOCBsMjE1CjAgMjkgMzggYzE2IDIwIDE0MyAxOTUgMjgxIDM4OSBsMjUyIDM1MiAtMiAyODggLTMgMjg5IC00OTAgLTY3MHoiLz4KPHBhdGggZD0iTTQxOTAgMTU4MyBjLTI1MCAtMzQ0IC00NzIgLTY1MCAtNDkzIC02ODAgbC0zOSAtNTMgMjE4IDIgMjE4IDMgMjc4CjM4OCAyNzggMzg4IC0yIDI4OSAtMyAyODggLTQ1NSAtNjI1eiIvPgo8cGF0aCBkPSJNNDQ0NyAxMTY4IGwtMjI3IC0zMTMgMjI2IC0zIGMxMjUgLTEgMjI5IC0xIDIzMSAxIDIgMiAyIDE0NCAxIDMxNgpsLTMgMzEyIC0yMjggLTMxM3oiLz4KPC9nPgo8L3N2Zz4K"
+  }
+}

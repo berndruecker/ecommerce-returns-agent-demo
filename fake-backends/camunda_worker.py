@@ -79,7 +79,8 @@ def _evaluate_result_expression(expression: str, response: Dict[str, Any]) -> Di
         # Remove leading = if present (FEEL syntax in Camunda)
         expr = expression.lstrip("= \t")
         
-        logger.info(f"Evaluating FEEL resultExpression (first 80 chars): {expr[:80]}...")
+        # Skip verbose FEEL expression logging to reduce noise
+        # logger.info(f"Evaluating FEEL resultExpression (first 80 chars): {expr[:80]}...")
         
         # Use fallback evaluator
         return _evaluate_feel_fallback(expr, response)
@@ -223,8 +224,9 @@ def _evaluate_condition(condition_str: str, response: Dict[str, Any]) -> bool:
         return bool(result)
         
     except Exception as e:
-        logger.warning(f"Error evaluating condition '{condition_str}': {e}")
-        logger.warning(f"Response at error: {response}")
+        # Silently fail condition evaluation - default to False for else branch
+        # logger.warning(f"Error evaluating condition '{condition_str}': {e}")
+        # logger.warning(f"Response at error: {response}")
         # If condition fails, default to False to use else branch
         return False
 

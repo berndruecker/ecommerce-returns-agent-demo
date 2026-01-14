@@ -57,6 +57,42 @@
         .api-link:hover {
             background: #5568d3;
         }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-reset {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-reset:hover { background: #c53030; }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: #2d3748;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
         
         .grid {
             display: grid;
@@ -202,7 +238,10 @@
         <header>
             <h1>🛍️ E-Commerce Returns Agent Demo</h1>
             <p class="subtitle">Mock Backend Systems for AI Agent Demonstration</p>
-            <a href="/docs" class="api-link" target="_blank">📚 View API Documentation</a>
+            <div class="actions">
+                <a href="/docs" class="api-link" target="_blank">📚 View API Documentation</a>
+                <button class="btn btn-reset" id="resetBtn" title="Reset demo data to baseline">♻️ Reset Demo Data</button>
+            </div>
         </header>
         
         <div class="grid">
@@ -376,5 +415,30 @@
             </div>
         </div>
     </div>
+    <div id="toast" class="toast">Demo data reset successfully.</div>
+    <script>
+        const btn = document.getElementById('resetBtn');
+        const toast = document.getElementById('toast');
+        if (btn) {
+            btn.addEventListener('click', async () => {
+                btn.disabled = true;
+                btn.textContent = 'Resetting…';
+                try {
+                    const res = await fetch('/admin/reset', { method: 'POST' });
+                    if (!res.ok) throw new Error('Reset failed');
+                    // Show toast
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 2000);
+                    // Refresh to reflect new data
+                    setTimeout(() => window.location.reload(), 300);
+                } catch (e) {
+                    alert('Reset failed: ' + e.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '♻️ Reset Demo Data';
+                }
+            });
+        }
+    </script>
 </body>
 </html>

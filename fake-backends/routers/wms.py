@@ -14,7 +14,7 @@ async def check_fulfillment_eligibility(
     postalCode: str = Query(..., alias="postalCode")
 ):
     """Check if SKU can be fulfilled to postal code"""
-    logger.info("WMS fulfillment-eligibility request: sku=%s, postalCode=%s", sku, postalCode)
+    logger.info("### MANHATTAN WMS ### checkFulfillmentEligibility ### sku=%s, postalCode=%s", sku, postalCode)
     product = data_store.products.get(sku)
     if not product:
         raise HTTPException(status_code=404, detail="SKU not found")
@@ -52,30 +52,58 @@ async def check_fulfillment_eligibility(
 # ========== Create Expected Return ==========
 @router.post("/returns/expected", response_model=ExpectedReturn)
 async def create_expected_return(
-    sku: str,
-    customer_id: str,
-    reason: str,
-    override_reason: str = None
+    rmaId: str = Query(None),
+    sku: str = Query(None),
+    qty: int = Query(1),
+    customer_id: str = Query(None),
+    reason: str = Query(None),
+    overrides: list[str] = Query(None),
+    caseId: str = Query(None),
+    approvalCode: str = Query(None)
 ):
-    """Create an expected return record"""
-    logger.info("WMS create-expected-return request: sku=%s, customer_id=%s, reason=%s", sku, customer_id, reason)
-    # Verify customer exists
-    customer = next((c for c in data_store.customers if c.customer_id == customer_id), None)
-    if not customer:
-        raise HTTPException(status_code=404, detail="Customer not found")
+    """Create an expected return record (Manhattan WMS)
+    
+    Supports overrides for special handling:
+    - ALLOW_CLEARANCE_RETURN: Accept returns of clearance/EOL products
+    - BYPASS_RESELL_CHECK: Skip resell eligibility verification
+    - EXPEDITE_PROCESSING: Priority processing for this return
+    """
+    logger.info(
+        "### MANHATTAN WMS ### createExpectedReturn ### rmaId=%s, sku=%s, qty=%s, overrides=%s",
+        rmaId, sku, qty, overrides
+    )
+    
+    # Verify customer exists if provided
+    if customer_id:
+        customer = next((c for c in data_store.customers if c.customer_id == customer_id), None)
+        if not customer:
+            raise HTTPException(status_code=404, detail="Customer not found")
+    
+    from models import ExpectedReturnReference
+    
+    # Build reference from individual fields
+    reference = None
+    if caseId or approvalCode:
+        reference = ExpectedReturnReference(case_id=caseId, approval_code=approvalCode)
     
     expected_return = ExpectedReturn(
         return_id=data_store.generate_id("RET"),
+        rma_id=rmaId,
         sku=sku,
         customer_id=customer_id,
+        qty=qty,
         reason=reason,
-        override_reason=override_reason,
+        overrides=overrides or [],
+        reference=reference,
         status="expected",
         created_at=datetime.now()
     )
     
     data_store.expected_returns.append(expected_return)
-    logger.info("WMS create-expected-return response: return_id=%s, status=%s", expected_return.return_id, expected_return.status)
+    logger.info(
+        "### MANHATTAN WMS ### createExpectedReturn ### return_id=%s, status=%s, overrides_applied=%s",
+        expected_return.return_id, expected_return.status, len(expected_return.overrides)
+    )
     return expected_return
 
 # ========== Release Outbound Shipment ==========
@@ -85,7 +113,7 @@ async def release_shipment(
     shipping_method: str = "STANDARD"
 ):
     """Release a shipment for an order"""
-    logger.info("WMS release-shipment request: order_id=%s, shipping_method=%s", order_id, shipping_method)
+    logger.info("### MANHATTAN WMS ### releaseShipment ### order_id=%s, shipping_method=%s", order_id, shipping_method)
     # Verify order exists
     order = next((o for o in data_store.orders if o.order_id == order_id), None)
     if not order:

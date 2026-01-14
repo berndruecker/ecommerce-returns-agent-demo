@@ -15,7 +15,7 @@ async def list_recent_orders(
     limit: int = Query(5, ge=1, le=50)
 ):
     """List recent orders for a customer"""
-    logger.info("Commerce list-orders request: customer_id=%s, limit=%s", customer_id, limit)
+    logger.info("### MAGENTO ### listOrders ### customer_id=%s, limit=%s", customer_id, limit)
     customer_orders = [
         order for order in data_store.orders 
         if order.customer_id == customer_id
@@ -29,21 +29,27 @@ async def list_recent_orders(
 # ========== Product Search ==========
 @router.get("/catalog/products", response_model=List[Product])
 async def search_products(
+    query: Optional[str] = None,
     category: Optional[str] = None,
-    wifiMin: Optional[int] = None,
     tags: Optional[str] = None
 ):
     """Search products with filters"""
-    logger.info("Commerce search-products request: category=%s, wifiMin=%s, tags=%s", category, wifiMin, tags)
+    logger.info("### MAGENTO ### productSearch ### query=%s, category=%s, tags=%s", query, category, tags)
     results = list(data_store.products.values())
+    
+    # Filter by free-text query (searches name, description, tags)
+    if query:
+        query_lower = query.lower()
+        results = [
+            p for p in results 
+            if query_lower in p.name.lower() 
+            or query_lower in p.description.lower()
+            or any(query_lower in tag.lower() for tag in p.tags)
+        ]
     
     # Filter by category
     if category:
         results = [p for p in results if p.category.value == category]
-    
-    # Filter by minimum WiFi standard
-    if wifiMin:
-        results = [p for p in results if p.wifi_standard and p.wifi_standard >= wifiMin]
     
     # Filter by tags (comma-separated)
     if tags:
@@ -67,7 +73,7 @@ async def create_rma(
     reason: str
 ):
     """Create a return merchandise authorization"""
-    logger.info("Commerce create-rma request: order_id=%s, customer_id=%s, sku=%s, reason=%s", order_id, customer_id, sku, reason)
+    logger.info("### MAGENTO ### createRma ### order_id=%s, customer_id=%s, sku=%s", order_id, customer_id, sku)
     # Verify order exists
     order = next((o for o in data_store.orders if o.order_id == order_id), None)
     if not order:
@@ -95,6 +101,7 @@ async def create_rma(
 @router.post("/carts", response_model=Cart)
 async def create_cart(customer_id: str):
     """Create a new shopping cart"""
+    logger.info("### MAGENTO ### createCart ### customer_id=%s", customer_id)
     cart = Cart(
         cart_id=data_store.generate_id("CART"),
         customer_id=customer_id,
@@ -113,6 +120,7 @@ async def add_cart_item(
     quantity: int = 1
 ):
     """Add an item to cart"""
+    logger.info("### MAGENTO ### addCartItem ### cart_id=%s, sku=%s, quantity=%s", cart_id, sku, quantity)
     cart = data_store.carts.get(cart_id)
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found")
@@ -142,6 +150,7 @@ async def apply_store_credit(
     amount: float
 ):
     """Apply store credit to cart"""
+    logger.info("### MAGENTO ### applyStoreCredit ### cart_id=%s, amount=%s", cart_id, amount)
     cart = data_store.carts.get(cart_id)
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found")
@@ -160,6 +169,7 @@ async def place_order(
     payment_method: str = "credit_card"
 ):
     """Place an order from cart"""
+    logger.info("### MAGENTO ### placeOrder ### cart_id=%s, payment_method=%s", cart_id, payment_method)
     cart = data_store.carts.get(cart_id)
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found")

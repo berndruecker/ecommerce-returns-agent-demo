@@ -24,6 +24,24 @@ class DataStore:
         self.return_labels: List[ReturnLabel] = []
         
         self._initialize_demo_data()
+
+    def reset(self):
+        """Reset demo data back to initial state (in-place)."""
+        # Clear all collections
+        self.customers.clear()
+        self.products.clear()
+        self.orders.clear()
+        self.rmas.clear()
+        self.carts.clear()
+        self.expected_returns.clear()
+        self.shipments.clear()
+        self.store_credits.clear()
+        self.charges.clear()
+        self.email_notifications.clear()
+        self.return_labels.clear()
+
+        # Re-initialize baseline demo data
+        self._initialize_demo_data()
     
     def _initialize_demo_data(self):
         """Initialize sample data for the demo"""
@@ -71,6 +89,20 @@ class DataStore:
             lifecycle_status="active",
             in_stock=True,
             stock_quantity=45
+        )
+        
+        # Gaming router in networking category for broader searches
+        self.products["RTR-GAMING-AX5700"] = Product(
+            sku="RTR-GAMING-AX5700",
+            name="Gaming Pro AX5700 WiFi 6 Router",
+            category=ProductCategory.NETWORKING,
+            price=199.99,
+            wifi_standard=6,
+            tags=["gaming", "wifi", "router", "low-latency", "wifi6", "qos"],
+            description="Professional gaming router with WiFi 6, advanced QoS, and ultra-low latency for competitive gaming",
+            lifecycle_status="active",
+            in_stock=True,
+            stock_quantity=32
         )
         
         self.products["RTR-AXE7800"] = Product(

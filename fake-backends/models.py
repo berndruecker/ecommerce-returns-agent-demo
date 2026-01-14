@@ -14,6 +14,7 @@ class OrderStatus(str, Enum):
     CANCELLED = "cancelled"
 
 class ProductCategory(str, Enum):
+    NETWORKING = "networking"
     ROUTERS = "routers"
     MODEMS = "modems"
     SWITCHES = "switches"
@@ -131,12 +132,20 @@ class FulfillmentEligibility(BaseModel):
     shipping_method: str
     warehouse: str
 
+class ExpectedReturnReference(BaseModel):
+    """Reference information for expected return"""
+    case_id: Optional[str] = None
+    approval_code: Optional[str] = None
+
 class ExpectedReturn(BaseModel):
     return_id: str
+    rma_id: Optional[str] = None
     sku: str
-    customer_id: str
-    reason: str
-    override_reason: Optional[str] = None
+    customer_id: Optional[str] = None
+    qty: int = 1
+    reason: Optional[str] = None
+    overrides: List[str] = []  # e.g., ["ALLOW_CLEARANCE_RETURN", "BYPASS_RESELL_CHECK"]
+    reference: Optional[ExpectedReturnReference] = None
     status: str = "expected"
     created_at: datetime = Field(default_factory=datetime.now)
 

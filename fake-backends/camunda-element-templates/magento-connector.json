@@ -92,6 +92,16 @@
     },
 
     {
+      "id": "productSearchQuery",
+      "label": "Search Query",
+      "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
+      "description": "Free-text search query (searches name, description, tags)",
+      "binding": { "type": "zeebe:input", "name": "query" },
+      "condition": { "property": "operation", "equals": "productSearch" }
+    },
+    {
       "id": "productSearchCategory",
       "label": "Category",
       "type": "String",
@@ -101,22 +111,12 @@
       "condition": { "property": "operation", "equals": "productSearch" }
     },
     {
-      "id": "productSearchWifiMin",
-      "label": "WiFi Minimum",
-      "type": "String",
-      "group": "magento-operation",
-      "feel": "optional",
-      "description": "Minimum WiFi standard (e.g., 6)",
-      "binding": { "type": "zeebe:input", "name": "wifiMin" },
-      "condition": { "property": "operation", "equals": "productSearch" }
-    },
-    {
       "id": "productSearchTags",
       "label": "Tags",
       "type": "String",
       "group": "magento-operation",
       "feel": "optional",
-      "description": "Comma-separated tags (e.g., gaming,low-latency)",
+      "description": "Comma-separated tags to filter by (e.g., gaming,wifi6,low-latency)",
       "binding": { "type": "zeebe:input", "name": "tags" },
       "condition": { "property": "operation", "equals": "productSearch" }
     },
