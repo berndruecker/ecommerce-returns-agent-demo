@@ -166,7 +166,7 @@ def _evaluate_feel_fallback(expression: str, response: Dict[str, Any]) -> Dict[s
             result = _parse_feel_dict_literal(obj_str, eval_context)
             
             if result:
-                logger.info(f"FEEL expression evaluated successfully: {list(result.keys())}")
+                logger.debug(f"FEEL expression evaluated successfully: {list(result.keys())}")
                 return result
             else:
                 logger.warning("Could not parse FEEL object from selected branch")
@@ -220,7 +220,7 @@ def _evaluate_condition(condition_str: str, response: Dict[str, Any]) -> bool:
         logger.debug(f"Response: {response}")
         result = eval(condition, {"__builtins__": {}}, eval_context)
         
-        logger.info(f"Condition result: {result} (body count: {len(response.get('body', [])) if response.get('body') else 0})")
+        logger.debug(f"Condition result: {result} (body count: {len(response.get('body', [])) if response.get('body') else 0})")
         return bool(result)
         
     except Exception as e:
@@ -726,7 +726,7 @@ def magento_connector(job: Job) -> Dict[str, Any]:
     # If resultExpression is provided, evaluate it to get multiple output variables
     if result_expression:
         output_vars = _evaluate_result_expression(result_expression, result)
-        logger.info(f"[{job.key}] Applied resultExpression, returning {len(output_vars)} variables")
+        logger.debug(f"[{job.key}] Applied resultExpression, returning {len(output_vars)} variables")
         return output_vars
     else:
         # Default: return raw response in the result variable

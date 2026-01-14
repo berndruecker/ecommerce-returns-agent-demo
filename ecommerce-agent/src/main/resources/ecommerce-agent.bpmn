@@ -86,20 +86,20 @@
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Activity_0xgzhz3" name="Search products" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+      <bpmn:serviceTask id="Tool_Magento_SearchProducts" name="Search products" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="productSearch" target="operation" />
             <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
-            <zeebe:input source="=fromAi(toolCall.query, &#34;Search query&#34;)" target="query" />
+            <zeebe:input source="productSearch" target="operation" />
+            <zeebe:input source="=fromAi(toolCall.searchQuery)" target="query" />
             <zeebe:input source="=fromAi(toolCall.category)" target="category" />
             <zeebe:input source="=fromAi(toolCall.tags)" target="tags" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
             <zeebe:header key="resultVariable" value="rawMagentoProductSearchResponse" />
-            <zeebe:header key="resultExpression" value="=if response.body = null or count(response.body) = 0 then&#10;{&#10;  products: [],&#10;  toolCallResult: {&#10;    status: &#34;no_products&#34;,&#10;    message: &#34;No products found matching the search criteria.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  products: response.body,&#10;  toolCallResult: {&#10;    status: &#34;products_found&#34;,&#10;    count: count(response.body),&#10;    products: response.body,&#10;    message: &#34;Found &#34; + string(count(response.body)) + &#34; product(s) matching the search.&#34;&#10;  }&#10;}&#10;" />
+            <zeebe:header key="resultExpression" value="=if response.body = null or count(response.body) = 0 then&#10;{&#10;  products: [],&#10;  toolCallResult: {&#10;    status: &#34;no_products&#34;,&#10;    message: &#34;No products found matching the search criteria.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  products: response.body,&#10;  toolCallResult: {&#10;    status: &#34;products_found&#34;,&#10;    count: count(response.body),&#10;    products: response.body,&#10;    message: &#34;Found &#34; + string(count(response.body)) + &#34; product(s) matching the search.&#34;&#10;  }&#10;}" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
@@ -406,7 +406,7 @@ If SKU is active and eligible, use:
       <bpmndi:BPMNShape id="Activity_1wk09jl_di" bpmnElement="Tool_Magento_ListRecentOrders">
         <dc:Bounds x="790" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0cza8ci" bpmnElement="Activity_0xgzhz3">
+      <bpmndi:BPMNShape id="BPMNShape_0cza8ci" bpmnElement="Tool_Magento_SearchProducts">
         <dc:Bounds x="790" y="450" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>

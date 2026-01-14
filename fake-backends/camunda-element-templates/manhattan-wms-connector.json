@@ -172,7 +172,7 @@
       "description": "Override flags (e.g., [\"ALLOW_CLEARANCE_RETURN\", \"BYPASS_RESELL_CHECK\"])",
       "type": "Text",
       "group": "operation",
-      "feel": "required",
+      "feel": "optional",
       "binding": {
         "type": "zeebe:input",
         "name": "overrides"
@@ -256,7 +256,7 @@
       "id": "url",
       "label": "URL",
       "type": "Hidden",
-      "value": "=if operation = \"checkFulfillmentEligibility\" then baseUrl + \"/fulfillment/eligibility?sku=\" + fulfillmentSku + \"&postalCode=\" + postalCode else if operation = \"createExpectedReturn\" then baseUrl + \"/returns/expected?rmaId=\" + rmaId + \"&sku=\" + returnSku + \"&qty=\" + string(number(qty)) + (if overrides instance of list then if count(overrides) > 0 then \"&overrides=\" + string(overrides[1]) else \"\" else if overrides != null then \"&overrides=\" + string(overrides) else \"\") + (if caseId != null then \"&caseId=\" + caseId else \"\") + (if approvalCode != null then \"&approvalCode=\" + approvalCode else \"\") else if operation = \"releaseShipment\" then baseUrl + \"/shipments/release?order_id=\" + shipmentOrderId + \"&shipping_method=\" + shippingMethod else baseUrl",
+      "value": "=if operation = \"checkFulfillmentEligibility\" then baseUrl + \"/fulfillment/eligibility?sku=\" + fulfillmentSku + \"&postalCode=\" + postalCode else if operation = \"createExpectedReturn\" then baseUrl + \"/returns/expected?rmaId=\" + rmaId + \"&sku=\" + returnSku + \"&qty=\" + string(number(qty)) + (if overrides instance of list then if count(overrides) > 0 then \"&overrides=\" + string(overrides[1]) else \"\" else if overrides != null and overrides != \"\" and overrides != \"[]\" then \"&overrides=\" + string(overrides) else \"\") + (if caseId != null and caseId != \"\" then \"&caseId=\" + caseId else \"\") + (if approvalCode != null and approvalCode != \"\" then \"&approvalCode=\" + approvalCode else \"\") else if operation = \"releaseShipment\" then baseUrl + \"/shipments/release?order_id=\" + shipmentOrderId + \"&shipping_method=\" + shippingMethod else baseUrl",
       "binding": {
         "type": "zeebe:input",
         "name": "url"

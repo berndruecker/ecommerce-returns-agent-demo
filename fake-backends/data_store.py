@@ -63,16 +63,16 @@ class DataStore:
             address=customer_address
         ))
         
-        # Sample Products - Current router being returned
-        self.products["RTR-AC1900"] = Product(
-            sku="RTR-AC1900",
-            name="AC1900 Dual-Band WiFi Router",
+        # Sample Products - Current router being returned (EOL / clearance)
+        self.products["RTR-HS-BASIC"] = Product(
+            sku="RTR-HS-BASIC",
+            name="HomeStream Basic Router",
             category=ProductCategory.ROUTERS,
             price=129.99,
             wifi_standard=5,
-            tags=["ac1900", "dual-band", "basic"],
-            description="Basic AC1900 router suitable for light browsing",
-            lifecycle_status="discontinued",
+            tags=["basic", "home", "clearance"],
+            description="Entry WiFi router (EOL / clearance)",
+            lifecycle_status="clearance",
             in_stock=False,
             stock_quantity=0
         )
@@ -143,8 +143,8 @@ class DataStore:
             status=OrderStatus.DELIVERED,
             items=[
                 OrderItem(
-                    sku="RTR-AC1900",
-                    product_name="AC1900 Dual-Band WiFi Router",
+                    sku="RTR-HS-BASIC",
+                    product_name="HomeStream Basic Router (EOL)",
                     quantity=1,
                     unit_price=129.99,
                     total_price=129.99

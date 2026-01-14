@@ -1,5 +1,6 @@
 import logging
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
 from models import FulfillmentEligibility, ExpectedReturn, Shipment
 from data_store import data_store
@@ -78,6 +79,34 @@ async def create_expected_return(
         customer = next((c for c in data_store.customers if c.customer_id == customer_id), None)
         if not customer:
             raise HTTPException(status_code=404, detail="Customer not found")
+
+    # Detect EOL / clearance SKU
+    product = data_store.products.get(sku) if sku else None
+    lifecycle = (product.lifecycle_status.lower() if product and product.lifecycle_status else "")
+    is_eol = sku == "RTR-HS-BASIC" or lifecycle in {"clearance", "discontinued", "eol"}
+
+    # Normalize overrides to a list
+    normalized_overrides: list[str] = []
+    if overrides:
+        normalized_overrides = overrides if isinstance(overrides, list) else [str(overrides)]
+
+    # For EOL/clearance SKUs, require caseId + approvalCode + override flag
+    if is_eol:
+        if not caseId or not approvalCode or caseId.strip() == "" or approvalCode.strip() == "":
+            error_body = {
+                "status": "error",
+                "errorCode": "EXCEPTION_AUTH_REQUIRED",
+                "message": "EOL/clearance returns require a Salesforce ReturnException caseId + approvalCode and override flags."
+            }
+            return JSONResponse(status_code=400, content=error_body)
+
+        if "ALLOW_CLEARANCE_RETURN" not in normalized_overrides:
+            error_body = {
+                "status": "error",
+                "errorCode": "EXCEPTION_AUTH_REQUIRED",
+                "message": "EOL/clearance returns require a Salesforce ReturnException caseId + approvalCode and override flags."
+            }
+            return JSONResponse(status_code=400, content=error_body)
     
     from models import ExpectedReturnReference
     
@@ -93,7 +122,7 @@ async def create_expected_return(
         customer_id=customer_id,
         qty=qty,
         reason=reason,
-        overrides=overrides or [],
+        overrides=normalized_overrides,
         reference=reference,
         status="expected",
         created_at=datetime.now()

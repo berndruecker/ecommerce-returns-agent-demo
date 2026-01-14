@@ -37,11 +37,12 @@
     },
     {
       "id": "apiBaseUrl",
-      "label": "API Base URL (optional)",
+      "label": "API Base URL",
       "type": "String",
       "group": "magento-connection",
       "feel": "optional",      
-      "description": "Override MAGENTO_API_BASE; defaults to http://localhost:8100/commerce",
+      "description": "Magento API base URL",
+      "value": "=secrets.DEMO_BACKEND_BASE_URL + \"/commerce\"",
       "binding": {
         "type": "zeebe:input",
         "name": "apiBaseUrl"
@@ -98,6 +99,7 @@
       "group": "magento-operation",
       "feel": "optional",
       "description": "Free-text search query (searches name, description, tags)",
+      "value": "=fromAi(toolCall.searchQuery)",
       "binding": { "type": "zeebe:input", "name": "query" },
       "condition": { "property": "operation", "equals": "productSearch" }
     },
@@ -107,6 +109,7 @@
       "type": "String",
       "group": "magento-operation",
       "feel": "optional",
+      "value": "=fromAi(toolCall.category)",
       "binding": { "type": "zeebe:input", "name": "category" },
       "condition": { "property": "operation", "equals": "productSearch" }
     },
@@ -117,6 +120,7 @@
       "group": "magento-operation",
       "feel": "optional",
       "description": "Comma-separated tags to filter by (e.g., gaming,wifi6,low-latency)",
+      "value": "=fromAi(toolCall.tags)",
       "binding": { "type": "zeebe:input", "name": "tags" },
       "condition": { "property": "operation", "equals": "productSearch" }
     },
@@ -267,7 +271,9 @@
         "type": "zeebe:taskHeader",
         "key": "resultExpression"
       },
-      "description": "Expression to map the response data"
+      "description": "Expression to map the response data",
+      "value": "=if response.body = null or count(response.body) = 0 then\n{\n  products: [],\n  toolCallResult: {\n    status: \"no_products\",\n    message: \"No products found matching the search criteria.\"\n  }\n}\nelse\n{\n  products: response.body,\n  toolCallResult: {\n    status: \"products_found\",\n    count: count(response.body),\n    products: response.body,\n    message: \"Found \" + string(count(response.body)) + \" product(s) matching the search.\"\n  }\n}",
+      "condition": { "property": "operation", "equals": "productSearch" }
     }
   ],
   "icon": {
