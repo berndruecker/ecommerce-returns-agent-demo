@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime
@@ -5,6 +6,7 @@ from models import Order, Product, RMA, Cart, CartItem, OrderItem, OrderStatus, 
 from data_store import data_store
 
 router = APIRouter()
+logger = logging.getLogger("fake-services.commerce")
 
 # ========== List Recent Orders ==========
 @router.get("/customers/{customer_id}/orders", response_model=List[Order])
@@ -13,13 +15,16 @@ async def list_recent_orders(
     limit: int = Query(5, ge=1, le=50)
 ):
     """List recent orders for a customer"""
+    logger.info("Commerce list-orders request: customer_id=%s, limit=%s", customer_id, limit)
     customer_orders = [
         order for order in data_store.orders 
         if order.customer_id == customer_id
     ]
     # Sort by order date descending
     customer_orders.sort(key=lambda x: x.order_date, reverse=True)
-    return customer_orders[:limit]
+    result = customer_orders[:limit]
+    logger.info("Commerce list-orders response: customer_id=%s, count=%s", customer_id, len(result))
+    return result
 
 # ========== Product Search ==========
 @router.get("/catalog/products", response_model=List[Product])
@@ -29,6 +34,7 @@ async def search_products(
     tags: Optional[str] = None
 ):
     """Search products with filters"""
+    logger.info("Commerce search-products request: category=%s, wifiMin=%s, tags=%s", category, wifiMin, tags)
     results = list(data_store.products.values())
     
     # Filter by category
@@ -49,7 +55,7 @@ async def search_products(
     
     # Sort by price descending (show premium options first)
     results.sort(key=lambda x: x.price, reverse=True)
-    
+    logger.info("Commerce search-products response: count=%s", len(results))
     return results
 
 # ========== Create RMA ==========
@@ -61,6 +67,7 @@ async def create_rma(
     reason: str
 ):
     """Create a return merchandise authorization"""
+    logger.info("Commerce create-rma request: order_id=%s, customer_id=%s, sku=%s, reason=%s", order_id, customer_id, sku, reason)
     # Verify order exists
     order = next((o for o in data_store.orders if o.order_id == order_id), None)
     if not order:
@@ -81,6 +88,7 @@ async def create_rma(
     )
     
     data_store.rmas.append(rma)
+    logger.info("Commerce create-rma response: rma_id=%s, status=%s", rma.rma_id, rma.status)
     return rma
 
 # ========== Create Cart ==========

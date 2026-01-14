@@ -1,9 +1,11 @@
+import logging
 from fastapi import APIRouter, HTTPException
 from datetime import datetime, timedelta
 from models import ReturnLabel
 from data_store import data_store
 
 router = APIRouter()
+logger = logging.getLogger("fake-services.returns-provider")
 
 # ========== Generate Return Label ==========
 @router.post("/labels", response_model=ReturnLabel)
@@ -13,7 +15,7 @@ async def generate_return_label(
     carrier: str = "USPS"
 ):
     """Generate a prepaid return shipping label"""
-    
+    logger.info("Returns-provider generate-label request: customer_id=%s, rma_id=%s, carrier=%s", customer_id, rma_id, carrier)
     # Verify customer exists
     customer = next((c for c in data_store.customers if c.customer_id == customer_id), None)
     if not customer:
@@ -34,4 +36,5 @@ async def generate_return_label(
     )
     
     data_store.return_labels.append(label)
+    logger.info("Returns-provider generate-label response: label_id=%s, tracking=%s, carrier=%s", label.label_id, label.tracking_number, label.carrier)
     return label

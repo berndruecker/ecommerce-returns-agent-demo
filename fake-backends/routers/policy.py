@@ -1,14 +1,22 @@
+import logging
 from fastapi import APIRouter, HTTPException
 from models import PolicyEvaluationRequest, PolicyEvaluationResponse
 from data_store import data_store
 
 router = APIRouter()
+logger = logging.getLogger("fake-services.policy")
 
 # ========== Evaluate Return Policy ==========
 @router.post("/returns/evaluate", response_model=PolicyEvaluationResponse)
 async def evaluate_return_policy(request: PolicyEvaluationRequest):
     """Evaluate return policy with rules and exceptions"""
-    
+    logger.info(
+        "Policy evaluate request: order_id=%s, days_since_delivery=%s, lifecycle=%s, reason=%s",
+        request.order_id,
+        request.days_since_delivery,
+        request.lifecycle_status,
+        request.reason
+    )
     # Verify order exists
     order = next((o for o in data_store.orders if o.order_id == request.order_id), None)
     if not order:
@@ -46,7 +54,7 @@ async def evaluate_return_policy(request: PolicyEvaluationRequest):
         restocking_fee = 0.0
         notes = "Performance issues reported - store credit for exchange recommended"
     
-    return PolicyEvaluationResponse(
+    response = PolicyEvaluationResponse(
         approved=approved,
         policy_matched=policy_matched,
         exception_applied=exception_applied,
@@ -54,3 +62,12 @@ async def evaluate_return_policy(request: PolicyEvaluationRequest):
         restocking_fee=restocking_fee,
         notes=notes
     )
+    logger.info(
+        "Policy evaluate response: approved=%s, policy=%s, exception=%s, refund_type=%s, fee=%s",
+        response.approved,
+        response.policy_matched,
+        response.exception_applied,
+        response.refund_type,
+        response.restocking_fee
+    )
+    return response

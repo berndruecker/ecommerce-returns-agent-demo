@@ -7,8 +7,6 @@ import httpx
 from mcp.server import Server
 from mcp.server.sse import SseServerTransport
 from mcp.types import Tool, TextContent
-from starlette.applications import Starlette
-from starlette.routing import Route
 
 logger = logging.getLogger("mcp-sap-server")
 
@@ -164,28 +162,62 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             )]
 
 
-# Starlette app for SSE transport
-async def handle_sse(request):
-    """Handle SSE connections for MCP."""
-    async with SseServerTransport("/mcp/sse") as transport:
-        await mcp_server.run(
-            transport.read_stream,
-            transport.write_stream,
-            mcp_server.create_initialization_options()
-        )
+# Create SSE transport for MCP
+# The endpoint must be the full path from the application root since it's sent to clients
+_sse_transport = SseServerTransport("/mcp/sse")
 
 
-async def handle_messages(request):
-    """Handle MCP messages endpoint."""
-    async with SseServerTransport("/mcp/messages") as transport:
-        await transport.handle_post_message(request)
+def create_mcp_app():
+    """Create ASGI app for MCP server with SSE transport.
+    
+    Returns a simple ASGI app that routes requests to the SSE transport methods.
+    The transport's connect_sse is an async context manager that yields read/write streams.
+    We need to run the server with those streams.
+    """
+    async def mcp_asgi_app(scope, receive, send):
+        """Custom ASGI router for MCP endpoints."""
+        if scope["type"] != "http":
+            return
+        
+        path = scope["path"]
+        method = scope["method"]
+        
+        # Debug: log the path and method
+        print(f"[mcp-debug] Received {method} request to path: '{path}'")
+        
+        # Strip /mcp prefix since we're mounted at /mcp
+        if path.startswith("/mcp"):
+            path = path[4:]  # Remove '/mcp'
+            print(f"[mcp-debug] Stripped path: '{path}'")
+        
+        # Route to appropriate handler
+        if path == "/sse" and method == "GET":
+            print(f"[mcp-debug] Routing to connect_sse")
+            # Don't modify scope path - keep it as /mcp/sse for the transport
+            # connect_sse is an async context manager
+            async with _sse_transport.connect_sse(scope, receive, send) as (read_stream, write_stream):
+                # Run the MCP server with these streams
+                await mcp_server.run(read_stream, write_stream, mcp_server.create_initialization_options())
+        elif path == "/sse" and method == "POST":
+            print(f"[mcp-debug] Routing to handle_post_message for session messages")
+            # Don't modify scope path - keep it as /mcp/sse for the transport
+            await _sse_transport.handle_post_message(scope, receive, send)
+        elif path == "/messages" and method == "POST":
+            print(f"[mcp-debug] Routing to handle_post_message")
+            # Don't modify scope path - keep it as /mcp/messages for the transport
+            await _sse_transport.handle_post_message(scope, receive, send)
+        else:
+            # Return 404
+            print(f"[mcp-debug] No route matched, returning 404")
+            await send({
+                "type": "http.response.start",
+                "status": 404,
+                "headers": [[b"content-type", b"text/plain"]],
+            })
+            await send({
+                "type": "http.response.body",
+                "body": f"Not Found. Path: {path}, Method: {method}".encode(),
+            })
+    
+    return mcp_asgi_app
 
-
-def create_mcp_app() -> Starlette:
-    """Create Starlette app for MCP server."""
-    return Starlette(
-        routes=[
-            Route("/mcp/sse", endpoint=handle_sse),
-            Route("/mcp/messages", endpoint=handle_messages, methods=["POST"]),
-        ]
-    )

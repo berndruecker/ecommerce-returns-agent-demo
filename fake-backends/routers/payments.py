@@ -1,9 +1,11 @@
+import logging
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 from models import StoreCredit, Charge
 from data_store import data_store
 
 router = APIRouter()
+logger = logging.getLogger("fake-services.payments")
 
 # ========== Create Store Credit ==========
 @router.post("/credits", response_model=StoreCredit)
@@ -13,7 +15,7 @@ async def create_store_credit(
     reason: str
 ):
     """Issue instant store credit"""
-    
+    logger.info("Payments create-store-credit request: customer_id=%s, amount=%s, reason=%s", customer_id, amount, reason)
     # Verify customer exists
     customer = next((c for c in data_store.customers if c.customer_id == customer_id), None)
     if not customer:
@@ -32,6 +34,7 @@ async def create_store_credit(
     )
     
     data_store.store_credits.append(credit)
+    logger.info("Payments create-store-credit response: credit_id=%s, amount=%s, applied=%s", credit.credit_id, credit.amount, credit.applied)
     return credit
 
 # ========== Charge Payment ==========
@@ -42,7 +45,7 @@ async def create_charge(
     payment_method: str = "credit_card"
 ):
     """Charge remaining balance"""
-    
+    logger.info("Payments create-charge request: customer_id=%s, amount=%s, payment_method=%s", customer_id, amount, payment_method)
     # Verify customer exists
     customer = next((c for c in data_store.customers if c.customer_id == customer_id), None)
     if not customer:
@@ -61,4 +64,5 @@ async def create_charge(
     )
     
     data_store.charges.append(charge)
+    logger.info("Payments create-charge response: charge_id=%s, amount=%s, status=%s", charge.charge_id, charge.amount, charge.status)
     return charge

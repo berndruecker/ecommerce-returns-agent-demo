@@ -9,13 +9,18 @@
   "category": { "id": "templates", "name": "Templates" },
   "groups": [
     {
-      "id": "templated-properties",
-      "label": "Templated properties",
+      "id": "magento-connection",
+      "label": "Magento Connection",
       "openByDefault": true
     },
     {
-      "id": "io-mapping",
-      "label": "I/O Mapping Example",
+      "id": "magento-operation",
+      "label": "Magento Operation",
+      "openByDefault": true
+    },
+    {
+      "id": "response-mapping",
+      "label": "Response Mapping",
       "openByDefault": true
     }
   ],
@@ -31,20 +36,22 @@
       }
     },
     {
-      "id": "resultVariable",
-      "label": "Result Variable",
+      "id": "apiBaseUrl",
+      "label": "API Base URL (optional)",
       "type": "String",
-      "value": "magentoResponse",
+      "group": "magento-connection",
+      "feel": "optional",      
+      "description": "Override MAGENTO_API_BASE; defaults to http://localhost:8100/commerce",
       "binding": {
         "type": "zeebe:input",
-        "name": "resultVariable"
-      },
-      "description": "Workflow variable name to store the connector response"
+        "name": "apiBaseUrl"
+      }
     },
     {
       "id": "operation",
       "label": "Operation",
       "type": "Dropdown",
+      "group": "magento-operation",
       "choices": [
         { "name": "List recent orders", "value": "listOrders" },
         { "name": "Product search", "value": "productSearch" },
@@ -62,21 +69,13 @@
         "notEmpty": true
       }
     },
-    {
-      "id": "apiBaseUrl",
-      "label": "API Base URL (optional)",
-      "type": "String",
-      "description": "Override MAGENTO_API_BASE; defaults to http://localhost:8100/commerce",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "apiBaseUrl"
-      }
-    },
 
     {
       "id": "listOrdersCustomerId",
       "label": "Customer ID",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "customerId" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "listOrders" }
@@ -85,6 +84,8 @@
       "id": "listOrdersLimit",
       "label": "Limit",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "value": "5",
       "binding": { "type": "zeebe:input", "name": "limit" },
       "condition": { "property": "operation", "equals": "listOrders" }
@@ -94,6 +95,8 @@
       "id": "productSearchCategory",
       "label": "Category",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "category" },
       "condition": { "property": "operation", "equals": "productSearch" }
     },
@@ -101,6 +104,8 @@
       "id": "productSearchWifiMin",
       "label": "WiFi Minimum",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "description": "Minimum WiFi standard (e.g., 6)",
       "binding": { "type": "zeebe:input", "name": "wifiMin" },
       "condition": { "property": "operation", "equals": "productSearch" }
@@ -109,6 +114,8 @@
       "id": "productSearchTags",
       "label": "Tags",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "description": "Comma-separated tags (e.g., gaming,low-latency)",
       "binding": { "type": "zeebe:input", "name": "tags" },
       "condition": { "property": "operation", "equals": "productSearch" }
@@ -118,6 +125,8 @@
       "id": "createRmaOrderId",
       "label": "Order ID",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "orderId" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "createRma" }
@@ -126,6 +135,8 @@
       "id": "createRmaCustomerId",
       "label": "Customer ID",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "customerId" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "createRma" }
@@ -134,6 +145,8 @@
       "id": "createRmaSku",
       "label": "SKU",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "sku" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "createRma" }
@@ -142,6 +155,8 @@
       "id": "createRmaReason",
       "label": "Reason",
       "type": "Text",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "reason" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "createRma" }
@@ -151,6 +166,8 @@
       "id": "createCartCustomerId",
       "label": "Customer ID",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "customerId" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "createCart" }
@@ -160,6 +177,8 @@
       "id": "addCartItemCartId",
       "label": "Cart ID",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "cartId" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "addCartItem" }
@@ -168,6 +187,8 @@
       "id": "addCartItemSku",
       "label": "SKU",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "sku" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "addCartItem" }
@@ -176,6 +197,8 @@
       "id": "addCartItemQuantity",
       "label": "Quantity",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "value": "1",
       "binding": { "type": "zeebe:input", "name": "quantity" },
       "condition": { "property": "operation", "equals": "addCartItem" }
@@ -185,6 +208,8 @@
       "id": "applyStoreCreditCartId",
       "label": "Cart ID",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "cartId" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "applyStoreCredit" }
@@ -193,6 +218,8 @@
       "id": "applyStoreCreditAmount",
       "label": "Amount",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "amount" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "applyStoreCredit" }
@@ -202,6 +229,8 @@
       "id": "placeOrderCartId",
       "label": "Cart ID",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "binding": { "type": "zeebe:input", "name": "cartId" },
       "constraints": { "notEmpty": true },
       "condition": { "property": "operation", "equals": "placeOrder" }
@@ -210,9 +239,35 @@
       "id": "placeOrderPaymentMethod",
       "label": "Payment Method",
       "type": "String",
+      "group": "magento-operation",
+      "feel": "optional",
       "value": "credit_card",
       "binding": { "type": "zeebe:input", "name": "paymentMethod" },
       "condition": { "property": "operation", "equals": "placeOrder" }
+    },
+    {
+      "id": "resultVariable",
+      "label": "Result Variable",
+      "type": "String",
+      "group": "response-mapping",
+      "value": "magentoResponse",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultVariable"
+      },
+      "description": "Name of variable to store the response in"
+    },
+    {
+      "id": "resultExpression",
+      "label": "Result Expression",
+      "type": "Text",
+      "group": "response-mapping",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      },
+      "description": "Expression to map the response data"
     }
   ],
   "icon": {

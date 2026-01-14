@@ -1,5 +1,6 @@
 import os
 import threading
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
@@ -11,10 +12,36 @@ import uvicorn
 from routers import commerce, erp, wms, policy, returns_provider, payments, notifications
 from data_store import data_store
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager for startup/shutdown events."""
+    # Startup: Start worker and mount MCP server
+    app.state.camunda_worker_thread = _start_camunda_worker_if_enabled()
+    
+    # Mount MCP server for SAP endpoints
+    try:
+        from mcp_server import create_mcp_app
+        mcp_app = create_mcp_app()
+        app.mount("/mcp", mcp_app)
+        print("[mcp-server] Mounted SAP MCP server at /mcp")
+        print("[mcp-server] MCP SSE endpoint: http://localhost:8100/mcp/sse")
+        print("[mcp-server] MCP Messages endpoint: http://localhost:8100/mcp/messages")
+    except Exception as exc:
+        print(f"[mcp-server] Failed to mount MCP server: {exc}")
+        import traceback
+        traceback.print_exc()
+    
+    yield
+    
+    # Shutdown: cleanup if needed
+
+
 app = FastAPI(
     title="E-Commerce Returns Agent Demo Backend",
     description="Mock backend systems for returns agent demonstration",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Add CORS middleware for MCP remote access
@@ -57,20 +84,6 @@ def _start_camunda_worker_if_enabled():
     print("[camunda-worker] Started background Camunda worker")
     return thread
 
-
-@app.on_event("startup")
-async def startup_event():
-    # Start worker only when explicitly enabled via env var
-    app.state.camunda_worker_thread = _start_camunda_worker_if_enabled()
-    
-    # Mount MCP server for SAP endpoints
-    try:
-        from mcp_server import create_mcp_app
-        mcp_app = create_mcp_app()
-        app.mount("/mcp", mcp_app)
-        print("[mcp-server] Mounted SAP MCP server at /mcp/sse")
-    except Exception as exc:
-        print(f"[mcp-server] Failed to mount MCP server: {exc}")
 
 @app.get("/", response_class=HTMLResponse)
 async def homepage(request: Request):

@@ -147,7 +147,329 @@ class DataStore:
             total=34.05,
             shipping_address=customer_address
         ))
-    
+        
+        # Sample Order for Salesforce contact - HomeStream Basic Router
+        sfdc_customer_address = Address(
+            street="456 Tech Avenue",
+            city="Seattle",
+            state="WA",
+            postal_code="98101",
+            country="USA"
+        )
+        
+        # First order - older one
+        delivery_date_sfdc_1 = datetime.now() - timedelta(days=45)
+        order_date_sfdc_1 = delivery_date_sfdc_1 - timedelta(days=2)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-007891",
+            customer_id="0039Q00001VsHMXQA3",
+            order_date=order_date_sfdc_1,
+            delivery_date=delivery_date_sfdc_1,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="RTR-HS-DELUXE",
+                    product_name="HomeStream Deluxe Router",
+                    quantity=1,
+                    unit_price=199.99,
+                    total_price=199.99
+                ),
+                OrderItem(
+                    sku="ACC-PWR-CABLE",
+                    product_name="Replacement Power Cable",
+                    quantity=2,
+                    unit_price=15.99,
+                    total_price=31.98
+                )
+            ],
+            subtotal=231.97,
+            tax=18.56,
+            shipping=0.00,
+            total=250.53,
+            shipping_address=sfdc_customer_address
+        ))
+        
+        # Second order - most recent (HomeStream Basic Router)
+        delivery_date_sfdc_2 = datetime.now() - timedelta(days=1)
+        order_date_sfdc_2 = delivery_date_sfdc_2 - timedelta(days=2)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-007892",
+            customer_id="0039Q00001VsHMXQA3",
+            order_date=order_date_sfdc_2,
+            delivery_date=delivery_date_sfdc_2,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="RTR-HS-BASIC",
+                    product_name="HomeStream Basic Router",
+                    quantity=1,
+                    unit_price=149.99,
+                    total_price=149.99
+                ),
+                OrderItem(
+                    sku="ACC-ETHERNET",
+                    product_name="CAT6 Ethernet Cable 10ft",
+                    quantity=1,
+                    unit_price=12.99,
+                    total_price=12.99
+                )
+            ],
+            subtotal=162.98,
+            tax=13.04,
+            shipping=0.00,
+            total=175.02,
+            shipping_address=sfdc_customer_address
+        ))
+        
+        # Third order - older than the router order (accessories)
+        delivery_date_sfdc_3 = datetime.now() - timedelta(days=12)
+        order_date_sfdc_3 = delivery_date_sfdc_3 - timedelta(days=1)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-007893",
+            customer_id="0039Q00001VsHMXQA3",
+            order_date=order_date_sfdc_3,
+            delivery_date=delivery_date_sfdc_3,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="ACC-WIFI-ADAPTER",
+                    product_name="USB WiFi Adapter",
+                    quantity=1,
+                    unit_price=29.99,
+                    total_price=29.99
+                ),
+                OrderItem(
+                    sku="ACC-SURGE-PROTECTOR",
+                    product_name="Smart Surge Protector",
+                    quantity=1,
+                    unit_price=34.99,
+                    total_price=34.99
+                )
+            ],
+            subtotal=64.98,
+            tax=5.20,
+            shipping=0.00,
+            total=70.18,
+            shipping_address=sfdc_customer_address
+        ))
+        
+        # Duplicate orders for second Salesforce contact: 0039Q00001VcSaVQAV
+        sfdc_customer_2_address = Address(
+            street="789 Innovation Drive",
+            city="Portland",
+            state="OR",
+            postal_code="97201",
+            country="USA"
+        )
+        
+        # First order - older one
+        delivery_date_sfdc2_1 = datetime.now() - timedelta(days=45)
+        order_date_sfdc2_1 = delivery_date_sfdc2_1 - timedelta(days=2)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-008891",
+            customer_id="0039Q00001VcSaVQAV",
+            order_date=order_date_sfdc2_1,
+            delivery_date=delivery_date_sfdc2_1,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="RTR-HS-DELUXE",
+                    product_name="HomeStream Deluxe Router",
+                    quantity=1,
+                    unit_price=199.99,
+                    total_price=199.99
+                ),
+                OrderItem(
+                    sku="ACC-PWR-CABLE",
+                    product_name="Replacement Power Cable",
+                    quantity=2,
+                    unit_price=15.99,
+                    total_price=31.98
+                )
+            ],
+            subtotal=231.97,
+            tax=18.56,
+            shipping=0.00,
+            total=250.53,
+            shipping_address=sfdc_customer_2_address
+        ))
+        
+        # Second order - most recent (HomeStream Basic Router)
+        delivery_date_sfdc2_2 = datetime.now() - timedelta(days=1)
+        order_date_sfdc2_2 = delivery_date_sfdc2_2 - timedelta(days=2)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-008892",
+            customer_id="0039Q00001VcSaVQAV",
+            order_date=order_date_sfdc2_2,
+            delivery_date=delivery_date_sfdc2_2,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="RTR-HS-BASIC",
+                    product_name="HomeStream Basic Router",
+                    quantity=1,
+                    unit_price=149.99,
+                    total_price=149.99
+                ),
+                OrderItem(
+                    sku="ACC-ETHERNET",
+                    product_name="CAT6 Ethernet Cable 10ft",
+                    quantity=1,
+                    unit_price=12.99,
+                    total_price=12.99
+                )
+            ],
+            subtotal=162.98,
+            tax=13.04,
+            shipping=0.00,
+            total=175.02,
+            shipping_address=sfdc_customer_2_address
+        ))
+        
+        # Third order - older than the router order (accessories)
+        delivery_date_sfdc2_3 = datetime.now() - timedelta(days=12)
+        order_date_sfdc2_3 = delivery_date_sfdc2_3 - timedelta(days=1)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-008893",
+            customer_id="0039Q00001VcSaVQAV",
+            order_date=order_date_sfdc2_3,
+            delivery_date=delivery_date_sfdc2_3,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="ACC-WIFI-ADAPTER",
+                    product_name="USB WiFi Adapter",
+                    quantity=1,
+                    unit_price=29.99,
+                    total_price=29.99
+                ),
+                OrderItem(
+                    sku="ACC-SURGE-PROTECTOR",
+                    product_name="Smart Surge Protector",
+                    quantity=1,
+                    unit_price=34.99,
+                    total_price=34.99
+                )
+            ],
+            subtotal=64.98,
+            tax=5.20,
+            shipping=0.00,
+            total=70.18,
+            shipping_address=sfdc_customer_2_address
+        ))        
+        # Duplicate orders for second Salesforce contact: 0039Q00001VcSaVQAV
+        sfdc_customer_2_address = Address(
+            street="789 Innovation Drive",
+            city="Portland",
+            state="OR",
+            postal_code="97201",
+            country="USA"
+        )
+        
+        # First order - older one
+        delivery_date_sfdc2_1 = datetime.now() - timedelta(days=45)
+        order_date_sfdc2_1 = delivery_date_sfdc2_1 - timedelta(days=2)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-008891",
+            customer_id="0039Q00001VcSaVQAV",
+            order_date=order_date_sfdc2_1,
+            delivery_date=delivery_date_sfdc2_1,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="RTR-HS-DELUXE",
+                    product_name="HomeStream Deluxe Router",
+                    quantity=1,
+                    unit_price=199.99,
+                    total_price=199.99
+                ),
+                OrderItem(
+                    sku="ACC-PWR-CABLE",
+                    product_name="Replacement Power Cable",
+                    quantity=2,
+                    unit_price=15.99,
+                    total_price=31.98
+                )
+            ],
+            subtotal=231.97,
+            tax=18.56,
+            shipping=0.00,
+            total=250.53,
+            shipping_address=sfdc_customer_2_address
+        ))
+        
+        # Second order - most recent (HomeStream Basic Router)
+        delivery_date_sfdc2_2 = datetime.now() - timedelta(days=1)
+        order_date_sfdc2_2 = delivery_date_sfdc2_2 - timedelta(days=2)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-008892",
+            customer_id="0039Q00001VcSaVQAV",
+            order_date=order_date_sfdc2_2,
+            delivery_date=delivery_date_sfdc2_2,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="RTR-HS-BASIC",
+                    product_name="HomeStream Basic Router",
+                    quantity=1,
+                    unit_price=149.99,
+                    total_price=149.99
+                ),
+                OrderItem(
+                    sku="ACC-ETHERNET",
+                    product_name="CAT6 Ethernet Cable 10ft",
+                    quantity=1,
+                    unit_price=12.99,
+                    total_price=12.99
+                )
+            ],
+            subtotal=162.98,
+            tax=13.04,
+            shipping=0.00,
+            total=175.02,
+            shipping_address=sfdc_customer_2_address
+        ))
+        
+        # Third order - older than the router order (accessories)
+        delivery_date_sfdc2_3 = datetime.now() - timedelta(days=12)
+        order_date_sfdc2_3 = delivery_date_sfdc2_3 - timedelta(days=1)
+        
+        self.orders.append(Order(
+            order_id="ORD-2025-008893",
+            customer_id="0039Q00001VcSaVQAV",
+            order_date=order_date_sfdc2_3,
+            delivery_date=delivery_date_sfdc2_3,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="ACC-WIFI-ADAPTER",
+                    product_name="USB WiFi Adapter",
+                    quantity=1,
+                    unit_price=29.99,
+                    total_price=29.99
+                ),
+                OrderItem(
+                    sku="ACC-SURGE-PROTECTOR",
+                    product_name="Smart Surge Protector",
+                    quantity=1,
+                    unit_price=34.99,
+                    total_price=34.99
+                )
+            ],
+            subtotal=64.98,
+            tax=5.20,
+            shipping=0.00,
+            total=70.18,
+            shipping_address=sfdc_customer_2_address
+        ))    
     def generate_id(self, prefix: str) -> str:
         """Generate a unique ID with prefix"""
         return f"{prefix}-{uuid.uuid4().hex[:8].upper()}"
