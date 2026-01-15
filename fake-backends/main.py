@@ -1,5 +1,6 @@
 import os
 import threading
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -8,6 +9,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.cors import CORSMiddleware
 import uvicorn
+
+# Suppress uvicorn access logs
+logging.getLogger('uvicorn.access').setLevel(logging.WARNING)
 
 from routers import commerce, erp, wms, policy, returns_provider, payments, notifications, admin
 from data_store import data_store
@@ -91,10 +95,15 @@ async def homepage(request: Request):
     """Homepage showing demo entities"""
     return templates.TemplateResponse("index.html", {
         "request": request,
-        "customers": data_store.customers,
         "products": list(data_store.products.values()),
         "orders": data_store.orders,
+        "business_operations": data_store.business_operations,
     })
+
+@app.get("/api/operations")
+async def get_operations():
+    """Get business operations as JSON for live refresh"""
+    return {"operations": data_store.business_operations}
 
 @app.get("/health")
 async def health_check():
@@ -102,4 +111,4 @@ async def health_check():
     return {"status": "healthy"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8100)
+    uvicorn.run(app, host="0.0.0.0", port=8100, access_log=False, log_level="warning")

@@ -1,11 +1,21 @@
 import logging
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.encoders import jsonable_encoder
 from models import ReturnEligibility, SKUInfo, AvailabilityInfo
 from data_store import data_store
 
 router = APIRouter()
 logger = logging.getLogger("fake-services.erp")
+
+def _log(operation: str, parameters: dict, response):
+    """Helper to log business operations"""
+    data_store.log_operation(
+        system="SAP ERP",
+        operation=operation,
+        parameters=parameters,
+        response=jsonable_encoder(response)
+    )
 
 # ========== SKU Return Eligibility ==========
 @router.get("/skus/{sku}/return-eligibility", response_model=ReturnEligibility)
@@ -56,6 +66,7 @@ async def check_return_eligibility(
         response.restocking_fee,
         response.reason,
     )
+    _log("checkReturnEligibility", {"sku": sku, "orderId": orderId, "daysSinceDelivery": daysSinceDelivery}, response)
     return response
 
 # ========== SKU Lifecycle Info ==========
@@ -83,6 +94,7 @@ async def get_sku_info(sku: str):
         response.is_discontinued,
         response.current_price,
     )
+    _log("getSkuInfo", {"sku": sku}, response)
     return response
 
 # ========== Availability Check ==========
@@ -110,4 +122,5 @@ async def check_availability(sku: str = Query(...)):
         response.quantity,
         response.warehouse_location,
     )
+    _log("checkAvailability", {"sku": sku}, response)
     return response

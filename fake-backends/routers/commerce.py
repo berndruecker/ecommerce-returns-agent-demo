@@ -1,12 +1,19 @@
 import logging
-from fastapi import APIRouter, HTTPException, Query
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
+
+from fastapi import APIRouter, HTTPException, Query
+from fastapi.encoders import jsonable_encoder
+
 from models import Order, Product, RMA, Cart, CartItem, OrderItem, OrderStatus, Address
 from data_store import data_store
 
 router = APIRouter()
 logger = logging.getLogger("fake-services.commerce")
+
+
+def _log(system: str, operation: str, parameters, response):
+    data_store.log_operation(system=system, operation=operation, parameters=jsonable_encoder(parameters), response=jsonable_encoder(response))
 
 # ========== List Recent Orders ==========
 @router.get("/customers/{customer_id}/orders", response_model=List[Order])
@@ -24,6 +31,7 @@ async def list_recent_orders(
     customer_orders.sort(key=lambda x: x.order_date, reverse=True)
     result = customer_orders[:limit]
     logger.info("Commerce list-orders response: customer_id=%s, count=%s", customer_id, len(result))
+    _log("Magento", "listRecentOrders", {"customer_id": customer_id, "limit": limit}, result)
     return result
 
 # ========== Product Search ==========
@@ -62,6 +70,7 @@ async def search_products(
     # Sort by price descending (show premium options first)
     results.sort(key=lambda x: x.price, reverse=True)
     logger.info("Commerce search-products response: count=%s", len(results))
+    _log("Magento", "productSearch", {"query": query, "category": category, "tags": tags}, results)
     return results
 
 # ========== Create RMA ==========
@@ -95,6 +104,7 @@ async def create_rma(
     
     data_store.rmas.append(rma)
     logger.info("Commerce create-rma response: rma_id=%s, status=%s", rma.rma_id, rma.status)
+    _log("Magento", "createRma", {"order_id": order_id, "customer_id": customer_id, "sku": sku, "reason": reason}, rma)
     return rma
 
 # ========== Create Cart ==========
@@ -110,6 +120,7 @@ async def create_cart(customer_id: str):
     )
     
     data_store.carts[cart.cart_id] = cart
+    _log("Magento", "createCart", {"customer_id": customer_id}, cart)
     return cart
 
 # ========== Add Item to Cart ==========
@@ -140,7 +151,7 @@ async def add_cart_item(
             quantity=quantity,
             unit_price=product.price
         ))
-    
+    _log("Magento", "addCartItem", {"cart_id": cart_id, "sku": sku, "quantity": quantity}, cart)
     return cart
 
 # ========== Apply Store Credit ==========
@@ -160,6 +171,7 @@ async def apply_store_credit(
     
     # Limit to cart subtotal
     cart.store_credit_applied = min(amount, cart.subtotal)
+    _log("Magento", "applyStoreCredit", {"cart_id": cart_id, "amount": amount}, cart)
     return cart
 
 # ========== Place Order ==========
@@ -214,5 +226,5 @@ async def place_order(
     
     # Clear cart
     del data_store.carts[cart_id]
-    
+    _log("Magento", "placeOrder", {"cart_id": cart_id, "payment_method": payment_method}, order)
     return order

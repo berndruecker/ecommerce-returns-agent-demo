@@ -1,12 +1,19 @@
 import logging
-from fastapi import APIRouter, HTTPException, Query
-from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
+
+from fastapi import APIRouter, HTTPException, Query
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+
 from models import FulfillmentEligibility, ExpectedReturn, Shipment
 from data_store import data_store
 
 router = APIRouter()
 logger = logging.getLogger("fake-services.wms")
+
+
+def _log(system: str, operation: str, parameters, response):
+    data_store.log_operation(system=system, operation=operation, parameters=jsonable_encoder(parameters), response=jsonable_encoder(response))
 
 # ========== Fulfillment Eligibility ==========
 @router.get("/fulfillment/eligibility", response_model=FulfillmentEligibility)
@@ -48,6 +55,7 @@ async def check_fulfillment_eligibility(
         warehouse=warehouse
     )
     logger.info("WMS fulfillment-eligibility response: eligible=%s, method=%s, warehouse=%s", response.eligible, response.shipping_method, response.warehouse)
+    _log("Manhattan", "checkFulfillmentEligibility", {"sku": sku, "postalCode": postalCode}, response)
     return response
 
 # ========== Create Expected Return ==========
@@ -108,7 +116,9 @@ async def create_expected_return(
                 "errorCode": "EXCEPTION_AUTH_REQUIRED",
                 "message": "EOL/clearance returns require a Salesforce ReturnException caseId + approvalCode and override flags."
             }
-            return JSONResponse(status_code=400, content=error_body)
+            resp = JSONResponse(status_code=400, content=error_body)
+            _log("Manhattan", "createExpectedReturn", {"rmaId": rmaId, "sku": sku, "qty": qty, "overrides": normalized_overrides, "caseId": caseId, "approvalCode": approvalCode}, error_body)
+            return resp
 
         if "ALLOW_CLEARANCE_RETURN" not in normalized_overrides:
             error_body = {
@@ -116,7 +126,9 @@ async def create_expected_return(
                 "errorCode": "EXCEPTION_AUTH_REQUIRED",
                 "message": "EOL/clearance returns require a Salesforce ReturnException caseId + approvalCode and override flags."
             }
-            return JSONResponse(status_code=400, content=error_body)
+            resp = JSONResponse(status_code=400, content=error_body)
+            _log("Manhattan", "createExpectedReturn", {"rmaId": rmaId, "sku": sku, "qty": qty, "overrides": normalized_overrides, "caseId": caseId, "approvalCode": approvalCode}, error_body)
+            return resp
     
     from models import ExpectedReturnReference
     
@@ -143,6 +155,7 @@ async def create_expected_return(
         "### MANHATTAN WMS ### createExpectedReturn ### return_id=%s, status=%s, overrides_applied=%s",
         expected_return.return_id, expected_return.status, len(expected_return.overrides)
     )
+    _log("Manhattan", "createExpectedReturn", {"rmaId": rmaId, "sku": sku, "qty": qty, "overrides": normalized_overrides, "caseId": caseId, "approvalCode": approvalCode}, expected_return)
     return expected_return
 
 # ========== Release Outbound Shipment ==========
@@ -184,4 +197,5 @@ async def release_shipment(
     order.status = "shipped"
     
     logger.info("WMS release-shipment response: shipment_id=%s, tracking=%s, carrier=%s, status=%s", shipment.shipment_id, shipment.tracking_number, shipment.carrier, shipment.status)
+    _log("Manhattan", "releaseShipment", {"order_id": order_id, "shipping_method": shipping_method}, shipment)
     return shipment

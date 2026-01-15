@@ -73,6 +73,15 @@
             font-weight: 600;
         }
 
+        .btn-link {
+            background: transparent;
+            color: #667eea;
+            padding: 0;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
         .btn-reset {
             background: #e53e3e;
             color: white;
@@ -231,6 +240,75 @@
             color: #667eea;
             margin-right: 10px;
         }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .log-table th, .log-table td {
+            padding: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        .log-table th {
+            text-align: left;
+            color: #4a5568;
+            background: #f7fafc;
+        }
+
+        .log-pre {
+            background: #f7fafc;
+            padding: 8px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        /* Modal styles for full JSON view */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: white;
+            width: min(900px, 95vw);
+            max-height: 85vh;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .modal-title {
+            font-weight: 700;
+            color: #2d3748;
+        }
+        .modal-body {
+            padding: 16px;
+            overflow: auto;
+        }
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #4a5568;
+        }
     </style>
 </head>
 <body>
@@ -245,36 +323,45 @@
         </header>
         
         <div class="grid">
-            <!-- Customers -->
-            <div class="card">
-                <h2>👤 Customers</h2>
-                {% for customer in customers %}
-                <div class="entity">
-                    <div class="entity-header">{{ customer.name }}</div>
-                    <div class="entity-detail">
-                        <span class="entity-label">Customer ID:</span>
-                        <span class="entity-value">{{ customer.customer_id }}</span>
-                    </div>
-                    <div class="entity-detail">
-                        <span class="entity-label">Email:</span>
-                        <span class="entity-value">{{ customer.email }}</span>
-                    </div>
-                    <div class="entity-detail">
-                        <span class="entity-label">Phone:</span>
-                        <span class="entity-value">{{ customer.phone }}</span>
-                    </div>
-                    <div class="entity-detail">
-                        <span class="entity-label">Address:</span>
-                        <span class="entity-value">{{ customer.address.street }}, {{ customer.address.city }}, {{ customer.address.state }} {{ customer.address.postal_code }}</span>
-                    </div>
-                </div>
-                {% endfor %}
+            <!-- Business Operation Log -->
+            <div class="card" style="grid-column: span 2;">
+                <h2>🧾 Business Operation Log</h2>
+                {% if business_operations %}
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 180px;">Timestamp</th>
+                            <th style="width: 110px;">System</th>
+                            <th style="width: 200px;">Operation</th>
+                            <th>Parameters</th>
+                            <th>Response</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in business_operations[::-1] %}
+                        <tr>
+                            <td>{{ entry.timestamp }}</td>
+                            <td>{{ entry.system }}</td>
+                            <td>{{ entry.operation }}</td>
+                            <td>
+                                <button class="btn-link" onclick='showJSON("Parameters", {{ entry.parameters | tojson }})'>View</button>
+                            </td>
+                            <td>
+                                <button class="btn-link" onclick='showJSON("Response", {{ entry.response | tojson }})'>View</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p style="color:#4a5568;">No operations logged yet. Calls to Magento or Manhattan will appear here.</p>
+                {% endif %}
             </div>
-            
+
             <!-- Recent Orders -->
             <div class="card">
                 <h2>📦 Recent Orders</h2>
-                {% for order in orders[:3] %}
+                {% for order in orders %}
                 <div class="entity">
                     <div class="entity-header">{{ order.order_id }}</div>
                     <div class="entity-detail">
@@ -416,9 +503,21 @@
         </div>
     </div>
     <div id="toast" class="toast">Demo data reset successfully.</div>
+    <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true">
+        <div class="modal">
+            <div class="modal-header">
+                <span id="modalTitle" class="modal-title">Details</span>
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body">
+                <pre id="modalContent" class="log-pre" style="margin:0;"></pre>
+            </div>
+        </div>
+    </div>
     <script>
         const btn = document.getElementById('resetBtn');
         const toast = document.getElementById('toast');
+
         if (btn) {
             btn.addEventListener('click', async () => {
                 btn.disabled = true;
@@ -429,7 +528,7 @@
                     // Show toast
                     toast.classList.add('show');
                     setTimeout(() => toast.classList.remove('show'), 2000);
-                    // Refresh to reflect new data
+                    // Refresh page to reflect reset
                     setTimeout(() => window.location.reload(), 300);
                 } catch (e) {
                     alert('Reset failed: ' + e.message);
@@ -438,6 +537,42 @@
                     btn.textContent = '♻️ Reset Demo Data';
                 }
             });
+        }
+
+        // Modal logic for full JSON view
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal(title, text) {
+            modalTitle.textContent = title;
+            modalContent.textContent = text;
+            modalOverlay.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modalOverlay.style.display = 'none';
+        }
+
+        if (modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', closeModal);
+        }
+
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) closeModal();
+            });
+        }
+
+        // Expose helper to global scope for initial page load onclick handlers
+        window.showJSON = function(title, obj) {
+            try {
+                const text = JSON.stringify(obj, null, 2);
+                openModal(title, text);
+            } catch (e) {
+                openModal(title, String(obj));
+            }
         }
     </script>
 </body>
