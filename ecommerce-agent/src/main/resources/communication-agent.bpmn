@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_09w5b7d" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.43.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
+  <bpmn:process id="customer-communication-agent" isExecutable="true">
+    <bpmn:documentation>communicationContext.channel = "whatsApp"</bpmn:documentation>
+    <bpmn:startEvent id="Event_0aolqb7" name="Customer communication received">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="={&#10;    &#34;subject&#34;: &#34;WhatsApp Request&#34;,&#10;    &#34;request&#34;: message.text, &#10;    &#34;originalMessage&#34;: message,&#10;    &#34;communicationContext&#34;: {&#10;        &#34;channel&#34; : &#34;whatsApp&#34;,&#10;        &#34;from&#34;: message.from,                &#10;        &#34;lastMessageId&#34;: message.id,&#10;        &#34;mobilePhone&#34;: message.mobilePhone&#10;    }&#10;}" target="supportCase" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0bgr4oc</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1bfeor5" messageRef="Message_2obe48c" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_Salesforce_LookupContact" name="Lookup contact from Salesforce" zeebe:modelerTemplate="io.camunda.connectors.Salesforce.v1" zeebe:modelerTemplateVersion="3" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgZmlsbD0icmdiKDAlLDAlLDAlKSIgeG1sbnM6dj0iaHR0cHM6Ly92ZWN0YS5pby9uYW5vIj48cGF0aCBkPSJNNC44MiAzLjA3NEMzLjM4MyAzLjE5MSAyLjE1NiA0LjE0MSAxLjcwNyA1LjVhMi44MSAyLjgxIDAgMCAwLS4xNzIgMS4wNTkgMi40NCAyLjQ0IDAgMCAwIC4xMjUuOTFsLjA1MS4xNzYtLjI4NS4yODFDLjkxOCA4LjQzNC42MzcgOC45NDUuNSA5LjYyMWE0LjAxIDQuMDEgMCAwIDAgLjAxMiAxLjIwMyAzLjEzIDMuMTMgMCAwIDAgLjg5MSAxLjYyNWMuNDYxLjQ2MS45NjEuNzM0IDEuNTgyLjg3MS4xODguMDM5LjY3Mi4wOS43MjcuMDc0LjAxNi0uMDA4LjA5LS4wMTYuMTYtLjAybC4xMzMtLjAxNi4xMzMuMjI3Yy45MDIgMS41MTIgMi43NTggMi4wMjcgNC4yNjYgMS4xODRhMy40OSAzLjQ5IDAgMCAwIDEuMDgyLTEuMDA0bC4xNDgtLjIzLjIzLjA3YTIuMTMgMi4xMyAwIDAgMCAuODgzLjEzMyAyLjg0IDIuODQgMCAwIDAgMS41Mi0uNSAzLjUyIDMuNTIgMCAwIDAgLjc4MS0uNzYyYy4wNzQtLjEwNS4xNDgtLjE4Ny4xNi0uMTg3cy4xMzMuMDEyLjI2Mi4wMjNjLjI2Mi4wMjcuNjA5LjAwNC45NjUtLjA2NmEzLjk5IDMuOTkgMCAwIDAgMi40OC0xLjY4NCAzLjkgMy45IDAgMCAwIC4xMTMtNC4xMjUgMy45MyAzLjkzIDAgMCAwLTIuNTIzLTEuODUyIDMuMzUgMy4zNSAwIDAgMC0xLjg3OS4wODZsLS4yNS4wN2EyLjI2IDIuMjYgMCAwIDEtLjA5NC0uMTI1IDMuODMgMy44MyAwIDAgMC0uNjIxLS42MDljLS40NTctLjM0NC0xLjA0Ny0uNTU1LTEuNjQxLS41ODItLjcxNS0uMDM5LTEuNDguMjU4LTIuMDUxLjc4MWwtLjE2NC4xNTItLjExMy0uMTIxYy0uNTgyLS42NDUtMS40NjUtMS4wOTQtMi4yNTgtMS4xNTItLjM0OC0uMDI3LS40MTQtLjAyNy0uNjEzLS4wMTJ6bS44NzkuNzdjLjc2Mi4xNzYgMS4zNzEuNjEzIDEuODMyIDEuMzEzbC4yMDcuMjk3Yy4wMTIgMCAuMTAyLS4xMTMuMjAzLS4yNTRhNC40MiA0LjQyIDAgMCAxIC4zNC0uNDAyYy44OTgtLjg4MyAyLjM1NS0uODc5IDMuMjUuMDE2LjE2NC4xNjQuMzEzLjM2Ny40NTcuNjI1LjA0My4wODIuMDkuMTQ1LjA5OC4xNDVzLjEwNS0uMDM1LjIwNy0uMDgyYTMuMjYgMy4yNiAwIDAgMSAxLjYyOS0uMjg1YzEuMjY2LjEyMSAyLjI4NS45MDIgMi43MzggMi4wOTRhNC41NCA0LjU0IDAgMCAxIC4xMDkuMzc1Yy4wNTkuMjMuMDU5LjI3LjA2My43MDcgMCAuNTEyLS4wMi42NDgtLjE1MiAxLjA0N2EzLjE2IDMuMTYgMCAwIDEtLjc3IDEuMjM0IDMuMTYgMy4xNiAwIDAgMS0xLjU1NS44NTljLS4zNC4wODItLjg1Mi4wOTQtMS4yNS4wMzFsLS4zMDEtLjAzOWE1LjY1IDUuNjUgMCAwIDAtLjEwOS4yMDdjLS4zMDUuNTk4LS44MjQgMS4wMzUtMS40MzQgMS4yMTEtLjU5LjE3Mi0xLjE2OC4xMDktMS43NS0uMTg0YTEuMTkgMS4xOSAwIDAgMC0uMTk1LS4wODJjLS4wMTEgMC0uMDgyLjExMy0uMTQ4LjI1LS4yNTQuNTYzLS42MjEuOTY1LTEuMTEzIDEuMjM4YTIuNTggMi41OCAwIDAgMS0yLjM3NSAwYy0uNTM1LS4yOTMtLjkyNi0uNzU4LTEuMTY4LTEuMzc1LS4wODYtLjIyMy0uMDYyLS4yMTEtLjQzNy0uMTQ4YTIuODggMi44OCAwIDAgMS0xLjAwNC0uMDI3Yy0xLjU0Ny0uMzg3LTIuMzQ4LTIuMDg2LTEuNjU2LTMuNTA4YTIuNTggMi41OCAwIDAgMSAuOTAyLTEuMDE2bC4yMTEtLjE0MWExLjU3IDEuNTcgMCAwIDAtLjA4Mi0uMjQyYy0uMTg0LS40OTYtLjI0Ni0uOTA2LS4xOTktMS4zNDguMTMzLTEuMzA1IDEuMDc4LTIuMzE2IDIuMzgzLTIuNTQ3YTMuOTQgMy45NCAwIDAgMSAxLjA3LjAzMXptLjExNyAzLjUxOWEzMi44MyAzMi44MyAwIDAgMC0uMDA0IDEuMDdsLjAwNCAxLjAzOS4xMzcuMDA0Yy4wOTguMDA0LjE0NSAwIC4xNTYtLjAyYTM2LjkzIDM2LjkzIDAgMCAwIC4wMDgtMi4wODIuMzkuMzkgMCAwIDAtLjMwMS0uMDEyem00LjMwOS0uMDA0Yy0uMTg3LjA0Ny0uMzMyLjE5NS0uMzk1LjQwMmEuODIuODIgMCAwIDAtLjA0My4xNzZjMCAuMDktLjAyMy4xMDktLjE0MS4xMDloLS4xMTNsLS4wMjMuMTA1YS44My44MyAwIDAgMC0uMDIzLjEyOWMwIC4wMTYuMDUxLjAyMy4xMTcuMDIzLjA3OCAwIC4xMTcuMDA4LjExNy4wMjNzLS4wNTEuMzAxLS4xMDUuNjI5Yy0uMTcyLjkzOC0uMTkxLjk4NC0uNDQ1Ljk4NEg4LjkzbC0uMDI3LjA3OGMtLjA0Ny4xMjUtLjAzOS4xNDUuMDYzLjE3Mi4xOTkuMDU1LjQ2MS0uMDI3LjU3NC0uMTguMTAyLS4xNDUuMTQ1LS4yOTcuMjctMS4wMDhsLjEyNS0uNjkxLjE3Mi0uMDA4Yy4xNjgtLjAxMi4xNjgtLjAxMi4xODQtLjA3NGEuNzguNzggMCAwIDAgLjAxNi0uMTI1bC4wMDQtLjA1OUg5Ljk4bC4wMTYtLjEwMmMuMDItLjE0MS4wODItLjI3Ny4xNDUtLjMwOS4wMjctLjAxNi4xMDUtLjAyNy4xOC0uMDIzbC4xMjkuMDA0LjAzOS0uMTA5YS4zOC4zOCAwIDAgMCAuMDI3LS4xMTdjLS4wNDMtLjA0My0uMjctLjA1OS0uMzkxLS4wMzF6bS02LjgwOS43MTFjLS4zNTkuMDgyLS40OTYuNDMtLjI1NC42NDguMDY2LjA1OS4xNDEuMDk0LjMzNi4xNTYuMzQ0LjEwNS40MTQuMTg0LjI4NS4zMTYtLjAzNS4wMzktLjA3LjA0My0uMjE5LjA0M3MtLjE5NS0uMDA4LS4zMjQtLjA3Yy0uMDgyLS4wMzktLjE1Mi0uMDYyLS4xNi0uMDUxYS45LjkgMCAwIDAtLjA1NS4xMDlsLS4wMzEuMDkuMTMzLjA2M2MuMzc5LjE3Ni44MzYuMTEzLjk2OS0uMTM3LjA1MS0uMTAyLjA1NS0uMjU0LjAwNC0uMzUycy0uMTQ1LS4xNTYtLjQzLS4yNWMtLjE5NS0uMDY2LS4yNjYtLjA5OC0uMjk3LS4xNDUtLjA0My0uMDU1LS4wNDMtLjA1OS0uMDA4LS4xMTMuMDItLjAzMS4wNjMtLjA2Ni4wOTQtLjA3OC4wNzQtLjAzMS4yNzMtLjAwOC40MjYuMDQ3LjA2Ni4wMjMuMTI5LjAzNS4xMzcuMDIzcy4wMzEtLjA1MS4wNTEtLjA5NGwuMDMxLS4wODItLjA2Ni0uMDQzYTEuMDEgMS4wMSAwIDAgMC0uNjIxLS4wODJ6bTEuNDExLS4wMDRjLS4xNTYuMDIzLS4yNzcuMDYzLS4zMi4wOTRzLS4wMzkuMDMxLjAwOC4xMjljLjAzNS4wODYuMDUxLjEwMi4wNzguMDkuMTg0LS4wNzQuNDY5LS4xMDIuNTktLjA1NS4wNzguMDI3LjEyNS4xMDIuMTI1LjE5NXYuMDc0bC0uMjI3LS4wMDhjLS4yODktLjAwOC0uNDI2LjAzMS0uNTU5LjE1Ni0uMTA1LjEwNS0uMTQ4LjIyMy0uMTI5LjM1OS4wNTUuMzQuNDUzLjQ1NyAxLjEwMi4zMTZsLjEwNS0uMDIzLjAxNi0uMzA5Yy4wMzUtLjY3Ni0uMDMxLS44OTUtLjI4NS0uOTg0YTEuMjYgMS4yNiAwIDAgMC0uNTA0LS4wMzV6bS40MTQuNzQybC4wNjYuMDEydi4zOThsLS4wOTguMDE2Yy0uMjUuMDMxLS40My0uMDA0LS40OC0uMDlhLjM4LjM4IDAgMCAxLS4wMjMtLjEyOWMwLS4wOTQuMDYzLS4xNjQuMTY0LS4xOTlhMS4zIDEuMyAwIDAgMSAuMzcxLS4wMDh6bTEuODItLjczNGMtLjM0LjA5OC0uNTA0LjM0NC0uNDg0Ljc0Mi4wMTYuMzE2LjEzNy41MDQuNDAyLjYwNS4yMjcuMDkuODM2LjA0Ny44MzYtLjA1OWEuODIuODIgMCAwIDAtLjA3NC0uMjAzbC0uMTA5LjAzMWExLjA2IDEuMDYgMCAwIDEtLjI3My4wMzVjLS4yMjMuMDA0LS4zNDgtLjA1NS0uNDE0LS4xOTUtLjAzMS0uMDUxLS4wNTEtLjExMy0uMDUxLS4xNDVWOC44NGwuNDg4LS4wMDQuNDg4LS4wMDh2LS4xNmMwLS4yNzMtLjExNy0uNDY5LS4zMjgtLjU2MmEuOTEuOTEgMCAwIDAtLjQ4LS4wMzF6bS4zMjQuMjQyYS4yOS4yOSAwIDAgMSAuMTc2LjIzNGwuMDA4LjA2My0uMzEyLjAwOGMtLjE2OCAwLS4zMiAwLS4zMzYtLjAwNC0uMDMxLS4wMTIuMDE2LS4xNzIuMDc0LS4yMzQuMDg2LS4wOTguMjQ2LS4xMjUuMzkxLS4wNjZ6bTAgMCIvPjxwYXRoIGQ9Ik04LjQzOCA4LjA3Yy0uMjAzLjA0Ny0uMzI0LjE1Ni0uMzU5LjMyLS4wNTUuMjIzLjA3NC4zNjcuNDEuNDczLjM0NC4xMDUuNDA2LjE0OC4zNjMuMjYyLS4wNTUuMTQ1LS4zMzIuMTYtLjU5OC4wMzUtLjA3OC0uMDM1LS4xNDUtLjA1OS0uMTUyLS4wNDdzLS4wMzEuMDU1LS4wNTUuMTA5bC0uMDMxLjA5LjEzMy4wNjNjLjQ4NC4yMjcgMS4wMTIuMDU5IDEuMDEyLS4zMi0uMDA0LS4yMDctLjEwNS0uMzAxLS40NjktLjQxOGExLjI4IDEuMjggMCAwIDEtLjI3My0uMTA5LjE0LjE0IDAgMCAxIC4wMDQtLjE5NWMuMDY2LS4wNTUuMzA5LS4wNTEuNDguMDEyLjA3LjAyMy4xMzMuMDM5LjE0NS4wMjdzLjAyNy0uMDUxLjA0Ny0uMDk0bC4wMzEtLjA4Mi0uMDY2LS4wNDNhMS4wMSAxLjAxIDAgMCAwLS42MjEtLjA4MnptMi40MS0uMDA0Yy0uMjcuMDU5LS40NTMuMjY2LS40OTYuNTYzLS4wNDcuMzQuMDg2LjY0NS4zMzYuNzc3LjExNy4wNTkuMzIuMDg2LjQ3My4wNTUuMjMtLjAzOS4zNzEtLjE0MS40NzMtLjMzMi4wNTEtLjA5OC4wNTUtLjEyNS4wNTUtLjM2M3MtLjAwNC0uMjY2LS4wNTUtLjM2N2MtLjA3LS4xMzMtLjE3Mi0uMjMtLjMwMS0uMjg1LS4xMTMtLjA1MS0uMzUyLS4wNzQtLjQ4NC0uMDQ3em0uMzcxLjI3N2MuMTE3LjA2Ni4xNDguMTU2LjE0OC40MjIgMCAuMTk1LS4wMDQuMjQ2LS4wNDMuMzA5LS4wNy4xMjEtLjE0NS4xNi0uMzAxLjE2cy0uMjI3LS4wMzktLjI5Ny0uMTcyYy0uMDYyLS4xMTctLjA2Mi0uNDczLS4wMDQtLjU5NC4wODYtLjE3Mi4zMTMtLjIyNy40OTYtLjEyNXptMS4yNS0uMjY1YS43NS43NSAwIDAgMC0uMTM3LjA2M2MtLjA3LjA0Ny0uMDc0LjA0My0uMDc0LS4wMiAwLS4wNTUtLjAwNC0uMDU1LS4xNDUtLjA1MWwtLjE0NS4wMDh2MS4zOTVoLjMwMWwuMDA4LS40NjFjLjAxMi0uMzkxLjAyLS40NzMuMDUxLS41MzEuMDU5LS4xMDkuMTUyLS4xNTYuMzA1LS4xNTZoLjEzM2wuMDM1LS4wOWMuMDU1LS4xNDUuMDQ3LS4xNTYtLjA2Mi0uMTc2LS4xMzctLjAxNi0uMTgtLjAxNi0uMjcuMDJ6bTAgMCIvPjxwYXRoIGQ9Ik0xMy4zOTUgOC4wODJjLS4zMDUuMDgyLS40NzMuMjk3LS40OTIuNjQ1LS4wMjcuNTcuNDA2Ljg2MyAxLjA0My43MDcuMTAyLS4wMjMuMTA1LS4wMzkuMDU1LS4xNjQtLjAyNy0uMDY2LS4wNDMtLjA4Ni0uMDctLjA3NGExLjI2IDEuMjYgMCAwIDEtLjQzNy4wMTJjLS4xODQtLjA2Mi0uMjctLjIwMy0uMjctLjQ0MSAwLS4xOC4wNDctLjI5Ny4xNDgtLjM4My4wOTQtLjA3OC4xNDEtLjA4Ni4zODMtLjA3NGwuMjA3LjAxNi4wMzktLjEwMmMuMDQzLS4xMTcuMDM5LS4xMjEtLjE0NS0uMTUyLS4xNzYtLjAzMS0uMzItLjAyNy0uNDYxLjAxMnptMCAwIi8+PHBhdGggZD0iTTE0LjYxNyA4LjA3OGMtLjMzMi4wOTQtLjQ5Mi4zNTUtLjQ2OS43NTguMDE2LjMwOS4xNjQuNTEyLjQ0MS41OTguMjM4LjA3Ljc5Ny4wMjMuNzk3LS4wN2EuODIuODIgMCAwIDAtLjA3NC0uMjAzbC0uMTA1LjAzMWMtLjA1OS4wMi0uMTg3LjAzNS0uMjgxLjAzNS0uMjc3IDAtLjQxNC0uMDk0LS40NDktLjMwNWwtLjAxNi0uMDgyLjQ4OC0uMDA0LjQ4OC0uMDA4di0uMTcyYy0uMDA0LS4yNy0uMTEzLS40NTMtLjMyNC0uNTUxLS4xMjUtLjA1NS0uMzUyLS4wNjYtLjQ5Ni0uMDI3em0uMzQuMjM4YS4yOS4yOSAwIDAgMSAuMTc2LjIzNGwuMDA4LjA2My0uMzEyLjAwOGMtLjE2OCAwLS4zMiAwLS4zMzYtLjAwNHMtLjAyLS4wMjctLjAwNC0uMDgyYy4wNzgtLjIyMy4yNTQtLjMwNS40NjktLjIxOXptMCAwIi8+PC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="= if supportCase.communicationContext.mobilePhone != null and supportCase.communicationContext.mobilePhone != &#34;&#34; then supportCase.communicationContext.mobilePhone else fromAi(toolCall.mobilePhone, &#34;Customer mobile phone (E.164)&#34;)" target="mobilePhone" />
+          <zeebe:input source="= if supportCase.communicationContext.emailAddress != null and supportCase.communicationContext.emailAddress != &#34;&#34; then supportCase.communicationContext.emailAddress else fromAi(toolCall.emailAddress, &#34;Customer email address&#34;)" target="emailAddress" />
+          <zeebe:input source="{{secrets.SALESFORCE_BASE_URL}}" target="baseUrl" />
+          <zeebe:input source="v58.0" target="apiVersion" />
+          <zeebe:input source="oauth-client-credentials-flow" target="authentication.type" />
+          <zeebe:input source="soqlQuery" target="salesforceInteractionType" />
+          <zeebe:input source="get" target="method" />
+          <zeebe:input source="=&#34;SELECT Id, AccountId, Name, Email, MobilePhone &#34; +&#10;&#34;FROM Contact WHERE &#34; +&#10;&#34;(MobilePhone = &#39;&#34; + mobilePhone + &#34;&#39; AND MobilePhone != NULL)&#34;  +&#10;&#34;LIMIT 1&#34;" target="soqlQuery" />
+          <zeebe:input source="={&#10;  q: soqlQuery&#10;}" target="queryParameters" />
+          <zeebe:input source="=baseUrl + &#34;/services/data/&#34; + apiVersion + &#34;/query&#34;" target="url" />
+          <zeebe:input source="=baseUrl + &#34;/services/oauth2/token&#34;" target="authentication.oauthTokenEndpoint" />
+          <zeebe:input source="{{secrets.SALESFORCE_CLIENT_ID}}" target="authentication.clientId" />
+          <zeebe:input source="{{secrets.SALESFORCE_CLIENT_SECRET}}" target="authentication.clientSecret" />
+          <zeebe:input source="credentialsBody" target="authentication.clientAuthentication" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultVariable" value="rawSalesforceCustomerResponse" />
+          <zeebe:header key="resultExpression" value="=if count(response.body.records) &#62; 0 then&#10;  {&#10;    customer: {&#10;      id: response.body.records[1].Id,&#10;      name: response.body.records[1].Name,&#10;      email: response.body.records[1].Email,&#10;      mobilePhone: response.body.records[1].MobilePhone&#10;    },&#10;    toolCallResult: {&#10;      status: &#34;found&#34;,&#10;      customer: {&#10;        id: response.body.records[1].Id,&#10;        name: response.body.records[1].Name,&#10;        email: response.body.records[1].Email,&#10;        mobilePhone: response.body.records[1].MobilePhone&#10;      }&#10;    }&#10;  }&#10;  else&#10;  {&#10;    customer: null,&#10;    toolCallResult: {&#10;      status: &#34;not_found&#34;,&#10;      message: &#34;No matching contact found for provided identifiers.&#34;&#10;    }&#10;  }" />
+          <zeebe:header key="elementTemplateVersion" value="3" />
+          <zeebe:header key="elementTemplateId" value="io.camunda.connectors.Salesforce.v1" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bgr4oc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0w9fba4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0bgr4oc" sourceRef="Event_0aolqb7" targetRef="Task_Salesforce_LookupContact" />
+    <bpmn:startEvent id="Event_0tu0evr" name="For testing">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="={&#34;subject&#34;:&#34;WhatsApp Request&#34;,&#34;request&#34;:&#34;I want to return a router&#34;,&#34;originalMessage&#34;:{&#34;profileName&#34;:&#34;Bernd&#34;,&#34;text&#34;:&#34;I want to return a router&#34;,&#34;mobilePhone&#34;:&#34;+491711473461&#34;,&#34;senderId&#34;:&#34;491711473461&#34;,&#34;id&#34;:&#34;SM3dca9d2ec98b6b2b8b98b72cb096bbc2&#34;,&#34;from&#34;:&#34;whatsapp:+491711473461&#34;},&#34;communicationContext&#34;:{&#34;channel&#34;:&#34;whatsApp&#34;,&#34;from&#34;:&#34;whatsapp:+491711473461&#34;,&#34;lastMessageId&#34;:&#34;SM3dca9d2ec98b6b2b8b98b72cb096bbc2&#34;,&#34;mobilePhone&#34;:&#34;+491711473461&#34;}}" target="supportCase" />
+          <zeebe:output source="={&#34;id&#34;:&#34;0039Q00001VcSaVQAV&#34;,&#34;name&#34;:&#34;Bernd Ruecker&#34;,&#34;email&#34;:&#34;bernd.it.depends.ruecker@gmail.com&#34;,&#34;mobilePhone&#34;:&#34;+491711473461&#34;}" target="customer" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0ht0jj7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0ht0jj7" sourceRef="Event_0tu0evr" targetRef="SubProcess_CommunicationAgent" />
+    <bpmn:sequenceFlow id="Flow_0w9fba4" sourceRef="Task_Salesforce_LookupContact" targetRef="SubProcess_CommunicationAgent" />
+    <bpmn:adHocSubProcess id="SubProcess_CommunicationAgent" zeebe:modelerTemplate="io.camunda.connectors.agenticai.aiagent.jobworker.v1" zeebe:modelerTemplateVersion="5" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNBNTZFRkYiLz4KPG1hc2sgaWQ9InBhdGgtMi1vdXRzaWRlLTFfMTg1XzYiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjQiIHk9IjQiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iYmxhY2siPgo8cmVjdCBmaWxsPSJ3aGl0ZSIgeD0iNCIgeT0iNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ii8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjAuMDEwNSAxMi4wOTg3QzE4LjQ5IDEwLjU4OTQgMTcuMTU5NCA4LjEwODE0IDE2LjE3OTkgNi4wMTEwM0MxNi4xNTIgNi4wMDQ1MSAxNi4xMTc2IDYgMTYuMDc5NCA2QzE2LjA0MTEgNiAxNi4wMDY2IDYuMDA0NTEgMTUuOTc4OCA2LjAxMTA0QzE0Ljk5OTQgOC4xMDgxNCAxMy42Njk3IDEwLjU4ODkgMTIuMTQ4MSAxMi4wOTgxQzEwLjYyNjkgMTMuNjA3MSA4LjEyNTY4IDE0LjkyNjQgNi4wMTE1NyAxNS44OTgxQzYuMDA0NzQgMTUuOTI2MSA2IDE1Ljk2MTEgNiAxNkM2IDE2LjAzODcgNi4wMDQ2OCAxNi4wNzM2IDYuMDExNDQgMTYuMTAxNEM4LjEyNTE5IDE3LjA3MjkgMTAuNjI2MiAxOC4zOTE5IDEyLjE0NzcgMTkuOTAxNkMxMy42Njk3IDIxLjQxMDcgMTQuOTk5NiAyMy44OTIgMTUuOTc5MSAyNS45ODlDMTYuMDA2OCAyNS45OTU2IDE2LjA0MTEgMjYgMTYuMDc5MyAyNkMxNi4xMTc1IDI2IDE2LjE1MTkgMjUuOTk1NCAxNi4xNzk2IDI1Ljk4OUMxNy4xNTkxIDIzLjg5MiAxOC40ODg4IDIxLjQxMSAyMC4wMDk5IDE5LjkwMjFNMjAuMDA5OSAxOS45MDIxQzIxLjUyNTMgMTguMzk4NyAyMy45NDY1IDE3LjA2NjkgMjUuOTkxNSAxNi4wODI0QzI1Ljk5NjUgMTYuMDU5MyAyNiAxNi4wMzEgMjYgMTUuOTk5N0MyNiAxNS45Njg0IDI1Ljk5NjUgMTUuOTQwMyAyNS45OTE1IDE1LjkxNzFDMjMuOTQ3NCAxNC45MzI3IDIxLjUyNTkgMTMuNjAxIDIwLjAxMDUgMTIuMDk4NyIvPgo8L21hc2s+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjAuMDEwNSAxMi4wOTg3QzE4LjQ5IDEwLjU4OTQgMTcuMTU5NCA4LjEwODE0IDE2LjE3OTkgNi4wMTEwM0MxNi4xNTIgNi4wMDQ1MSAxNi4xMTc2IDYgMTYuMDc5NCA2QzE2LjA0MTEgNiAxNi4wMDY2IDYuMDA0NTEgMTUuOTc4OCA2LjAxMTA0QzE0Ljk5OTQgOC4xMDgxNCAxMy42Njk3IDEwLjU4ODkgMTIuMTQ4MSAxMi4wOTgxQzEwLjYyNjkgMTMuNjA3MSA4LjEyNTY4IDE0LjkyNjQgNi4wMTE1NyAxNS44OTgxQzYuMDA0NzQgMTUuOTI2MSA2IDE1Ljk2MTEgNiAxNkM2IDE2LjAzODcgNi4wMDQ2OCAxNi4wNzM2IDYuMDExNDQgMTYuMTAxNEM4LjEyNTE5IDE3LjA3MjkgMTAuNjI2MiAxOC4zOTE5IDEyLjE0NzcgMTkuOTAxNkMxMy42Njk3IDIxLjQxMDcgMTQuOTk5NiAyMy44OTIgMTUuOTc5MSAyNS45ODlDMTYuMDA2OCAyNS45OTU2IDE2LjA0MTEgMjYgMTYuMDc5MyAyNkMxNi4xMTc1IDI2IDE2LjE1MTkgMjUuOTk1NCAxNi4xNzk2IDI1Ljk4OUMxNy4xNTkxIDIzLjg5MiAxOC40ODg4IDIxLjQxMSAyMC4wMDk5IDE5LjkwMjFNMjAuMDA5OSAxOS45MDIxQzIxLjUyNTMgMTguMzk4NyAyMy45NDY1IDE3LjA2NjkgMjUuOTkxNSAxNi4wODI0QzI1Ljk5NjUgMTYuMDU5MyAyNiAxNi4wMzEgMjYgMTUuOTk5N0MyNiAxNS45Njg0IDI1Ljk5NjUgMTUuOTQwMyAyNS45OTE1IDE1LjkxNzFDMjMuOTQ3NCAxNC45MzI3IDIxLjUyNTkgMTMuNjAxIDIwLjAxMDUgMTIuMDk4NyIgZmlsbD0id2hpdGUiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMC4wMTA1IDEyLjA5ODdDMTguNDkgMTAuNTg5NCAxNy4xNTk0IDguMTA4MTQgMTYuMTc5OSA2LjAxMTAzQzE2LjE1MiA2LjAwNDUxIDE2LjExNzYgNiAxNi4wNzk0IDZDMTYuMDQxMSA2IDE2LjAwNjYgNi4wMDQ1MSAxNS45Nzg4IDYuMDExMDRDMTQuOTk5NCA4LjEwODE0IDEzLjY2OTcgMTAuNTg4OSAxMi4xNDgxIDEyLjA5ODFDMTAuNjI2OSAxMy42MDcxIDguMTI1NjggMTQuOTI2NCA2LjAxMTU3IDE1Ljg5ODFDNi4wMDQ3NCAxNS45MjYxIDYgMTUuOTYxMSA2IDE2QzYgMTYuMDM4NyA2LjAwNDY4IDE2LjA3MzYgNi4wMTE0NCAxNi4xMDE0QzguMTI1MTkgMTcuMDcyOSAxMC42MjYyIDE4LjM5MTkgMTIuMTQ3NyAxOS45MDE2QzEzLjY2OTcgMjEuNDEwNyAxNC45OTk2IDIzLjg5MiAxNS45NzkxIDI1Ljk4OUMxNi4wMDY4IDI1Ljk5NTYgMTYuMDQxMSAyNiAxNi4wNzkzIDI2QzE2LjExNzUgMjYgMTYuMTUxOSAyNS45OTU0IDE2LjE3OTYgMjUuOTg5QzE3LjE1OTEgMjMuODkyIDE4LjQ4ODggMjEuNDExIDIwLjAwOTkgMTkuOTAyMU0yMC4wMDk5IDE5LjkwMjFDMjEuNTI1MyAxOC4zOTg3IDIzLjk0NjUgMTcuMDY2OSAyNS45OTE1IDE2LjA4MjRDMjUuOTk2NSAxNi4wNTkzIDI2IDE2LjAzMSAyNiAxNS45OTk3QzI2IDE1Ljk2ODQgMjUuOTk2NSAxNS45NDAzIDI1Ljk5MTUgMTUuOTE3MUMyMy45NDc0IDE0LjkzMjcgMjEuNTI1OSAxMy42MDEgMjAuMDEwNSAxMi4wOTg3IiBzdHJva2U9IiM0OTFEOEIiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgbWFzaz0idXJsKCNwYXRoLTItb3V0c2lkZS0xXzE4NV82KSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="bedrock" target="provider.type" />
+          <zeebe:input source="us-east-1" target="provider.bedrock.region" />
+          <zeebe:input source="credentials" target="provider.bedrock.authentication.type" />
+          <zeebe:input source="{{secrets.AWS_BEDROCK_ACCESS_KEY}}" target="provider.bedrock.authentication.accessKey" />
+          <zeebe:input source="{{secrets.AWS_BEDROCK_SECRET_KEY}}" target="provider.bedrock.authentication.secretKey" />
+          <zeebe:input source="anthropic.claude-3-5-sonnet-20240620-v1:0" target="provider.bedrock.model.model" />
+          <zeebe:input source="=5000" target="provider.bedrock.model.parameters.maxTokens" />
+          <zeebe:input source="=0.2" target="provider.bedrock.model.parameters.temperature" />
+          <zeebe:input source="=0.1" target="provider.bedrock.model.parameters.topP" />
+          <zeebe:input source="=&#34;&#10;You are Customer Concierge, the single point of contact for the customer.&#10;You own all customer communication and delegate execution to ecommerce specialist sub-agents.&#10;&#10;# What you do&#10;&#10;Read incoming customer messages and figure out what they need.&#10;Decide whether this is a new topic or an existing ongoing topic.&#10;Delegate the work to the right sub-agent.&#10;Keep threads organized so nothing gets lost.&#10;Wait until the customer case got sorted out, but finish if it is succesfully resolved.&#10;&#10;# What you don’t do&#10;&#10;You don’t do deep specialist work yourself (implementation, investigations, detailed configs) unless it’s trivial.&#10;You don’t expose internal notes, agent prompts, or tool details to the customer.&#10;&#10;# Important rule&#10;&#10;There is a dedicated WAIT tool available (its name is \&#34;Tool_WAIT\&#34;).&#10;You MUST use this tool whenever the case is not yet resolved and you need to wait for something.&#10;&#10;Every turn must end in one of two ways:&#10;- If the case is still open: your FINAL assistant message MUST include a call to the \&#34;Tool_WAIT\&#34; tool. Do NOT just say that you will wait; you must actually call the wait tool.&#10;- If the case is clearly and finally resolved: you may end the turn with a closing message and NO tool calls.&#10;&#10;If you have sent a customer message or started / notified a sub-agent and the case is not resolved yet, you MUST call the \&#34;Tool_WAIT\&#34; tool as your last action in that turn.&#10;&#10;# Core workflow (every inbound message)&#10;Summarize the customer request in 1–2 sentences.&#10;Pick a thread id (a short label like THREAD-Orders, THREAD-Checkout, THREAD-Integration).&#10;&#10;Decide:&#10;If it’s new → start a sub-agent for it.&#10;If it’s ongoing → notify the running sub-agent with the new info or question.&#10;&#10;When you have enough to respond, send one customer message that includes:&#10;- What we understood&#10;- What we’re doing / what we did&#10;- What we need from them (only if necessary)&#10;- Next step + expected follow-up point (no timing promises—just the next action)&#10;&#10;If the case is then still open, call the \&#34;Tool_WAIT\&#34; tool.&#10;&#10;# Threading rules (simple)&#10;Maintain one thread id per topic.&#10;Don’t mix topics; if the message contains multiple topics, split into 2+ threads and delegate separately.&#10;If you’re unsure which thread it belongs to, pick the closest fit and state the assumption internally (not to the customer).&#10;&#10;# Delegation rules&#10;When delegating to a sub-agent, provide:&#10;- The customer’s goal&#10;- Any constraints (deadline, environment, platform, “must not do X”)&#10;- The exact deliverable you want back (e.g., “give me 3 likely causes + diagnostic steps”)&#10;&#10;# Forwarding rule (mandatory)&#10;Whenever you receive a customer update while a specialist agent is running, you MUST forward the customer’s message to that specialist agent every time, even if the message is incomplete, ambiguous, or just “yes/no”.&#10;When forwarding, always include:&#10;- the customer message verbatim, and&#10;- the most recent question(s) you asked the customer (or a brief summary of what you were asking for), so the specialist can interpret replies like “yes”.&#10;&#10;# Post-Update Continuation Rule (mandatory)&#10;When you are waiting and receive any update (customer reply or internal agent update), you MUST:&#10;- Treat the update as a new inbound message.&#10;- If the update answers a previous question or provides requested information, forward it to the responsible specialist agent.&#10;- Decide the next required action (ask next question, start/notify a sub-agent, or confirm progress).&#10;- If the case is still open, call the \&#34;Tool_WAIT\&#34; tool again.&#10;- Only end the turn without calling \&#34;Tool_WAIT\&#34; when the case is explicitly completed and no further communication or follow-up is required.&#10;&#10;# Customer message style&#10;Short, friendly, and structured.&#10;Use bullet points when helpful.&#10;Avoid internal jargon and avoid blaming.&#10;Be explicit about next steps.&#10;&#34;" target="data.systemPrompt.prompt" />
+          <zeebe:input source="=supportCase.request" target="data.userPrompt.prompt" />
+          <zeebe:input target="agentContext" />
+          <zeebe:input source="in-process" target="data.memory.storage.type" />
+          <zeebe:input source="=20" target="data.memory.contextWindowSize" />
+          <zeebe:input source="=50" target="data.limits.maxModelCalls" />
+          <zeebe:input source="WAIT_FOR_TOOL_CALL_RESULTS" target="data.events.behavior" />
+          <zeebe:input source="text" target="data.response.format.type" />
+          <zeebe:input source="=false" target="data.response.format.parseJson" />
+          <zeebe:input source="=false" target="data.response.includeAssistantMessage" />
+          <zeebe:input source="=false" target="data.response.includeAgentContext" />
+          <zeebe:output source="=agent" target="agent" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="io.camunda.agenticai:aiagent-job-worker:1" retries="3" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="elementTemplateVersion" value="5" />
+          <zeebe:header key="elementTemplateId" value="io.camunda.connectors.agenticai.aiagent.jobworker.v1" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+        <zeebe:adHoc outputCollection="toolCallResults" outputElement="={&#10;  id: toolCall._meta.id,&#10;  name: toolCall._meta.name,&#10;  content: toolCallResult&#10;}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ht0jj7</bpmn:incoming>
+      <bpmn:incoming>Flow_0w9fba4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ej315i</bpmn:outgoing>
+      <bpmn:sendTask id="Tool_NotifyEcommerceAgent" name="Notify ecommerce agent" zeebe:modelerTemplate="io.camunda.connectors.message.sendtask.v1" zeebe:modelerTemplateVersion="0" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZwogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHdpZHRoPSIyMDAwIgogICBoZWlnaHQ9IjIwMDAiCiAgIHZpZXdCb3g9IjAgMCAyMDAwIDIwMDAiCiAgIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4KICA8cGF0aAogICAgIHN0eWxlPSJjb2xvcjojMDAwMDAwIgogICAgIGQ9Im0gMCwyODQgMjAwMCwwIC0xMDAwLDU1NCB6Ii8+CiAgPHBhdGgKICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMCIKICAgICBkPSJtIDAsNDUyIDEwMDAsNTQ4IDEwMDAsLTU0OCAwLDEwOTYgLTIwMDAsMCB6Ii8+Cjwvc3ZnPgo=">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:sendMessage:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="ecommerceAgentNotify" target="messageName" />
+            <zeebe:input source="=supportCase.communicationContext.mobilePhone" target="correlationKey" />
+            <zeebe:input source="={&#10;  &#34;communicationResult&#34;: {&#10;    status: &#34;success&#34;,&#10;    originalText: fromAi(toolCall.customerMessageInFull),&#10;    text: fromAi(toolCall.customerIntent)&#10;  }&#10;}" target="variables" />
+            <zeebe:input source="publish" target="correlationType.type" />
+            <zeebe:input source="PT60S" target="correlationType.timeToLive" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="elementTemplateVersion" value="0" />
+            <zeebe:header key="elementTemplateId" value="io.camunda.connectors.message.v1" />
+            <zeebe:header key="retryBackoff" value="PT0S" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+      </bpmn:sendTask>
+      <bpmn:sendTask id="Tool_StartEcommerceAgent" name="Start ecommerce agent" zeebe:modelerTemplate="io.camunda.connectors.message.sendtask.v1" zeebe:modelerTemplateVersion="0" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZwogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHdpZHRoPSIyMDAwIgogICBoZWlnaHQ9IjIwMDAiCiAgIHZpZXdCb3g9IjAgMCAyMDAwIDIwMDAiCiAgIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4KICA8cGF0aAogICAgIHN0eWxlPSJjb2xvcjojMDAwMDAwIgogICAgIGQ9Im0gMCwyODQgMjAwMCwwIC0xMDAwLDU1NCB6Ii8+CiAgPHBhdGgKICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMCIKICAgICBkPSJtIDAsNDUyIDEwMDAsNTQ4IDEwMDAsLTU0OCAwLDEwOTYgLTIwMDAsMCB6Ii8+Cjwvc3ZnPgo=">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:sendMessage:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="ecommerceAgentStart" target="messageName" />
+            <zeebe:input source="=supportCase.communicationContext.mobilePhone" target="correlationKey" />
+            <zeebe:input source="={&#10;  &#34;supportCase&#34;: supportCase,&#10;  &#34;customer&#34;: customer,&#10;  &#34;request&#34;: fromAi(toolCall.customerDesireToPassToTheAgent)&#10;}" target="variables" />
+            <zeebe:input source="publish" target="correlationType.type" />
+            <zeebe:input source="PT60S" target="correlationType.timeToLive" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="elementTemplateVersion" value="0" />
+            <zeebe:header key="elementTemplateId" value="io.camunda.connectors.message.v1" />
+            <zeebe:header key="retryBackoff" value="PT0S" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+      </bpmn:sendTask>
+      <bpmn:callActivity id="Tool_MessageCustomer" name="Message customer">
+        <bpmn:extensionElements>
+          <zeebe:calledElement processId="message-sender" propagateAllChildVariables="false" propagateAllParentVariables="false" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=supportCase.communicationContext" target="communicationContext" />
+            <zeebe:input source="={&#10;  &#34;subject&#34;: &#34;RE: &#34; + supportCase.subject,&#10;  &#34;text&#34;: fromAi(toolCall.customerMessageText)&#10;}" target="communicationContent" />
+            <zeebe:output source="=communicationResult" target="toolCallResult" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+      </bpmn:callActivity>
+      <bpmn:eventBasedGateway id="Tool_WAIT" name="Wait for next update">
+        <bpmn:outgoing>Flow_1vm2pns</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1ps8779</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0xt5a8t</bpmn:outgoing>
+      </bpmn:eventBasedGateway>
+      <bpmn:intermediateCatchEvent id="Event_CommunicationRequired" name="Communication required">
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="={&#10;  &#34;intent&#34;: &#34;There is a request to message the customer&#34;,&#10;  &#34;content&#34;: communicationContent,&#10;  &#34;status&#34;: &#34;success&#34;&#10;}" target="toolCallResult" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1ps8779</bpmn:incoming>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1j9i1y4" messageRef="Message_29lh69a" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:intermediateCatchEvent id="Event_CommunicationReceived" name="Communication received">
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="={&#10;  &#34;intent&#34;: &#34;A message from the customer was received and needs to be processed&#34;,&#10;  &#34;message&#34;: message,&#10;  &#34;status&#34;: &#34;success&#34;&#10;}" target="toolCallResult" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1vm2pns</bpmn:incoming>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1eci7ah" messageRef="Message_2obe48c" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="Flow_1vm2pns" sourceRef="Tool_WAIT" targetRef="Event_CommunicationReceived" />
+      <bpmn:sequenceFlow id="Flow_1ps8779" sourceRef="Tool_WAIT" targetRef="Event_CommunicationRequired" />
+      <bpmn:intermediateCatchEvent id="Event_AgentFinished" name="Agent finished">
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="={&#10;  &#34;intent&#34;: &#34;A sub agent just finished its work&#34;,&#10;  &#34;agentResolution&#34;: agentResolution,&#10;  &#34;status&#34;: &#34;success&#34;&#10;}" target="toolCallResult" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0xt5a8t</bpmn:incoming>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_0390xgm" messageRef="Message_0tibq0q" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="Flow_0xt5a8t" sourceRef="Tool_WAIT" targetRef="Event_AgentFinished" />
+    </bpmn:adHocSubProcess>
+    <bpmn:boundaryEvent id="Event_0vu3qvq" name="Timeout" attachedToRef="SubProcess_CommunicationAgent">
+      <bpmn:outgoing>Flow_0k0v80t</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1eycrk5">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT24H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_0c6un6p" name="Cases timed out">
+      <bpmn:incoming>Flow_0k0v80t</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0k0v80t" sourceRef="Event_0vu3qvq" targetRef="Event_0c6un6p" />
+    <bpmn:endEvent id="Event_1msk788" name="Case resolved">
+      <bpmn:incoming>Flow_0ej315i</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ej315i" sourceRef="SubProcess_CommunicationAgent" targetRef="Event_1msk788" />
+  </bpmn:process>
+  <bpmn:message id="Message_07i0alk" name="chat">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=x" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:error id="Error_07xvk80" name="ERROR_CHAT" errorCode="ERROR_CHAT" />
+  <bpmn:message id="Message_0775ttq" name="io.camunda.chat.message.8814bbef-fba9-41fb-a59c-dcdcf5e44afe">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=communicationContext.conversationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1lwucfp" name="io.camunda.chat.message.2afef382-db76-4151-a6a3-079b58f0205f">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=communicationContext.conversationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_3qs5cs3" name="WhatsApp2">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=communicationContext.mobilePhone" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_1r1v4qd" name="WhatsApp2" />
+  <bpmn:message id="Message_2obe48c" name="CustomerCommunicationReceived">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=supportCase.communicationContext.mobilePhone" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_29lh69a" name="CustomerCommunicationRequired">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=supportCase.communicationContext.mobilePhone" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0tibq0q" name="AgentFinished">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=supportCase.communicationContext.mobilePhone" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="customer-communication-agent">
+      <bpmndi:BPMNShape id="BPMNShape_17ij23f" bpmnElement="Task_Salesforce_LookupContact">
+        <dc:Bounds x="280" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1nlghks_di" bpmnElement="Event_0aolqb7">
+        <dc:Bounds x="172" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="153" y="318" width="74" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tu0evr_di" bpmnElement="Event_0tu0evr">
+        <dc:Bounds x="352" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="344" y="175" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0c6un6p_di" bpmnElement="Event_0c6un6p">
+        <dc:Bounds x="1032" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="505" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1msk788_di" bpmnElement="Event_1msk788">
+        <dc:Bounds x="1022" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1005" y="305" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0vgvidi" bpmnElement="SubProcess_CommunicationAgent" isExpanded="true">
+        <dc:Bounds x="450" y="80" width="450" height="470" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0c3vrls" bpmnElement="Tool_StartEcommerceAgent">
+        <dc:Bounds x="500" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1i6gmn8" bpmnElement="Tool_WAIT">
+        <dc:Bounds x="665" y="395" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="719" y="416" width="61" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0oqirgf" bpmnElement="Event_CommunicationRequired">
+        <dc:Bounds x="762" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="742" y="385" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1o78up6" bpmnElement="Event_CommunicationReceived">
+        <dc:Bounds x="762" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="741" y="506" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1a1aev6" bpmnElement="Tool_MessageCustomer">
+        <dc:Bounds x="500" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1382mvd" bpmnElement="Tool_NotifyEcommerceAgent">
+        <dc:Bounds x="620" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1l1hsh6_di" bpmnElement="Event_AgentFinished">
+        <dc:Bounds x="762" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="745" y="305" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_18d796t" bpmnElement="Flow_1vm2pns">
+        <di:waypoint x="690" y="445" />
+        <di:waypoint x="690" y="480" />
+        <di:waypoint x="762" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0al14uq" bpmnElement="Flow_1ps8779">
+        <di:waypoint x="690" y="395" />
+        <di:waypoint x="690" y="360" />
+        <di:waypoint x="762" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xt5a8t_di" bpmnElement="Flow_0xt5a8t">
+        <di:waypoint x="690" y="395" />
+        <di:waypoint x="690" y="280" />
+        <di:waypoint x="762" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_1j55a7c" bpmnElement="Event_0vu3qvq">
+        <dc:Bounds x="882" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="910" y="505" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0bgr4oc_di" bpmnElement="Flow_0bgr4oc">
+        <di:waypoint x="208" y="290" />
+        <di:waypoint x="280" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w9fba4_di" bpmnElement="Flow_0w9fba4">
+        <di:waypoint x="380" y="290" />
+        <di:waypoint x="450" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ht0jj7_di" bpmnElement="Flow_0ht0jj7">
+        <di:waypoint x="388" y="150" />
+        <di:waypoint x="450" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k0v80t_di" bpmnElement="Flow_0k0v80t">
+        <di:waypoint x="918" y="480" />
+        <di:waypoint x="1032" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ej315i_di" bpmnElement="Flow_0ej315i">
+        <di:waypoint x="900" y="280" />
+        <di:waypoint x="1022" y="280" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

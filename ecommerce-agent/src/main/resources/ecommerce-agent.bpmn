@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0fzcjmg" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.42.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0fzcjmg" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.43.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
   <bpmn:process id="ecommerce-agent" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_1">
+    <bpmn:startEvent id="StartEvent_1" name="For testing">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=&#34;4711&#34;" target="orderId" />
@@ -23,7 +23,7 @@
           <zeebe:input source="=5000" target="provider.bedrock.model.parameters.maxTokens" />
           <zeebe:input source="=0.2" target="provider.bedrock.model.parameters.temperature" />
           <zeebe:input source="=0.1" target="provider.bedrock.model.parameters.topP" />
-          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;# Core behavior&#10;&#10;Start every return conversation by identifying the customer and finding their most recent relevant order.&#10;&#10;Prefer extraction of identifiers (customer id, order id, product, delivery date) through tool usage before asking the customer to provide information.&#10;&#10;Do not ask for an order number unless you are unable to identify the customer or find matching orders.&#10;&#10;# Identifier handling&#10;&#10;When identifying the customer, first look for available identifiers in the process variable supportCase.communicationContext. Use supportCase.communicationContext.mobilePhone and/or supportCase.communicationContext.emailAddress if present.&#10;&#10;Only ask the customer for an identifier if neither of these values is available or usable.&#10;&#10;# Conversation policy&#10;&#10;If the customer intent is a return, attempt customer identification using the identifiers from supportcase.communicationContext before asking any questions.&#10;&#10;If customer identification is not possible, ask for exactly one missing identifier (either email or mobile phone), not multiple at once.&#10;&#10;Once the customer is identified, load recent orders and look for likely matches based on product type and recency.&#10;&#10;Summarize the most likely order in clear, human-readable terms (item, approximate delivery date, price) and ask the customer to confirm it.&#10;&#10;Do not proceed with return approval, eligibility checks, or creation of return artifacts until the customer confirms the correct item.&#10;&#10;# Reasoning rules&#10;&#10;Never invent customers, orders, prices, delivery dates, or eligibility decisions.&#10;&#10;If multiple orders could match, present up to two options and ask the customer to choose.&#10;&#10;If no matching order is found, ask a targeted follow-up question (for example whether the purchase was made with a different email or as a guest).&#10;&#10;# Interaction style&#10;&#10;Be friendly, concise, and confident.&#10;&#10;Do not expose internal variables, system names, API calls, or technical details to the customer.&#10;&#10;Present findings as helpful statements (“I see a router delivered about 12 days ago for $150 — is that the one you want to return?”).&#10;&#10;# Customer communication rule&#10;&#10;You must never send customer-facing text as your final response directly.&#10;&#10;Whenever you need to ask the customer a question or send a message to the customer, you MUST call the tool Ask_Customer.&#10;&#10;The only time you may finish without calling Ask_Customer is when you are explicitly returning internal notes for the process (e.g., tool summaries) and no customer message is required.&#10;&#10;# Interaction protocol&#10;&#10;When you have identified a likely order, you MUST call Ask_Customer with exactly one clear confirmation question:&#10;“I see a router delivered on &#60;date&#62; for &#60;price&#62;. Is this the one you want to return?”&#10;&#10;After calling Ask_Customer, stop. Do not add any additional customer text outside the tool call.&#10;&#10;# Recommendation rule&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. &#10;&#10;If you find a product, verify it is in stock and eligible for shipment, then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown (or product search is unavailable), do not apologize and do not mention recommendations. Proceed directly with the return flow.&#10;&#34;" target="data.systemPrompt.prompt" />
+          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;# Core behavior&#10;&#10;Start every return conversation by identifying the customer and finding their most recent relevant order.&#10;&#10;Prefer extraction of identifiers (customer id, order id, product, delivery date) through tool usage before asking the customer to provide information.&#10;&#10;Do not ask for an order number unless you are unable to identify the customer or find matching orders.&#10;&#10;# Identifier handling&#10;&#10;When identifying the customer, first look for available identifiers in the process variable supportCase.communicationContext. Use supportCase.communicationContext.mobilePhone and/or supportCase.communicationContext.emailAddress if present.&#10;&#10;Only ask the customer for an identifier if neither of these values is available or usable.&#10;&#10;# Conversation policy&#10;&#10;If the customer intent is a return, attempt customer identification using the identifiers from supportcase.communicationContext before asking any questions.&#10;&#10;If customer identification is not possible, ask for exactly one missing identifier (either email or mobile phone), not multiple at once.&#10;&#10;Once the customer is identified, load recent orders and look for likely matches based on product type and recency.&#10;&#10;Summarize the most likely order in clear, human-readable terms (item, approximate delivery date, price) and ask the customer to confirm it.&#10;&#10;Do not proceed with return approval, eligibility checks, or creation of return artifacts until the customer confirms the correct item.&#10;&#10;# Reasoning rules&#10;&#10;Never invent customers, orders, prices, delivery dates, or eligibility decisions.&#10;&#10;If multiple orders could match, present up to two options and ask the customer to choose.&#10;&#10;If no matching order is found, ask a targeted follow-up question (for example whether the purchase was made with a different email or as a guest).&#10;&#10;# Interaction style&#10;&#10;Be friendly, concise, and confident.&#10;&#10;Do not expose internal variables, system names, API calls, or technical details to the customer.&#10;&#10;Present findings as helpful statements (“I see a router delivered about 12 days ago for $150 — is that the one you want to return?”).&#10;&#10;# Customer communication rule&#10;&#10;You must never send customer-facing text as your final response directly.&#10;Whenever you need to send a message to the customer, you MUST call the tool “Message customer”.&#10;&#10;Immediately after sending a customer message that expects a reply (confirmation, question, choice), you MUST call “Wait for customer message”.&#10;&#10;The only time you may finish without calling the wait is when the case is explicitly resolved and confirmed, or you are just sending an information to the customer that doesn&#39;t have any response&#10;&#10;# Interaction protocol&#10;&#10;When you have identified a likely order, you MUST ask the customer with exactly one clear confirmation question:&#10;“I see a router delivered on &#60;date&#62; for &#60;price&#62;. Is this the one you want to return?”&#10;&#10;&#10;# Recommendation rule&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. &#10;&#10;If you find a product, verify it is in stock and eligible for shipment, then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown (or product search is unavailable), do not apologize and do not mention recommendations. Proceed directly with the return flow.&#10;&#34;" target="data.systemPrompt.prompt" />
           <zeebe:input source="=supportCase.request" target="data.userPrompt.prompt" />
           <zeebe:input target="agentContext" />
           <zeebe:input source="in-process" target="data.memory.storage.type" />
@@ -32,7 +32,7 @@
           <zeebe:input source="WAIT_FOR_TOOL_CALL_RESULTS" target="data.events.behavior" />
           <zeebe:input source="text" target="data.response.format.type" />
           <zeebe:input source="=false" target="data.response.format.parseJson" />
-          <zeebe:input source="=false" target="data.response.includeAssistantMessage" />
+          <zeebe:input source="=true" target="data.response.includeAssistantMessage" />
           <zeebe:input source="=false" target="data.response.includeAgentContext" />
           <zeebe:output source="=agent" target="agent" />
         </zeebe:ioMapping>
@@ -44,8 +44,7 @@
         </zeebe:taskHeaders>
         <zeebe:adHoc outputCollection="toolCallResults" outputElement="={&#10;  id: toolCall._meta.id,&#10;  name: toolCall._meta.name,&#10;  content: toolCallResult&#10;}" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1ca5nhs</bpmn:incoming>
-      <bpmn:incoming>Flow_0ekpsfu</bpmn:incoming>
+      <bpmn:incoming>Flow_1j9u2o1</bpmn:incoming>
       <bpmn:outgoing>Flow_1sm4gwc</bpmn:outgoing>
       <bpmn:serviceTask id="Tool_SAP_MCP" name="SAP Inventory Tools" zeebe:modelerTemplate="io.camunda.connectors.agenticai.mcp.remoteclient.v0" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+CiAgICA8cGF0aCBkPSJNMjUgOTcuODUyOEw5Mi44ODIzIDI5Ljk3MDZDMTAyLjI1NSAyMC41OTggMTE3LjQ1MSAyMC41OTggMTI2LjgyMyAyOS45NzA2VjI5Ljk3MDZDMTM2LjE5NiAzOS4zNDMxIDEzNi4xOTYgNTQuNTM5MSAxMjYuODIzIDYzLjkxMTdMNzUuNTU4MSAxMTUuMTc3IiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjEyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik03Ni4yNjUzIDExNC40N0wxMjYuODIzIDYzLjkxMTdDMTM2LjE5NiA1NC41MzkxIDE1MS4zOTIgNTQuNTM5MSAxNjAuNzY1IDYzLjkxMTdMMTYxLjExOCA2NC4yNjUyQzE3MC40OTEgNzMuNjM3OCAxNzAuNDkxIDg4LjgzMzggMTYxLjExOCA5OC4yMDYzTDk5LjcyNDggMTU5LjZDOTYuNjAwNiAxNjIuNzI0IDk2LjYwMDYgMTY3Ljc4OSA5OS43MjQ4IDE3MC45MTNMMTEyLjMzMSAxODMuNTIiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTTEwOS44NTMgNDYuOTQxMUw1OS42NDgyIDk3LjE0NTdDNTAuMjc1NyAxMDYuNTE4IDUwLjI3NTcgMTIxLjcxNCA1OS42NDgyIDEzMS4wODdWMTMxLjA4N0M2OS4wMjA4IDE0MC40NTkgODQuMjE2OCAxNDAuNDU5IDkzLjU4OTQgMTMxLjA4N0wxNDMuNzk0IDgwLjg4MjIiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K">
         <bpmn:extensionElements>
@@ -222,17 +221,6 @@
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
-      <bpmn:callActivity id="Tool_AskCustomer" name="Ask customer">
-        <bpmn:documentation>Use for ANY message that includes a question or clarification. If you’re asking the customer anything, you MUST use this tool.</bpmn:documentation>
-        <bpmn:extensionElements>
-          <zeebe:calledElement processId="customer-communication-question" propagateAllChildVariables="false" propagateAllParentVariables="false" />
-          <zeebe:ioMapping>
-            <zeebe:input source="=supportCase.communicationContext" target="communicationContext" />
-            <zeebe:input source="={&#10;  &#34;subject&#34;: &#34;RE: &#34; + supportCase.subject,&#10;  &#34;text&#34;: fromAi(toolCall.response, &#34;The text response to reply to the customer&#34;)&#10;}" target="communicationContent" />
-            <zeebe:output source="=communicationResult" target="toolCallResult" />
-          </zeebe:ioMapping>
-        </bpmn:extensionElements>
-      </bpmn:callActivity>
       <bpmn:serviceTask id="Tool_Manhatten_CreateExpectedReturn" name="Create expected return" zeebe:modelerTemplate="manhattan-wms-connector-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iNjY0LjAwMDAwMHB0IiBoZWlnaHQ9IjM4NC4wMDAwMDBwdCIgdmlld0JveD0iMCAwIDY2NC4wMDAwMDAgMzg0LjAwMDAwMCIKIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIG1lZXQiPgoKPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4wMDAwMDAsMzg0LjAwMDAwMCkgc2NhbGUoMC4xMDAwMDAsLTAuMTAwMDAwKSIKZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSJub25lIj4KPHBhdGggZD0iTTI3NDAgMTkzMCBjLTQyMSAtNTc5IC03NjcgLTEwNTcgLTc2OCAtMTA2MiAtMiAtNSA5MCAtNyAyMTQgLTYKbDIxOCAzIDI5NCA0MTAgYzE2MSAyMjYgNDEwIDU3MyA1NTMgNzczIGwyNTkgMzYzIC0yIDI4NSAtMyAyODYgLTc2NSAtMTA1MnoiLz4KPHBhdGggZD0iTTQ1NjQgMjg5NyBjLTI4IC00MCAtMTM0IC0xODcgLTIzNSAtMzI3IC05ODcgLTEzNjIgLTEyMzkgLTE3MTEKLTEyMzkgLTE3MTUgMCAtMyA5OCAtNCAyMTcgLTMgbDIxNyAzIDU1MyA3NzMgNTUzIDc3NCAwIDI4NCBjMCAxNTYgLTMgMjg0IC03CjI4NCAtNSAtMSAtMzEgLTMzIC01OSAtNzN6Ii8+CjxwYXRoIGQ9Ik0zMDI1IDE1MzYgYy0yNjkgLTM2OCAtNDkxIC02NzMgLTQ5MyAtNjc4IC0yIC00IDkzIC04IDIxMSAtOCBsMjE1CjAgMjkgMzggYzE2IDIwIDE0MyAxOTUgMjgxIDM4OSBsMjUyIDM1MiAtMiAyODggLTMgMjg5IC00OTAgLTY3MHoiLz4KPHBhdGggZD0iTTQxOTAgMTU4MyBjLTI1MCAtMzQ0IC00NzIgLTY1MCAtNDkzIC02ODAgbC0zOSAtNTMgMjE4IDIgMjE4IDMgMjc4CjM4OCAyNzggMzg4IC0yIDI4OSAtMyAyODggLTQ1NSAtNjI1eiIvPgo8cGF0aCBkPSJNNDQ0NyAxMTY4IGwtMjI3IC0zMTMgMjI2IC0zIGMxMjUgLTEgMjI5IC0xIDIzMSAxIDIgMiAyIDE0NCAxIDMxNgpsLTMgMzEyIC0yMjggLTMxM3oiLz4KPC9nPgo8L3N2Zz4K">
         <bpmn:documentation># Create Expected Return (WMS)
 Purpose: Register the return in the warehouse upfront so the item is accepted when it arrives. This prevents warehouse rejections, especially for end-of-life (EOL), discontinued, or clearance items.
@@ -282,12 +270,11 @@ If SKU is active and eligible, use:
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
             <zeebe:header key="resultVariable" value="wmsResponse" />
-            <zeebe:header key="resultExpression" value="=if response.body.status = &#34;error&#34; then {toolCallResult: {status: &#34;error&#34;, errorCode: response.body.errorCode, message: response.body.message}} else {toolCallResult: {status: &#34;success&#34;, data: response.body}}" />
-            <zeebe:header key="errorExpression" value="=if error.code = &#34;404&#34; then bpmnError(&#34;WMS_NOT_FOUND&#34;, &#34;Resource not found in WMS&#34;) else null" />
+            <zeebe:header key="resultExpression" value="=if response.body.status = &#34;error&#34; then {&#10;    toolCallResult: {&#10;      status: &#34;error&#34;, &#10;      errorType: response.body.errorType, &#10;      errorCode: response.body.errorCode, &#10;      message: response.body.message, &#10;      action: response.body.action&#10;    }&#10;  } else {&#10;    toolCallResult: {&#10;      status: &#34;success&#34;, &#10;      data: response.body.data&#10;    }&#10;}" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Activity_15xd324" name="Search available products" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+      <bpmn:serviceTask id="Tool_Magento_SearchProducts" name="Search available products" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
@@ -303,185 +290,166 @@ If SKU is active and eligible, use:
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
+      <bpmn:sendTask id="Tool_MessageCustomer" name="Message customer" zeebe:modelerTemplate="io.camunda.connectors.message.sendtask.v1" zeebe:modelerTemplateVersion="0" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZwogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHdpZHRoPSIyMDAwIgogICBoZWlnaHQ9IjIwMDAiCiAgIHZpZXdCb3g9IjAgMCAyMDAwIDIwMDAiCiAgIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4KICA8cGF0aAogICAgIHN0eWxlPSJjb2xvcjojMDAwMDAwIgogICAgIGQ9Im0gMCwyODQgMjAwMCwwIC0xMDAwLDU1NCB6Ii8+CiAgPHBhdGgKICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMCIKICAgICBkPSJtIDAsNDUyIDEwMDAsNTQ4IDEwMDAsLTU0OCAwLDEwOTYgLTIwMDAsMCB6Ii8+Cjwvc3ZnPgo=">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:sendMessage:1" retries="3" />
+          <zeebe:ioMapping>
+            <zeebe:input source="CustomerCommunicationRequired" target="messageName" />
+            <zeebe:input source="=supportCase.communicationContext.mobilePhone" target="correlationKey" />
+            <zeebe:input source="={&#10;  &#34;communicationContent&#34;: {&#10;    &#34;subject&#34;: &#34;RE: &#34; + supportCase.subject,&#10;    &#34;text&#34;: fromAi(toolCall.messageToCustomer)&#10;  },&#10;  &#34;communicationContext&#34;: supportCase.communicationContext&#10;}" target="variables" />
+            <zeebe:input source="publish" target="correlationType.type" />
+            <zeebe:input source="PT60S" target="correlationType.timeToLive" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="elementTemplateVersion" value="0" />
+            <zeebe:header key="elementTemplateId" value="io.camunda.connectors.message.v1" />
+            <zeebe:header key="retryBackoff" value="PT0S" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+      </bpmn:sendTask>
+      <bpmn:receiveTask id="Tool_WaitForMessage" name="Wait for customer message" messageRef="Message_056rkja">
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="=communicationResult" target="toolCallResult" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+      </bpmn:receiveTask>
     </bpmn:adHocSubProcess>
     <bpmn:sequenceFlow id="Flow_0eqjm89" sourceRef="StartEvent_1" targetRef="Event_0nyk35b" />
     <bpmn:endEvent id="Event_0il4izb">
-      <bpmn:incoming>Flow_1sm4gwc</bpmn:incoming>
+      <bpmn:incoming>Flow_00z8ltx</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1sm4gwc" sourceRef="SubProcess_EcommerceAgent" targetRef="Event_0il4izb" />
-    <bpmn:startEvent id="StartEvent_Chat" name="Customer support chat started" zeebe:modelerTemplate="io.camunda.chat.messageStart.6f459df0-d0eb-4b54-b299-ddc2a1fdc0d7.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzIwMDFfNTApIj4KPHBhdGggZD0iTTE3Ljk4ODYgMzEuODU3MUwxNiAzMC43MTQzTDIwLjU3MTQgMjIuNzE0M0gyNy40Mjg2QzI4LjAzNDggMjIuNzE0MyAyOC42MTYyIDIyLjQ3MzUgMjkuMDQ0OCAyMi4wNDQ4QzI5LjQ3MzUgMjEuNjE2MiAyOS43MTQzIDIxLjAzNDggMjkuNzE0MyAyMC40Mjg2VjYuNzE0MjhDMjkuNzE0MyA2LjEwODA3IDI5LjQ3MzUgNS41MjY2OSAyOS4wNDQ4IDUuMDk4MDRDMjguNjE2MiA0LjY2OTM4IDI4LjAzNDggNC40Mjg1NyAyNy40Mjg2IDQuNDI4NTdINC41NzE0M0MzLjk2NTIyIDQuNDI4NTcgMy4zODM4NCA0LjY2OTM4IDIuOTU1MTggNS4wOTgwNEMyLjUyNjUzIDUuNTI2NjkgMi4yODU3MSA2LjEwODA3IDIuMjg1NzEgNi43MTQyOFYyMC40Mjg2QzIuMjg1NzEgMjEuMDM0OCAyLjUyNjUzIDIxLjYxNjIgMi45NTUxOCAyMi4wNDQ4QzMuMzgzODQgMjIuNDczNSAzLjk2NTIyIDIyLjcxNDMgNC41NzE0MyAyMi43MTQzSDE0Ljg1NzFWMjVINC41NzE0M0MzLjM1OTAxIDI1IDIuMTk2MjUgMjQuNTE4NCAxLjMzODk0IDIzLjY2MTFDMC40ODE2MzEgMjIuODAzNyAwIDIxLjY0MSAwIDIwLjQyODZWNi43MTQyOEMwIDUuNTAxODYgMC40ODE2MzEgNC4zMzkxIDEuMzM4OTQgMy40ODE3OUMyLjE5NjI1IDIuNjI0NDggMy4zNTkwMSAyLjE0Mjg1IDQuNTcxNDMgMi4xNDI4NUgyNy40Mjg2QzI4LjY0MSAyLjE0Mjg1IDI5LjgwMzggMi42MjQ0OCAzMC42NjExIDMuNDgxNzlDMzEuNTE4NCA0LjMzOTEgMzIgNS41MDE4NiAzMiA2LjcxNDI4VjIwLjQyODZDMzIgMjEuNjQxIDMxLjUxODQgMjIuODAzNyAzMC42NjExIDIzLjY2MTFDMjkuODAzOCAyNC41MTg0IDI4LjY0MSAyNSAyNy40Mjg2IDI1SDIxLjg5NzFMMTcuOTg4NiAzMS44NTcxWiIgZmlsbD0iIzBGNjJGRSIvPgo8cGF0aCBkPSJNMjUuMTQyOSA5SDYuODU3MThWMTEuMjg1N0gyNS4xNDI5VjlaIiBmaWxsPSIjMEY2MkZFIi8+CjxwYXRoIGQ9Ik0xOC4yODU3IDE1Ljg1NzFINi44NTcxOFYxOC4xNDI5SDE4LjI4NTdWMTUuODU3MVoiIGZpbGw9IiMwRjYyRkUiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8yMDAxXzUwIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="={&#10;    &#34;subject&#34;: &#34;Chat Request&#34;,&#10;    &#34;request&#34;: message.parts[count(message.parts)].content,&#10;    &#34;originalMessageInFull&#34;: string join(message.parts.content, &#34;; &#34;),&#10;    &#34;communicationContext&#34;: {&#10;        &#34;channel&#34; : &#34;chat&#34;,&#10;        &#34;channelId&#34;: channelUUID,&#10;        &#34;emailAddress&#34;: &#34;bernd.it.depends.ruecker@gmail.com&#34;,&#10;        &#34;conversationId&#34;: conversationUUID,&#10;        &#34;lastMessageId&#34;: message.id&#10;    }&#10;}" target="supportCase" />
-          <zeebe:output source="=message" target="chatMessage" />
-          <zeebe:output source="=&#34;+49123456789&#34;" target="mobilePhone" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_1i0kcwv</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_11vthav" messageRef="Message_1io25dr" />
-    </bpmn:startEvent>
-    <bpmn:serviceTask id="Task_ChatThinkingUpdate" name="Update status &#10;(&#34;Thinking...&#34;)" zeebe:modelerTemplate="io.camunda.chat.rest.reply.camunda-chat-admin-986421179728.europe-west1.run.app.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzIwMDFfNTApIj4KPHBhdGggZD0iTTE3Ljk4ODYgMzEuODU3MUwxNiAzMC43MTQzTDIwLjU3MTQgMjIuNzE0M0gyNy40Mjg2QzI4LjAzNDggMjIuNzE0MyAyOC42MTYyIDIyLjQ3MzUgMjkuMDQ0OCAyMi4wNDQ4QzI5LjQ3MzUgMjEuNjE2MiAyOS43MTQzIDIxLjAzNDggMjkuNzE0MyAyMC40Mjg2VjYuNzE0MjhDMjkuNzE0MyA2LjEwODA3IDI5LjQ3MzUgNS41MjY2OSAyOS4wNDQ4IDUuMDk4MDRDMjguNjE2MiA0LjY2OTM4IDI4LjAzNDggNC40Mjg1NyAyNy40Mjg2IDQuNDI4NTdINC41NzE0M0MzLjk2NTIyIDQuNDI4NTcgMy4zODM4NCA0LjY2OTM4IDIuOTU1MTggNS4wOTgwNEMyLjUyNjUzIDUuNTI2NjkgMi4yODU3MSA2LjEwODA3IDIuMjg1NzEgNi43MTQyOFYyMC40Mjg2QzIuMjg1NzEgMjEuMDM0OCAyLjUyNjUzIDIxLjYxNjIgMi45NTUxOCAyMi4wNDQ4QzMuMzgzODQgMjIuNDczNSAzLjk2NTIyIDIyLjcxNDMgNC41NzE0MyAyMi43MTQzSDE0Ljg1NzFWMjVINC41NzE0M0MzLjM1OTAxIDI1IDIuMTk2MjUgMjQuNTE4NCAxLjMzODk0IDIzLjY2MTFDMC40ODE2MzEgMjIuODAzNyAwIDIxLjY0MSAwIDIwLjQyODZWNi43MTQyOEMwIDUuNTAxODYgMC40ODE2MzEgNC4zMzkxIDEuMzM4OTQgMy40ODE3OUMyLjE5NjI1IDIuNjI0NDggMy4zNTkwMSAyLjE0Mjg1IDQuNTcxNDMgMi4xNDI4NUgyNy40Mjg2QzI4LjY0MSAyLjE0Mjg1IDI5LjgwMzggMi42MjQ0OCAzMC42NjExIDMuNDgxNzlDMzEuNTE4NCA0LjMzOTEgMzIgNS41MDE4NiAzMiA2LjcxNDI4VjIwLjQyODZDMzIgMjEuNjQxIDMxLjUxODQgMjIuODAzNyAzMC42NjExIDIzLjY2MTFDMjkuODAzOCAyNC41MTg0IDI4LjY0MSAyNSAyNy40Mjg2IDI1SDIxLjg5NzFMMTcuOTg4NiAzMS44NTcxWiIgZmlsbD0iIzBGNjJGRSIvPgo8cGF0aCBkPSJNMjUuMTQyOSA5SDYuODU3MThWMTEuMjg1N0gyNS4xNDI5VjlaIiBmaWxsPSIjMEY2MkZFIi8+CjxwYXRoIGQ9Ik0xOC4yODU3IDE1Ljg1NzFINi44NTcxOFYxOC4xNDI5SDE4LjI4NTdWMTUuODU3MVoiIGZpbGw9IiMwRjYyRkUiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8yMDAxXzUwIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
-        <zeebe:ioMapping>
-          <zeebe:input source="https://camunda-chat-admin-986421179728.europe-west1.run.app/api/" target="apiBaseUrl" />
-          <zeebe:input source="=supportCase.communicationContext.channelId" target="channelUUID" />
-          <zeebe:input source="=supportCase.communicationContext.conversationId" target="conversationUUID" />
-          <zeebe:input source="{{secrets.CHAT_BACKEND_SERVICE_TOKEN}}" target="authToken" />
-          <zeebe:input source="thinking" target="messageType" />
-          <zeebe:input source="=&#34;Thank you for your message - let me sort this out for you...&#34;" target="content" />
-          <zeebe:input source="={&#34;type&#34;: &#34;bearer&#34;, &#34;token&#34;: authToken}" target="authentication" />
-          <zeebe:input source="PUT" target="method" />
-          <zeebe:input source="=apiBaseUrl + &#34;channels/&#34; + channelUUID + &#34;/conversations/&#34; + conversationUUID + &#34;/messages/&#34; + uuid()" target="url" />
-          <zeebe:input source="={&#34;senderUsername&#34;:&#34;Camunda&#34;,&#34;parts&#34;:[{&#34;type&#34;: messageType, &#34;content&#34;: content, &#34;position&#34;: 0}]}" target="body" />
-          <zeebe:input source="=false" target="storeResponse" />
-          <zeebe:input source="=false" target="ignoreNullValues" />
-          <zeebe:input source="=20" target="connectionTimeoutInSeconds" />
-          <zeebe:input source="=20" target="readTimeoutInSeconds" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders>
-          <zeebe:header key="retryBackoff" value="PT0S" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1i0kcwv</bpmn:incoming>
-      <bpmn:outgoing>Flow_1ca5nhs</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1i0kcwv" sourceRef="StartEvent_Chat" targetRef="Task_ChatThinkingUpdate" />
-    <bpmn:sequenceFlow id="Flow_1ca5nhs" sourceRef="Task_ChatThinkingUpdate" targetRef="SubProcess_EcommerceAgent" />
-    <bpmn:startEvent id="Event_0aolqb7" name="WhatsApp received">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="={&#10;    &#34;subject&#34;: &#34;WhatsApp Request&#34;,&#10;    &#34;request&#34;: message.text, &#10;    &#34;originalMessage&#34;: message,&#10;    &#34;communicationContext&#34;: {&#10;        &#34;channel&#34; : &#34;whatsApp&#34;,&#10;        &#34;from&#34;: message.from,                &#10;        &#34;lastMessageId&#34;: message.id,&#10;        &#34;mobilePhone&#34;: message.mobilePhone&#10;    }&#10;}" target="supportCase" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_0ekpsfu</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1bfeor5" messageRef="Message_1r1v4qd" />
-    </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_0ekpsfu" sourceRef="Event_0aolqb7" targetRef="SubProcess_EcommerceAgent" />
+    <bpmn:sequenceFlow id="Flow_1sm4gwc" sourceRef="SubProcess_EcommerceAgent" targetRef="Activity_1mrkke7" />
     <bpmn:endEvent id="Event_0nyk35b">
       <bpmn:incoming>Flow_0eqjm89</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Tool_Magento_SearchProducts" name="Search products" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+    <bpmn:startEvent id="Event_1xxrygt" name="Agent requested by customer message">
+      <bpmn:outgoing>Flow_1j9u2o1</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1j8muag" messageRef="Message_0p7867v" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1j9u2o1" sourceRef="Event_1xxrygt" targetRef="SubProcess_EcommerceAgent" />
+    <bpmn:sequenceFlow id="Flow_00z8ltx" sourceRef="Activity_1mrkke7" targetRef="Event_0il4izb" />
+    <bpmn:sendTask id="Activity_1mrkke7" name="Agent finished" zeebe:modelerTemplate="io.camunda.connectors.message.sendtask.v1" zeebe:modelerTemplateVersion="0" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZwogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHdpZHRoPSIyMDAwIgogICBoZWlnaHQ9IjIwMDAiCiAgIHZpZXdCb3g9IjAgMCAyMDAwIDIwMDAiCiAgIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4KICA8cGF0aAogICAgIHN0eWxlPSJjb2xvcjojMDAwMDAwIgogICAgIGQ9Im0gMCwyODQgMjAwMCwwIC0xMDAwLDU1NCB6Ii8+CiAgPHBhdGgKICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMCIKICAgICBkPSJtIDAsNDUyIDEwMDAsNTQ4IDEwMDAsLTU0OCAwLDEwOTYgLTIwMDAsMCB6Ii8+Cjwvc3ZnPgo=">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="magento-connector" />
+        <zeebe:taskDefinition type="io.camunda:sendMessage:1" retries="3" />
         <zeebe:ioMapping>
-          <zeebe:input source="magentoResponse" target="resultVariable" />
-          <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
-          <zeebe:input source="productSearch" target="operation" />
-          <zeebe:input source="=fromAi(toolCall.searchQuery)" target="query" />
-          <zeebe:input source="=fromAi(toolCall.category)" target="category" />
-          <zeebe:input source="=fromAi(toolCall.tags)" target="tags" />
+          <zeebe:input source="AgentFinished" target="messageName" />
+          <zeebe:input source="=supportCase.communicationContext.mobilePhone" target="correlationKey" />
+          <zeebe:input source="= {&#10;  &#34;agentResolution&#34;: agent.responseMessage  &#10;}" target="variables" />
+          <zeebe:input source="publish" target="correlationType.type" />
+          <zeebe:input source="PT60S" target="correlationType.timeToLive" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultVariable" value="rawMagentoProductSearchResponse" />
-          <zeebe:header key="resultExpression" value="=if response.body = null or count(response.body) = 0 then&#10;{&#10;  products: [],&#10;  toolCallResult: {&#10;    status: &#34;no_products&#34;,&#10;    message: &#34;No products found matching the search criteria.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  products: response.body,&#10;  toolCallResult: {&#10;    status: &#34;products_found&#34;,&#10;    count: count(response.body),&#10;    products: response.body,&#10;    message: &#34;Found &#34; + string(count(response.body)) + &#34; product(s) matching the search.&#34;&#10;  }&#10;}" />
+          <zeebe:header key="elementTemplateVersion" value="0" />
+          <zeebe:header key="elementTemplateId" value="io.camunda.connectors.message.v1" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
-    </bpmn:serviceTask>
+      <bpmn:incoming>Flow_1sm4gwc</bpmn:incoming>
+      <bpmn:outgoing>Flow_00z8ltx</bpmn:outgoing>
+    </bpmn:sendTask>
   </bpmn:process>
-  <bpmn:message id="Message_1io25dr" name="io.camunda.chat.message.6f459df0-d0eb-4b54-b299-ddc2a1fdc0d7" zeebe:modelerTemplate="io.camunda.chat.messageStart.6f459df0-d0eb-4b54-b299-ddc2a1fdc0d7.v1" />
   <bpmn:message id="Message_1r1v4qd" name="WhatsApp2" />
+  <bpmn:message id="Message_0p7867v" name="ecommerceAgentStart" />
+  <bpmn:message id="Message_056rkja" name="ecommerceAgentNotify">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=supportCase.communicationContext.mobilePhone" />
+    </bpmn:extensionElements>
+  </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ecommerce-agent">
-      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="362" y="622" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_0l4hj6x_di" bpmnElement="Event_1xxrygt">
+        <dc:Bounds x="182" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="195" width="81" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1gvmxab_di" bpmnElement="SubProcess_EcommerceAgent" isExpanded="true">
-        <dc:Bounds x="760" y="140" width="500" height="940" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0o6iy1c_di" bpmnElement="Tool_SAP_MCP">
-        <dc:Bounds x="790" y="180" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1wk09jl_di" bpmnElement="Tool_Magento_ListRecentOrders">
-        <dc:Bounds x="790" y="360" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0gqsaip" bpmnElement="Tool_Magento_CreateRMA">
-        <dc:Bounds x="790" y="540" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_115kmd0" bpmnElement="Tool_Magento_CreateCart">
-        <dc:Bounds x="790" y="640" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_05s82vk" bpmnElement="Tool_Magento_AddItemToCart">
-        <dc:Bounds x="790" y="730" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1dfr57p" bpmnElement="Tool_Magento_ApplyStoreCredit">
-        <dc:Bounds x="790" y="830" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1g7lnxd" bpmnElement="Tool_Magento_PlaceOrder">
-        <dc:Bounds x="790" y="920" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_17ij23f" bpmnElement="Task_Salesforce_LookupContact">
-        <dc:Bounds x="940" y="360" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1k1934o" bpmnElement="Task_CreateSalesforceCase">
-        <dc:Bounds x="940" y="470" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1v0upkw_di" bpmnElement="Tool_AskCustomer">
-        <dc:Bounds x="940" y="730" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1t80u8s_di" bpmnElement="Tool_Manhatten_CreateExpectedReturn">
-        <dc:Bounds x="940" y="920" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0t87ykw_di" bpmnElement="Activity_15xd324">
-        <dc:Bounds x="790" y="450" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1dwefqj_di" bpmnElement="Activity_1mrkke7">
+        <dc:Bounds x="780" y="140" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0il4izb_di" bpmnElement="Event_0il4izb">
-        <dc:Bounds x="1482" y="222" width="36" height="36" />
+        <dc:Bounds x="932" y="162" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_18kap8k_di" bpmnElement="StartEvent_Chat">
-        <dc:Bounds x="162" y="212" width="36" height="36" />
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="172" y="952" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="138" y="255" width="88" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0shrxp6" bpmnElement="Task_ChatThinkingUpdate">
-        <dc:Bounds x="250" y="190" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1nlghks_di" bpmnElement="Event_0aolqb7">
-        <dc:Bounds x="162" y="102" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="155" y="145" width="51" height="27" />
+          <dc:Bounds x="164" y="995" width="52" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0nyk35b_di" bpmnElement="Event_0nyk35b">
-        <dc:Bounds x="542" y="622" width="36" height="36" />
+        <dc:Bounds x="782" y="942" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0cza8ci" bpmnElement="Tool_Magento_SearchProducts">
-        <dc:Bounds x="1530" y="980" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1gvmxab_di" bpmnElement="SubProcess_EcommerceAgent" isExpanded="true">
+        <dc:Bounds x="320" y="80" width="390" height="740" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_144xlhd_di" bpmnElement="Tool_MessageCustomer">
+        <dc:Bounds x="350" y="120" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wk09jl_di" bpmnElement="Tool_Magento_ListRecentOrders">
+        <dc:Bounds x="350" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t87ykw_di" bpmnElement="Tool_Magento_SearchProducts">
+        <dc:Bounds x="350" y="330" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_115kmd0" bpmnElement="Tool_Magento_CreateCart">
+        <dc:Bounds x="350" y="590" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_05s82vk" bpmnElement="Tool_Magento_AddItemToCart">
+        <dc:Bounds x="470" y="590" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1dfr57p" bpmnElement="Tool_Magento_ApplyStoreCredit">
+        <dc:Bounds x="350" y="680" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1g7lnxd" bpmnElement="Tool_Magento_PlaceOrder">
+        <dc:Bounds x="470" y="680" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0gqsaip" bpmnElement="Tool_Magento_CreateRMA">
+        <dc:Bounds x="350" y="450" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1t80u8s_di" bpmnElement="Tool_Manhatten_CreateExpectedReturn">
+        <dc:Bounds x="470" y="450" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0o6iy1c_di" bpmnElement="Tool_SAP_MCP">
+        <dc:Bounds x="470" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17ij23f" bpmnElement="Task_Salesforce_LookupContact">
+        <dc:Bounds x="590" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1k1934o" bpmnElement="Task_CreateSalesforceCase">
+        <dc:Bounds x="590" y="330" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0a19pyj_di" bpmnElement="Tool_WaitForMessage">
+        <dc:Bounds x="470" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1j9u2o1_di" bpmnElement="Flow_1j9u2o1">
+        <di:waypoint x="218" y="170" />
+        <di:waypoint x="320" y="170" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0eqjm89_di" bpmnElement="Flow_0eqjm89">
-        <di:waypoint x="398" y="640" />
-        <di:waypoint x="542" y="640" />
+        <di:waypoint x="208" y="970" />
+        <di:waypoint x="495" y="970" />
+        <di:waypoint x="495" y="960" />
+        <di:waypoint x="782" y="960" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1sm4gwc_di" bpmnElement="Flow_1sm4gwc">
-        <di:waypoint x="1260" y="240" />
-        <di:waypoint x="1482" y="240" />
+        <di:waypoint x="710" y="180" />
+        <di:waypoint x="780" y="180" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1i0kcwv_di" bpmnElement="Flow_1i0kcwv">
-        <di:waypoint x="198" y="230" />
-        <di:waypoint x="250" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1ca5nhs_di" bpmnElement="Flow_1ca5nhs">
-        <di:waypoint x="350" y="230" />
-        <di:waypoint x="760" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ekpsfu_di" bpmnElement="Flow_0ekpsfu">
-        <di:waypoint x="198" y="120" />
-        <di:waypoint x="479" y="120" />
-        <di:waypoint x="479" y="170" />
-        <di:waypoint x="760" y="170" />
+      <bpmndi:BPMNEdge id="Flow_00z8ltx_di" bpmnElement="Flow_00z8ltx">
+        <di:waypoint x="880" y="180" />
+        <di:waypoint x="932" y="180" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

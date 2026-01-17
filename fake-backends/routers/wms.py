@@ -113,22 +113,24 @@ async def create_expected_return(
         if not caseId or not approvalCode or caseId.strip() == "" or approvalCode.strip() == "":
             error_body = {
                 "status": "error",
-                "errorCode": "EXCEPTION_AUTH_REQUIRED",
-                "message": "EOL/clearance returns require a Salesforce ReturnException caseId + approvalCode and override flags."
+                "errorType": "BUSINESS_VALIDATION",
+                "errorCode": "MISSING_CASE_ID",
+                "message": "caseId and approvalCode are required for this return",
+                "action": "CREATE_SALESFORCE_CASE"
             }
-            resp = JSONResponse(status_code=400, content=error_body)
             _log("Manhattan", "createExpectedReturn", {"rmaId": rmaId, "sku": sku, "qty": qty, "overrides": normalized_overrides, "caseId": caseId, "approvalCode": approvalCode}, error_body)
-            return resp
+            return JSONResponse(status_code=200, content=error_body)
 
         if "ALLOW_CLEARANCE_RETURN" not in normalized_overrides:
             error_body = {
                 "status": "error",
-                "errorCode": "EXCEPTION_AUTH_REQUIRED",
-                "message": "EOL/clearance returns require a Salesforce ReturnException caseId + approvalCode and override flags."
+                "errorType": "BUSINESS_VALIDATION",
+                "errorCode": "MISSING_OVERRIDE_FLAG",
+                "message": "ALLOW_CLEARANCE_RETURN override flag is required for EOL/clearance returns",
+                "action": "INCLUDE_OVERRIDE_FLAG"
             }
-            resp = JSONResponse(status_code=400, content=error_body)
             _log("Manhattan", "createExpectedReturn", {"rmaId": rmaId, "sku": sku, "qty": qty, "overrides": normalized_overrides, "caseId": caseId, "approvalCode": approvalCode}, error_body)
-            return resp
+            return JSONResponse(status_code=200, content=error_body)
     
     from models import ExpectedReturnReference
     
