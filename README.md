@@ -100,16 +100,6 @@ TWILIO_ACCOUNT_SID=your_account_sid
 TWILIO_AUTH_TOKEN=your_auth_token
 ```
 
-If using Saas, create the following secrets via UI:
-
-```bash
-DEMO_BACKEND_BASE_URL = http://localhost:8100
-AWS_BEDROCK_ACCESS_KEY = <your-key>
-AWS_BEDROCK_SECRET_KEY = <your-secret>
-SALESFORCE_BASE_URL = <your-salesforce-url>
-SALESFORCE_CLIENT_ID = <your-client-id>
-SALESFORCE_CLIENT_SECRET = <your-client-secret>
-```
 
 ### 5. Deploy BPMN Processes
 

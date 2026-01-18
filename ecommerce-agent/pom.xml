@@ -13,8 +13,10 @@
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.release>21</maven.compiler.release>
 
-	<spring-boot.version>3.3.2</spring-boot.version>
-    <camunda.version>8.8.8</camunda.version>
+	<spring-boot.version>3.5.9</spring-boot.version>
+    <camunda.version>8.8.5</camunda.version>
+    
+    <version.wiremock-spring-boot>4.0.8</version.wiremock-spring-boot>    
   </properties>
 
   <dependencyManagement>
@@ -26,6 +28,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+	    
     </dependencies>
   </dependencyManagement>
 
@@ -52,6 +55,13 @@
   <version>${camunda.version}</version>
   <scope>test</scope>
 </dependency>
+
+    <dependency>
+      <groupId>org.wiremock.integrations</groupId>
+      <artifactId>wiremock-spring-boot</artifactId>
+      <version>${version.wiremock-spring-boot}</version>
+      <scope>test</scope>
+    </dependency>
 	</dependencies>
 
 	<build>
