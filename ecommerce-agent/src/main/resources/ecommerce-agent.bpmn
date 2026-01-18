@@ -23,7 +23,7 @@
           <zeebe:input source="=5000" target="provider.bedrock.model.parameters.maxTokens" />
           <zeebe:input source="=0.2" target="provider.bedrock.model.parameters.temperature" />
           <zeebe:input source="=0.1" target="provider.bedrock.model.parameters.topP" />
-          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;## What you should do&#10;&#10;- Identify the customer and the relevant order/item as early as possible.&#10;- Prefer extraction of identifiers (customer id, order id, sku, delivery date) via tools instead of asking the customer.&#10;- Only ask the customer for ONE identifier (email OR mobile) if you cannot identify them from supportCase.communicationContext or cannot find matching orders.&#10;- Never invent customers, orders, prices, dates, or eligibility decisions. If multiple orders match, present up to two options and ask the customer to choose.&#10;&#10;## Customer messaging and tools&#10;&#10;- Never output customer-facing text directly. Always use Tool_MessageCustomer for anything the customer should see.&#10;- Use tools as needed based on context (e.g., eligibility checks, RMA creation, warehouse registration, product search, cart/order actions). Do not follow a fixed script; decide the right tool calls from the situation.&#10;&#10;## When to wait vs end&#10;&#10;- If your last message to the customer contains a question or requires a reply, you MUST call Tool_WaitForMessage immediately after Tool_MessageCustomer.&#10;- If your message is informational or a final closing message, DO NOT call Tool_WaitForMessage afterwards.&#10;&#10;## Closing rule (must prevent endless waiting)&#10;&#10;When the return/exchange is completed and you have sent a final summary/closure to the customer:&#10;- The closing message MUST NOT contain a \&#34;?\&#34;.&#10;- Do NOT ask \&#34;Is there anything else...\&#34; or similar.&#10;- End with a statement like \&#34;If you need anything else in the future, feel free to reach out.\&#34;.&#10;- After that closing message (Tool_MessageCustomer), STOP and do not call any more tools.&#10;&#34;" target="data.systemPrompt.prompt" />
+          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;## What you should do&#10;&#10;- Identify the customer and the relevant order/item as early as possible.&#10;- Prefer extraction of identifiers (customer id, order id, sku, delivery date) via tools instead of asking the customer.&#10;- Try to identify them from \&#34;supportCase.communicationContext\&#34; or \&#34;customer\&#34;&#10;- Only ask the customer for ONE identifier (email OR mobile) if none of the above are present or information cannot be found via tools&#10;- Never invent customers, orders, prices, dates, or eligibility decisions. If multiple orders match, present up to two options and ask the customer to choose.&#10;&#10;## Customer messaging and tools&#10;&#10;- Never output customer-facing text directly. Always use Tool_MessageCustomer for anything the customer should see.&#10;- Use tools as needed based on context (e.g., eligibility checks, RMA creation, warehouse registration, product search, cart/order actions). Do not follow a fixed script; decide the right tool calls from the situation.&#10;&#10;## When to wait vs end&#10;&#10;- If your last message to the customer contains a question or requires a reply, you MUST call Tool_WaitForMessage immediately after Tool_MessageCustomer.&#10;- If your message is informational or a final closing message, DO NOT call Tool_WaitForMessage afterwards.&#10;&#10;&#10;## Recommendations&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. &#10;&#10;If you find a product, verify it is in stock and eligible for shipment, then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown (or product search is unavailable), do not apologize and do not mention recommendations. Proceed directly with the return flow.&#10;&#10;## Closing rule (must prevent endless waiting)&#10;&#10;When the return/exchange is completed and you have sent a final summary/closure to the customer:&#10;- The closing message MUST NOT contain a \&#34;?\&#34;.&#10;- Do NOT ask \&#34;Is there anything else...\&#34; or similar.&#10;- End with a statement like \&#34;If you need anything else in the future, feel free to reach out.\&#34;.&#10;- After that closing message (Tool_MessageCustomer), STOP and do not call any more tools.&#10;&#34;" target="data.systemPrompt.prompt" />
           <zeebe:input source="=supportCase.request" target="data.userPrompt.prompt" />
           <zeebe:input target="agentContext" />
           <zeebe:input source="in-process" target="data.memory.storage.type" />
@@ -348,6 +348,35 @@ If SKU is active and eligible, use:
       <bpmn:incoming>Flow_1sm4gwc</bpmn:incoming>
       <bpmn:outgoing>Flow_00z8ltx</bpmn:outgoing>
     </bpmn:sendTask>
+    <bpmn:adHocSubProcess id="Activity_0ikmel7" zeebe:modelerTemplate="io.camunda.connectors.agenticai.aiagent.jobworker.v1" zeebe:modelerTemplateVersion="6" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNBNTZFRkYiLz4KPG1hc2sgaWQ9InBhdGgtMi1vdXRzaWRlLTFfMTg1XzYiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjQiIHk9IjQiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iYmxhY2siPgo8cmVjdCBmaWxsPSJ3aGl0ZSIgeD0iNCIgeT0iNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ii8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjAuMDEwNSAxMi4wOTg3QzE4LjQ5IDEwLjU4OTQgMTcuMTU5NCA4LjEwODE0IDE2LjE3OTkgNi4wMTEwM0MxNi4xNTIgNi4wMDQ1MSAxNi4xMTc2IDYgMTYuMDc5NCA2QzE2LjA0MTEgNiAxNi4wMDY2IDYuMDA0NTEgMTUuOTc4OCA2LjAxMTA0QzE0Ljk5OTQgOC4xMDgxNCAxMy42Njk3IDEwLjU4ODkgMTIuMTQ4MSAxMi4wOTgxQzEwLjYyNjkgMTMuNjA3MSA4LjEyNTY4IDE0LjkyNjQgNi4wMTE1NyAxNS44OTgxQzYuMDA0NzQgMTUuOTI2MSA2IDE1Ljk2MTEgNiAxNkM2IDE2LjAzODcgNi4wMDQ2OCAxNi4wNzM2IDYuMDExNDQgMTYuMTAxNEM4LjEyNTE5IDE3LjA3MjkgMTAuNjI2MiAxOC4zOTE5IDEyLjE0NzcgMTkuOTAxNkMxMy42Njk3IDIxLjQxMDcgMTQuOTk5NiAyMy44OTIgMTUuOTc5MSAyNS45ODlDMTYuMDA2OCAyNS45OTU2IDE2LjA0MTEgMjYgMTYuMDc5MyAyNkMxNi4xMTc1IDI2IDE2LjE1MTkgMjUuOTk1NCAxNi4xNzk2IDI1Ljk4OUMxNy4xNTkxIDIzLjg5MiAxOC40ODg4IDIxLjQxMSAyMC4wMDk5IDE5LjkwMjFNMjAuMDA5OSAxOS45MDIxQzIxLjUyNTMgMTguMzk4NyAyMy45NDY1IDE3LjA2NjkgMjUuOTkxNSAxNi4wODI0QzI1Ljk5NjUgMTYuMDU5MyAyNiAxNi4wMzEgMjYgMTUuOTk5N0MyNiAxNS45Njg0IDI1Ljk5NjUgMTUuOTQwMyAyNS45OTE1IDE1LjkxNzFDMjMuOTQ3NCAxNC45MzI3IDIxLjUyNTkgMTMuNjAxIDIwLjAxMDUgMTIuMDk4NyIvPgo8L21hc2s+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjAuMDEwNSAxMi4wOTg3QzE4LjQ5IDEwLjU4OTQgMTcuMTU5NCA4LjEwODE0IDE2LjE3OTkgNi4wMTEwM0MxNi4xNTIgNi4wMDQ1MSAxNi4xMTc2IDYgMTYuMDc5NCA2QzE2LjA0MTEgNiAxNi4wMDY2IDYuMDA0NTEgMTUuOTc4OCA2LjAxMTA0QzE0Ljk5OTQgOC4xMDgxNCAxMy42Njk3IDEwLjU4ODkgMTIuMTQ4MSAxMi4wOTgxQzEwLjYyNjkgMTMuNjA3MSA4LjEyNTY4IDE0LjkyNjQgNi4wMTE1NyAxNS44OTgxQzYuMDA0NzQgMTUuOTI2MSA2IDE1Ljk2MTEgNiAxNkM2IDE2LjAzODcgNi4wMDQ2OCAxNi4wNzM2IDYuMDExNDQgMTYuMTAxNEM4LjEyNTE5IDE3LjA3MjkgMTAuNjI2MiAxOC4zOTE5IDEyLjE0NzcgMTkuOTAxNkMxMy42Njk3IDIxLjQxMDcgMTQuOTk5NiAyMy44OTIgMTUuOTc5MSAyNS45ODlDMTYuMDA2OCAyNS45OTU2IDE2LjA0MTEgMjYgMTYuMDc5MyAyNkMxNi4xMTc1IDI2IDE2LjE1MTkgMjUuOTk1NCAxNi4xNzk2IDI1Ljk4OUMxNy4xNTkxIDIzLjg5MiAxOC40ODg4IDIxLjQxMSAyMC4wMDk5IDE5LjkwMjFNMjAuMDA5OSAxOS45MDIxQzIxLjUyNTMgMTguMzk4NyAyMy45NDY1IDE3LjA2NjkgMjUuOTkxNSAxNi4wODI0QzI1Ljk5NjUgMTYuMDU5MyAyNiAxNi4wMzEgMjYgMTUuOTk5N0MyNiAxNS45Njg0IDI1Ljk5NjUgMTUuOTQwMyAyNS45OTE1IDE1LjkxNzFDMjMuOTQ3NCAxNC45MzI3IDIxLjUyNTkgMTMuNjAxIDIwLjAxMDUgMTIuMDk4NyIgZmlsbD0id2hpdGUiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMC4wMTA1IDEyLjA5ODdDMTguNDkgMTAuNTg5NCAxNy4xNTk0IDguMTA4MTQgMTYuMTc5OSA2LjAxMTAzQzE2LjE1MiA2LjAwNDUxIDE2LjExNzYgNiAxNi4wNzk0IDZDMTYuMDQxMSA2IDE2LjAwNjYgNi4wMDQ1MSAxNS45Nzg4IDYuMDExMDRDMTQuOTk5NCA4LjEwODE0IDEzLjY2OTcgMTAuNTg4OSAxMi4xNDgxIDEyLjA5ODFDMTAuNjI2OSAxMy42MDcxIDguMTI1NjggMTQuOTI2NCA2LjAxMTU3IDE1Ljg5ODFDNi4wMDQ3NCAxNS45MjYxIDYgMTUuOTYxMSA2IDE2QzYgMTYuMDM4NyA2LjAwNDY4IDE2LjA3MzYgNi4wMTE0NCAxNi4xMDE0QzguMTI1MTkgMTcuMDcyOSAxMC42MjYyIDE4LjM5MTkgMTIuMTQ3NyAxOS45MDE2QzEzLjY2OTcgMjEuNDEwNyAxNC45OTk2IDIzLjg5MiAxNS45NzkxIDI1Ljk4OUMxNi4wMDY4IDI1Ljk5NTYgMTYuMDQxMSAyNiAxNi4wNzkzIDI2QzE2LjExNzUgMjYgMTYuMTUxOSAyNS45OTU0IDE2LjE3OTYgMjUuOTg5QzE3LjE1OTEgMjMuODkyIDE4LjQ4ODggMjEuNDExIDIwLjAwOTkgMTkuOTAyMU0yMC4wMDk5IDE5LjkwMjFDMjEuNTI1MyAxOC4zOTg3IDIzLjk0NjUgMTcuMDY2OSAyNS45OTE1IDE2LjA4MjRDMjUuOTk2NSAxNi4wNTkzIDI2IDE2LjAzMSAyNiAxNS45OTk3QzI2IDE1Ljk2ODQgMjUuOTk2NSAxNS45NDAzIDI1Ljk5MTUgMTUuOTE3MUMyMy45NDc0IDE0LjkzMjcgMjEuNTI1OSAxMy42MDEgMjAuMDEwNSAxMi4wOTg3IiBzdHJva2U9IiM0OTFEOEIiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgbWFzaz0idXJsKCNwYXRoLTItb3V0c2lkZS0xXzE4NV82KSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda.agenticai:aiagent-job-worker:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="anthropic" target="provider.type" />
+          <zeebe:input target="provider.anthropic.authentication.apiKey" />
+          <zeebe:input source="claude-3-5-sonnet-20240620" target="provider.anthropic.model.model" />
+          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;# Core behavior&#10;&#10;Start every return conversation by identifying the customer and finding their most recent relevant order.&#10;&#10;Prefer extraction of identifiers (customer id, order id, product, delivery date) through tool usage before asking the customer to provide information.&#10;&#10;Do not ask for an order number unless you are unable to identify the customer or find matching orders.&#10;&#10;# Identifier handling&#10;&#10;When identifying the customer, first look for available identifiers in the process variable supportCase.communicationContext. Use supportCase.communicationContext.mobilePhone and/or supportCase.communicationContext.emailAddress if present.&#10;&#10;Only ask the customer for an identifier if neither of these values is available or usable.&#10;&#10;# Conversation policy&#10;&#10;If the customer intent is a return, attempt customer identification using the identifiers from supportcase.communicationContext before asking any questions.&#10;&#10;If customer identification is not possible, ask for exactly one missing identifier (either email or mobile phone), not multiple at once.&#10;&#10;Once the customer is identified, load recent orders and look for likely matches based on product type and recency.&#10;&#10;Summarize the most likely order in clear, human-readable terms (item, approximate delivery date, price) and ask the customer to confirm it.&#10;&#10;Do not proceed with return approval, eligibility checks, or creation of return artifacts until the customer confirms the correct item.&#10;&#10;# Reasoning rules&#10;&#10;Never invent customers, orders, prices, delivery dates, or eligibility decisions.&#10;&#10;If multiple orders could match, present up to two options and ask the customer to choose.&#10;&#10;If no matching order is found, ask a targeted follow-up question (for example whether the purchase was made with a different email or as a guest).&#10;&#10;# Interaction style&#10;&#10;Be friendly, concise, and confident.&#10;&#10;Do not expose internal variables, system names, API calls, or technical details to the customer.&#10;&#10;Present findings as helpful statements (“I see a router delivered about 12 days ago for $150 — is that the one you want to return?”).&#10;&#10;# Customer communication rule&#10;&#10;You must never send customer-facing text as your final response directly.&#10;Whenever you need to send a message to the customer, you MUST call the tool “Message customer”.&#10;&#10;Immediately after sending a customer message that expects a reply (confirmation, question, choice), you MUST call “Wait for customer message”.&#10;&#10;The only time you may finish without calling the wait is when the case is explicitly resolved and confirmed, or you are just sending an information to the customer that doesn&#39;t have any response&#10;&#10;# Interaction protocol&#10;&#10;When you have identified a likely order, you MUST ask the customer with exactly one clear confirmation question:&#10;“I see a router delivered on &#60;date&#62; for &#60;price&#62;. Is this the one you want to return?”&#10;&#10;&#10;# Recommendation rule&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. &#10;&#10;If you find a product, verify it is in stock and eligible for shipment, then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown (or product search is unavailable), do not apologize and do not mention recommendations. Proceed directly with the return flow.&#10;&#34;" target="data.systemPrompt.prompt" />
+          <zeebe:input target="data.userPrompt.prompt" />
+          <zeebe:input target="agentContext" />
+          <zeebe:input source="in-process" target="data.memory.storage.type" />
+          <zeebe:input source="=20" target="data.memory.contextWindowSize" />
+          <zeebe:input source="=10" target="data.limits.maxModelCalls" />
+          <zeebe:input source="WAIT_FOR_TOOL_CALL_RESULTS" target="data.events.behavior" />
+          <zeebe:input source="text" target="data.response.format.type" />
+          <zeebe:input source="=false" target="data.response.format.parseJson" />
+          <zeebe:input source="=false" target="data.response.includeAssistantMessage" />
+          <zeebe:input source="=false" target="data.response.includeAgentContext" />
+          <zeebe:output source="=agent" target="agent" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="elementTemplateVersion" value="6" />
+          <zeebe:header key="elementTemplateId" value="io.camunda.connectors.agenticai.aiagent.jobworker.v1" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+        <zeebe:adHoc outputCollection="toolCallResults" outputElement="={&#10;  id: toolCall._meta.id,&#10;  name: toolCall._meta.name,&#10;  content: toolCallResult&#10;}" />
+      </bpmn:extensionElements>
+      <bpmn:task id="Activity_16nz764" name="Do nothing" />
+    </bpmn:adHocSubProcess>
   </bpmn:process>
   <bpmn:message id="Message_1r1v4qd" name="WhatsApp2" />
   <bpmn:message id="Message_0p7867v" name="ecommerceAgentStart" />
@@ -358,40 +387,23 @@ If SKU is active and eligible, use:
   </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ecommerce-agent">
-      <bpmndi:BPMNShape id="Event_0l4hj6x_di" bpmnElement="Event_1xxrygt">
-        <dc:Bounds x="182" y="152" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="160" y="195" width="81" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1dwefqj_di" bpmnElement="Activity_1mrkke7">
-        <dc:Bounds x="780" y="140" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0il4izb_di" bpmnElement="Event_0il4izb">
-        <dc:Bounds x="932" y="162" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="422" y="862" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="414" y="905" width="52" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0nyk35b_di" bpmnElement="Event_0nyk35b">
-        <dc:Bounds x="552" y="852" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1gvmxab_di" bpmnElement="SubProcess_EcommerceAgent" isExpanded="true">
         <dc:Bounds x="320" y="80" width="390" height="740" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_144xlhd_di" bpmnElement="Tool_MessageCustomer">
-        <dc:Bounds x="350" y="120" width="100" height="80" />
-        <bpmndi:BPMNLabel />
+      <bpmndi:BPMNShape id="Activity_0o6iy1c_di" bpmnElement="Tool_SAP_MCP">
+        <dc:Bounds x="470" y="240" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1wk09jl_di" bpmnElement="Tool_Magento_ListRecentOrders">
         <dc:Bounds x="350" y="240" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0t87ykw_di" bpmnElement="Tool_Magento_SearchProducts">
-        <dc:Bounds x="350" y="330" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_0gqsaip" bpmnElement="Tool_Magento_CreateRMA">
+        <dc:Bounds x="350" y="450" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_115kmd0" bpmnElement="Tool_Magento_CreateCart">
@@ -410,17 +422,6 @@ If SKU is active and eligible, use:
         <dc:Bounds x="470" y="680" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0gqsaip" bpmnElement="Tool_Magento_CreateRMA">
-        <dc:Bounds x="350" y="450" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1t80u8s_di" bpmnElement="Tool_Manhatten_CreateExpectedReturn">
-        <dc:Bounds x="470" y="450" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0o6iy1c_di" bpmnElement="Tool_SAP_MCP">
-        <dc:Bounds x="470" y="240" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_17ij23f" bpmnElement="Task_Salesforce_LookupContact">
         <dc:Bounds x="590" y="240" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -429,14 +430,45 @@ If SKU is active and eligible, use:
         <dc:Bounds x="590" y="330" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1t80u8s_di" bpmnElement="Tool_Manhatten_CreateExpectedReturn">
+        <dc:Bounds x="470" y="450" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t87ykw_di" bpmnElement="Tool_Magento_SearchProducts">
+        <dc:Bounds x="350" y="330" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_144xlhd_di" bpmnElement="Tool_MessageCustomer">
+        <dc:Bounds x="350" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0a19pyj_di" bpmnElement="Tool_WaitForMessage">
         <dc:Bounds x="470" y="120" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1j9u2o1_di" bpmnElement="Flow_1j9u2o1">
-        <di:waypoint x="218" y="170" />
-        <di:waypoint x="320" y="170" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0il4izb_di" bpmnElement="Event_0il4izb">
+        <dc:Bounds x="932" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nyk35b_di" bpmnElement="Event_0nyk35b">
+        <dc:Bounds x="552" y="852" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0l4hj6x_di" bpmnElement="Event_1xxrygt">
+        <dc:Bounds x="182" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="195" width="81" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dwefqj_di" bpmnElement="Activity_1mrkke7">
+        <dc:Bounds x="780" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1cgaki9_di" bpmnElement="Activity_0ikmel7" isExpanded="true">
+        <dc:Bounds x="360" y="960" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16nz764_di" bpmnElement="Activity_16nz764">
+        <dc:Bounds x="440" y="1010" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0eqjm89_di" bpmnElement="Flow_0eqjm89">
         <di:waypoint x="458" y="880" />
         <di:waypoint x="495" y="880" />
@@ -446,6 +478,10 @@ If SKU is active and eligible, use:
       <bpmndi:BPMNEdge id="Flow_1sm4gwc_di" bpmnElement="Flow_1sm4gwc">
         <di:waypoint x="710" y="180" />
         <di:waypoint x="780" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j9u2o1_di" bpmnElement="Flow_1j9u2o1">
+        <di:waypoint x="218" y="170" />
+        <di:waypoint x="320" y="170" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_00z8ltx_di" bpmnElement="Flow_00z8ltx">
         <di:waypoint x="880" y="180" />
