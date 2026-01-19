@@ -23,7 +23,7 @@
           <zeebe:input source="=5000" target="provider.bedrock.model.parameters.maxTokens" />
           <zeebe:input source="=0.2" target="provider.bedrock.model.parameters.temperature" />
           <zeebe:input source="=0.1" target="provider.bedrock.model.parameters.topP" />
-          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;## What you should do&#10;&#10;- Identify the customer and the relevant order/item as early as possible.&#10;- Prefer extraction of identifiers (customer id, order id, sku, delivery date) via tools instead of asking the customer.&#10;- Try to identify them from \&#34;supportCase.communicationContext\&#34; or \&#34;customer\&#34;&#10;- Only ask the customer for ONE identifier (email OR mobile) if none of the above are present or information cannot be found via tools&#10;- Never invent customers, orders, prices, dates, or eligibility decisions. If multiple orders match, present up to two options and ask the customer to choose.&#10;&#10;## Customer messaging and tools&#10;&#10;- Never output customer-facing text directly. Always use Tool_MessageCustomer for anything the customer should see.&#10;- Use tools as needed based on context (e.g., eligibility checks, RMA creation, warehouse registration, product search, cart/order actions). Do not follow a fixed script; decide the right tool calls from the situation.&#10;&#10;## When to wait vs end&#10;&#10;- If your last message to the customer contains a question or requires a reply, you MUST call Tool_WaitForMessage immediately after Tool_MessageCustomer.&#10;- If your message is informational or a final closing message, DO NOT call Tool_WaitForMessage afterwards.&#10;&#10;&#10;## Recommendations&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. &#10;&#10;If you find a product, verify it is in stock and eligible for shipment, then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown (or product search is unavailable), do not apologize and do not mention recommendations. Proceed directly with the return flow.&#10;&#10;## Closing rule (must prevent endless waiting)&#10;&#10;When the return/exchange is completed and you have sent a final summary/closure to the customer:&#10;- The closing message MUST NOT contain a \&#34;?\&#34;.&#10;- Do NOT ask \&#34;Is there anything else...\&#34; or similar.&#10;- End with a statement like \&#34;If you need anything else in the future, feel free to reach out.\&#34;.&#10;- After that closing message (Tool_MessageCustomer), STOP and do not call any more tools.&#10;&#34;" target="data.systemPrompt.prompt" />
+          <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;## What you should do&#10;&#10;- Identify the customer and the relevant order/item as early as possible.&#10;- Prefer extraction of identifiers (customer id, order id, sku, delivery date) via tools instead of asking the customer.&#10;- Never invent customers, orders, prices, dates, or eligibility decisions. If multiple orders match, present up to two options and ask the customer to choose.&#10;&#10;## Customer identification (hard rules)&#10;&#10;- Assume a process variable named \&#34;customer\&#34; may already be provided to you.&#10;- If \&#34;customer\&#34; is present and has a non-empty \&#34;id\&#34;, the customer is already identified:&#10;  - Use customer.id as the customerId for Magento tools.&#10;  - You MUST NOT ask the customer for email or mobile phone.&#10;  - You MUST NOT call Task_Salesforce_LookupContact.&#10;&#10;- Only if \&#34;customer\&#34; is missing OR customer.id is empty, use supportCase.communicationContext (email/mobile) to identify the customer via tools&#10;&#10;- Only if neither \&#34;customer\&#34; nor supportCase.communicationContext provides usable identifiers, ask the customer for ONE identifier (email OR mobile).&#10;&#10;&#10;## Customer messaging and tools&#10;&#10;- Never output customer-facing text directly. Always use Tool_MessageCustomer for anything the customer should see.&#10;- Use tools as needed based on context (e.g., eligibility checks, RMA creation, warehouse registration, product search, cart/order actions). Do not follow a fixed script; decide the right tool calls from the situation.&#10;&#10;## When to wait vs end&#10;&#10;- If your last message to the customer contains a question or requires a reply, you MUST call Tool_WaitForMessage immediately after Tool_MessageCustomer.&#10;- If your message is informational or a final closing message, DO NOT call Tool_WaitForMessage afterwards.&#10;&#10;&#10;## Recommendations&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. &#10;&#10;If you find a product, verify it is in stock and eligible for shipment, then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown (or product search is unavailable), do not apologize and do not mention recommendations. Proceed directly with the return flow.&#10;&#10;## Closing rule (must prevent endless waiting)&#10;&#10;When the return/exchange is completed and you have sent a final summary/closure to the customer:&#10;- The closing message MUST NOT contain a \&#34;?\&#34;.&#10;- Do NOT ask \&#34;Is there anything else...\&#34; or similar.&#10;- End with a statement like \&#34;If you need anything else in the future, feel free to reach out.\&#34;.&#10;- After that closing message (Tool_MessageCustomer), STOP and do not call any more tools.&#10;&#34;" target="data.systemPrompt.prompt" />
           <zeebe:input source="=supportCase.request" target="data.userPrompt.prompt" />
           <zeebe:input target="agentContext" />
           <zeebe:input source="in-process" target="data.memory.storage.type" />
@@ -51,7 +51,7 @@
           <zeebe:taskDefinition type="io.camunda.agenticai:mcpremoteclient:1" retries="3" />
           <zeebe:ioMapping>
             <zeebe:input source="sse" target="data.transport.type" />
-            <zeebe:input source="http://localhost:8100/mcp/sse" target="data.transport.sse.url" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/mcp/sse" target="data.transport.sse.url" />
             <zeebe:input source="noAuth" target="data.transport.sse.authentication.type" />
             <zeebe:input source="=false" target="data.options.clientCache" />
             <zeebe:input source="aiAgentTool" target="data.connectorMode.type" />
@@ -74,32 +74,14 @@
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/commerce" target="apiBaseUrl" />
             <zeebe:input source="listOrders" target="operation" />
             <zeebe:input source="=fromAi(toolCall.customerId)" target="customerId" />
             <zeebe:input source="5" target="limit" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
-            <zeebe:header key="resultVariable" value="rawMagentoRecentOrdersResponse" />
             <zeebe:header key="resultExpression" value="=if response.body = null or count(response.body) = 0 then&#10;{&#10;  recentOrders: [],&#10;  selectedOrderCandidate: null,&#10;  toolCallResult: {&#10;    status: &#34;no_orders&#34;,&#10;    message: &#34;No recent orders found for this customer.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  recentOrders: response.body,&#10;  selectedOrderCandidate: response.body[1],&#10;  toolCallResult: {&#10;    status: &#34;orders_found&#34;,&#10;    candidate: {&#10;      orderId: response.body[1].order_id,&#10;      deliveryDate: response.body[1].delivery_date,&#10;      status: response.body[1].status,&#10;      firstItem: response.body[1].items[1]&#10;    },&#10;    message:&#10;      &#34;Found a delivered order. Likely match: &#34; +&#10;      response.body[1].items[1].product_name +&#10;      &#34; delivered on &#34; + response.body[1].delivery_date +&#10;      &#34; for $&#34; + string(response.body[1].items[1].unit_price) +&#10;      &#34;. Ask the customer to confirm this is the one to return.&#34;&#10;  }&#10;}&#10;" />
-          </zeebe:taskHeaders>
-        </bpmn:extensionElements>
-      </bpmn:serviceTask>
-      <bpmn:serviceTask id="Tool_Magento_CreateRMA" name="Create RMA" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="magento-connector" />
-          <zeebe:ioMapping>
-            <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
-            <zeebe:input source="createRma" target="operation" />
-            <zeebe:input source="=fromAi(toolCall.orderId)" target="orderId" />
-            <zeebe:input source="=fromAi(toolCall.customerId)" target="customerId" />
-            <zeebe:input source="=fromAi(toolCall.sku)" target="sku" />
-            <zeebe:input source="=fromAi(toolCall.reason, &#34;Return reason&#34;)" target="reason" />
-          </zeebe:ioMapping>
-          <zeebe:taskHeaders>
-            <zeebe:header key="resultExpression" value="=if response.body = null or response.body.rma_id = null then&#10;{&#10;  rma: null,&#10;  toolCallResult: {&#10;    status: &#34;failed&#34;,&#10;    message: &#34;Failed to create RMA. Please try again or contact support.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  rma: response.body,&#10;  toolCallResult: {&#10;    status: &#34;created&#34;,&#10;    rmaId: response.body.rma_id,&#10;    trackingNumber: response.body.tracking_number,&#10;    message: &#34;RMA created successfully with ID &#34; + response.body.rma_id + &#34;. Tracking number: &#34; + response.body.tracking_number&#10;  }&#10;}&#10;" />
-            <zeebe:header key="resultVariable" value="rawMagentoCreateRmaResponse" />
+            <zeebe:header key="resultVariable" value="rawMagentoRecentOrdersResponse" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
       </bpmn:serviceTask>
@@ -108,7 +90,7 @@
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/commerce" target="apiBaseUrl" />
             <zeebe:input source="createCart" target="operation" />
             <zeebe:input source="=fromAi(toolCall.customerId)" target="customerId" />
           </zeebe:ioMapping>
@@ -123,7 +105,7 @@
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/commerce" target="apiBaseUrl" />
             <zeebe:input source="addCartItem" target="operation" />
             <zeebe:input source="=fromAi(toolCall.cartId)" target="cartId" />
             <zeebe:input source="=fromAi(toolCall.sku)" target="sku" />
@@ -140,7 +122,7 @@
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/commerce" target="apiBaseUrl" />
             <zeebe:input source="applyStoreCredit" target="operation" />
             <zeebe:input source="=fromAi(toolCall.cartId)" target="cartId" />
             <zeebe:input source="=fromAi(toolCall.amount)" target="amount" />
@@ -156,7 +138,7 @@
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
             <zeebe:input source="magentoResponse" target="resultVariable" />
-            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/commerce" target="apiBaseUrl" />
             <zeebe:input source="placeOrder" target="operation" />
             <zeebe:input source="=fromAi(toolCall.cartId)" target="cartId" />
             <zeebe:input source="credit_card" target="paymentMethod" />
@@ -215,7 +197,7 @@
           </zeebe:ioMapping>
           <zeebe:taskHeaders>
             <zeebe:header key="resultVariable" value="rawSalesforceCreateCaseResponse" />
-            <zeebe:header key="resultExpression" value="={ &#10;  caseId: response.body.id, &#10;  caseSalesforceUrl: &#34;https://camunda--demoenv.sandbox.my.salesforce.com/&#34; + response.body.id&#10;}" />
+            <zeebe:header key="resultExpression" value="={ &#10;  caseId: response.body.id, &#10;  caseSalesforceUrl: &#34;https://camunda--demoenv.sandbox.my.salesforce.com/&#34; + response.body.id,&#10;  toolCallResult: {&#10;      status: &#34;success&#34;,&#10;      caseId: response.body.id&#10;  }&#10;}" />
             <zeebe:header key="elementTemplateVersion" value="3" />
             <zeebe:header key="elementTemplateId" value="io.camunda.connectors.Salesforce.v1" />
           </zeebe:taskHeaders>
@@ -256,7 +238,7 @@ If SKU is active and eligible, use:
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="io.camunda:http-json:1" />
           <zeebe:ioMapping>
-            <zeebe:input source="=if secrets.DEMO_BACKEND_BASE_URL != null then secrets.DEMO_BACKEND_BASE_URL + &#34;/wms&#34; else &#34;http://localhost:8100/wms&#34;" target="baseUrl" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/wms" target="baseUrl" />
             <zeebe:input source="createExpectedReturn" target="operation" />
             <zeebe:input source="=fromAi(toolCall.rmaId)" target="rmaId" />
             <zeebe:input source="=fromAi(toolCall.sku)" target="returnSku" />
@@ -278,7 +260,7 @@ If SKU is active and eligible, use:
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="magento-connector" />
           <zeebe:ioMapping>
-            <zeebe:input source="=secrets.DEMO_BACKEND_BASE_URL + &#34;/commerce&#34;" target="apiBaseUrl" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/commerce" target="apiBaseUrl" />
             <zeebe:input source="productSearch" target="operation" />
             <zeebe:input source="=fromAi(toolCall.searchQuery)" target="query" />
             <zeebe:input source="=fromAi(toolCall.category)" target="category" />
@@ -314,6 +296,24 @@ If SKU is active and eligible, use:
           </zeebe:ioMapping>
         </bpmn:extensionElements>
       </bpmn:receiveTask>
+      <bpmn:serviceTask id="Tool_Magento_CreateRMA" name="Create RMA" zeebe:modelerTemplate="service-task-template" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTI5LjE2IDEzMzMuMzMiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBpbWFnZS1yZW5kZXJpbmc9Im9wdGltaXplUXVhbGl0eSIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02MzguOTEgMzk5Ljkzdjc1OS41bC03NC42OSA0NS42NS03NC43NS00NS44OVY0MDAuNTJMMjk1LjkzIDUxOS42OHY2NDkuNTFsMjY4LjI4IDE2NC4xNSAyNzAuNTUtMTY1LjMyVjUxOS4yN0w2MzguODkgMzk5Ljk0ek01NjQuMjIgMEwwIDM0MS44NHY2NDkuNTlsMTQ2LjU0IDg2LjMzVjQyOC4xMWw0MTcuOC0yNTQuMDQgNDE4LjE5IDI1My42NyAxLjcyLjk4LS4xOSA2NDguMDcgMTQ1LjEtODUuMzZWMzQxLjg0TDU2NC4yMyAweiIgZmlsbD0iI2YyNjMyMiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="magento-connector" />
+          <zeebe:ioMapping>
+            <zeebe:input source="magentoResponse" target="resultVariable" />
+            <zeebe:input source="{{secrets.DEMO_BACKEND_BASE_URL}}/commerce" target="apiBaseUrl" />
+            <zeebe:input source="createRma" target="operation" />
+            <zeebe:input source="=fromAi(toolCall.orderId)" target="orderId" />
+            <zeebe:input source="=fromAi(toolCall.customerId)" target="customerId" />
+            <zeebe:input source="=fromAi(toolCall.sku)" target="sku" />
+            <zeebe:input source="=fromAi(toolCall.reason, &#34;Return reason&#34;)" target="reason" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="resultExpression" value="=if response.body = null or response.body.rma_id = null then&#10;{&#10;  rma: null,&#10;  toolCallResult: {&#10;    status: &#34;failed&#34;,&#10;    message: &#34;Failed to create RMA. Please try again or contact support.&#34;&#10;  }&#10;}&#10;else&#10;{&#10;  rma: response.body,&#10;  toolCallResult: {&#10;    status: &#34;created&#34;,&#10;    rmaId: response.body.rma_id,&#10;    trackingNumber: response.body.tracking_number,&#10;    message: &#34;RMA created successfully with ID &#34; + response.body.rma_id + &#34;. Tracking number: &#34; + response.body.tracking_number&#10;  }&#10;}&#10;" />
+            <zeebe:header key="resultVariable" value="rawMagentoCreateRmaResponse" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+      </bpmn:serviceTask>
     </bpmn:adHocSubProcess>
     <bpmn:sequenceFlow id="Flow_0eqjm89" sourceRef="StartEvent_1" targetRef="Event_0nyk35b" />
     <bpmn:endEvent id="Event_0il4izb">
@@ -353,10 +353,10 @@ If SKU is active and eligible, use:
         <zeebe:taskDefinition type="io.camunda.agenticai:aiagent-job-worker:1" retries="3" />
         <zeebe:ioMapping>
           <zeebe:input source="anthropic" target="provider.type" />
-          <zeebe:input target="provider.anthropic.authentication.apiKey" />
+          <zeebe:input source="sadas" target="provider.anthropic.authentication.apiKey" />
           <zeebe:input source="claude-3-5-sonnet-20240620" target="provider.anthropic.model.model" />
           <zeebe:input source="=&#34;You are an AI service agent for an e-commerce company. Your task is to help customers return items they bought online with minimal friction.&#10;&#10;# Core behavior&#10;&#10;Start every return conversation by identifying the customer and finding their most recent relevant order.&#10;&#10;Prefer extraction of identifiers (customer id, order id, product, delivery date) through tool usage before asking the customer to provide information.&#10;&#10;Do not ask for an order number unless you are unable to identify the customer or find matching orders.&#10;&#10;# Identifier handling&#10;&#10;When identifying the customer, first look for available identifiers in the process variable supportCase.communicationContext. Use supportCase.communicationContext.mobilePhone and/or supportCase.communicationContext.emailAddress if present.&#10;&#10;Only ask the customer for an identifier if neither of these values is available or usable.&#10;&#10;# Conversation policy&#10;&#10;If the customer intent is a return, attempt customer identification using the identifiers from supportcase.communicationContext before asking any questions.&#10;&#10;If customer identification is not possible, ask for exactly one missing identifier (either email or mobile phone), not multiple at once.&#10;&#10;Once the customer is identified, load recent orders and look for likely matches based on product type and recency.&#10;&#10;Summarize the most likely order in clear, human-readable terms (item, approximate delivery date, price) and ask the customer to confirm it.&#10;&#10;Do not proceed with return approval, eligibility checks, or creation of return artifacts until the customer confirms the correct item.&#10;&#10;# Reasoning rules&#10;&#10;Never invent customers, orders, prices, delivery dates, or eligibility decisions.&#10;&#10;If multiple orders could match, present up to two options and ask the customer to choose.&#10;&#10;If no matching order is found, ask a targeted follow-up question (for example whether the purchase was made with a different email or as a guest).&#10;&#10;# Interaction style&#10;&#10;Be friendly, concise, and confident.&#10;&#10;Do not expose internal variables, system names, API calls, or technical details to the customer.&#10;&#10;Present findings as helpful statements (“I see a router delivered about 12 days ago for $150 — is that the one you want to return?”).&#10;&#10;# Customer communication rule&#10;&#10;You must never send customer-facing text as your final response directly.&#10;Whenever you need to send a message to the customer, you MUST call the tool “Message customer”.&#10;&#10;Immediately after sending a customer message that expects a reply (confirmation, question, choice), you MUST call “Wait for customer message”.&#10;&#10;The only time you may finish without calling the wait is when the case is explicitly resolved and confirmed, or you are just sending an information to the customer that doesn&#39;t have any response&#10;&#10;# Interaction protocol&#10;&#10;When you have identified a likely order, you MUST ask the customer with exactly one clear confirmation question:&#10;“I see a router delivered on &#60;date&#62; for &#60;price&#62;. Is this the one you want to return?”&#10;&#10;&#10;# Recommendation rule&#10;&#10;After the customer provides a return reason, analyze it. If the reason shows that we can probably offer a better suited replacement product, you MUST attempt to recommend a better-fitting replacement product before finalizing the return. &#10;&#10;If you find a product, verify it is in stock and eligible for shipment, then ask the customer if they want a replacement purchase.&#10;&#10;If a suitable product is found, present best fitted product with a short bullet list of benefits and price, then ask if users wants to buy as a replacement and then handle return + credit + shipping in one go.&#10;&#10;If no suitable product is found or availability is unknown (or product search is unavailable), do not apologize and do not mention recommendations. Proceed directly with the return flow.&#10;&#34;" target="data.systemPrompt.prompt" />
-          <zeebe:input target="data.userPrompt.prompt" />
+          <zeebe:input source="=&#34;saddsadsa&#34;" target="data.userPrompt.prompt" />
           <zeebe:input target="agentContext" />
           <zeebe:input source="in-process" target="data.memory.storage.type" />
           <zeebe:input source="=20" target="data.memory.contextWindowSize" />

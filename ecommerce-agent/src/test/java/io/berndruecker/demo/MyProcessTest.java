@@ -9,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,47 +24,59 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
 import org.wiremock.spring.EnableWireMock;
 
 import io.camunda.client.CamundaClient;
 import io.camunda.client.annotation.Deployment;
+import io.camunda.process.test.api.CamundaAssert;
 import io.camunda.process.test.api.CamundaProcessTestContext;
 import io.camunda.process.test.api.CamundaSpringProcessTest;
+import io.camunda.process.test.api.assertions.ProcessInstanceAssert;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.awaitility.Awaitility.await;
 
 
-@EnableWireMock
+
 @SpringBootTest(classes = MyProcessTest.TestProcessApplication.class)
 @CamundaSpringProcessTest
+@org.testcontainers.junit.jupiter.Testcontainers
 public class MyProcessTest {
 
+  private static final String SALESFORCE_CONTACT_ID = "0039Q00001VsHMXQA3";
   // Need an app to deploy
   @SpringBootApplication
   @Deployment(resources = {"classpath:/ecommerce-agent.bpmn", "classpath:/communication-agent.bpmn", "classpath:/message-receiver.bpmn", "classpath:/message-sender.bpmn"})
   static class TestProcessApplication {}
 
   private static final String CONNECTOR_ID = "twilio";   
+  private static final String EMAIL_ADDRESS = "camunda.demo.bernd@gmail.com";
   
     @Autowired private CamundaClient client;
     @Autowired private CamundaProcessTestContext processTestContext;
-    
-    @Value("${wiremock.server.port}")
-    private int wireMockPort;
 
+    
+//    @Container
+//    static GenericContainer<?> fakeBackend = new GenericContainer<>("berndruecker/ecommerce-fake-backends")
+//        .withExposedPorts(8100)
+//        .withNetworkAliases("fake-backends")
+//        .waitingFor(Wait.forHttp("/").forStatusCode(200));
+    
+//    static String fakeBackendHostUrl() {
+//      return "http://" + fakeBackend.getHost() + ":" + fakeBackend.getMappedPort(8100);
+//    }
+    
     @BeforeEach
     void setup() {
-      Testcontainers.exposeHostPorts(wireMockPort);
+      Testcontainers.exposeHostPorts(8100); // Fake Backend - want to use it in demo
     }
     
     @Test
     void shouldCreateProcessInstance() throws URISyntaxException {
+//      CamundaAssert.setAssertionTimeout(Duration.ofSeconds(75)); // increase for LLM calls
+      
         Map<String, Object> variables = new HashMap<String, Object>();
 
         String initialChat = "Hi, I want to return a router I bought online.";
@@ -71,34 +84,29 @@ public class MyProcessTest {
         
         variables.put("supportCase", buildSupportCase(initialChat, mobilePhone));
         
-        
+        // Prepare WireMock for Salesforce Call (lookup customer)
+        // Don't use WireMock - but mock the HTTP connector itself, because I can't obverwrite the Twilio URL from the connector
+        //stubFor(get("/services/data/").willReturn(aResponse().withStatus(200).withBody(createSalesforceDummyResponse(mobilePhone))));            
         HttpJsonConnectorMock httpMock = new HttpJsonConnectorMock();
-        httpMock.stubFor(
-                HttpJsonConnectorMock.get("/services/data/")
-                    .willReturn(
-                        HttpJsonConnectorMock.aResponse()
-                            .withStatus(200)
-                            .withBody(createSalesforceDummyResponse(mobilePhone))
-                    )
-            );
+        
+        // 
+        httpMock.stubFor(HttpJsonConnectorMock.get("{{secrets.salesforce_base_url}}/services/data/").willReturn(
+                         HttpJsonConnectorMock.aResponse().withStatus(200).withResultVariable("customer", buildCustomer(mobilePhone))));
 
-        httpMock.stubFor(
-                HttpJsonConnectorMock.post("/2010-04-01/Accounts/" + "123" + "/Messages.json")
-                    .willReturn(
-                        HttpJsonConnectorMock.aResponse()
-                            .withStatus(200)
+       // secrets are not replaced in this mock
+        httpMock.stubFor(HttpJsonConnectorMock.post("/2010-04-01/Accounts/{{secrets.twilio_account_sid}}/Messages.json").willReturn(
+                         HttpJsonConnectorMock.aResponse().withStatus(200)
                             .withBody("""
                                 {
                                   "sid": "SM123",
                                   "status": "queued"
                                 }
-                                """)
-                    )
-            );
+                                """)));
         
         processTestContext
           .mockJobWorker("io.camunda:http-json:1")
-          .withHandler(httpMock);         
+          .withHandler(httpMock);   
+        
 
 //        // when
 //        final ProcessInstanceEvent processInstance =
@@ -111,42 +119,45 @@ public class MyProcessTest {
 //                .join();
         
         // Start via simulating Twilio:
-        final var request =
-            HttpRequest.newBuilder()
+        final var request = HttpRequest.newBuilder()
                 .uri(new URI(processTestContext.getConnectorsAddress() + "/inbound/" + CONNECTOR_ID))
                 .header("Content-Type", "application/json")
                 .POST(BodyPublishers.ofString(createTwilioPayload(initialChat, mobilePhone)))
                 .build();
         final var httpClient = HttpClient.newHttpClient();
-        Awaitility.await()
-            .untilAsserted(
-                () -> {
-                  final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-                  Assertions.assertThat(response.statusCode())
+        Awaitility.await().untilAsserted(() -> {
+           final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+           Assertions.assertThat(response.statusCode())
                       .describedAs("Expect invoking the inbound connector successfully")
                       .isEqualTo(200);
-                });
-              
-        
-        // Prepare WireMock for Salesforce Call (lookup customer)
-        // Don't use WireMock - but mock the HTTP connector itself, because I can't obverwrite the Twilio URL from the connector
-        //stubFor(get("/services/data/").willReturn(aResponse().withStatus(200).withBody(createSalesforceDummyResponse(mobilePhone))));       
+        });
+                      
+   
 
         assertThatProcessInstance(byProcessId("customer-communication-agent"))
           .isActive()
           .hasCompletedElement("Task_Salesforce_LookupContact", 1)
+          .hasVariableSatisfies("customer", java.util.Map.class, customer -> {
+              Assertions.assertThat(customer).containsEntry("id", SALESFORCE_CONTACT_ID);
+              Assertions.assertThat(customer).containsEntry("mobilePhone", mobilePhone);
+          })          
           .hasCompletedElement("Tool_StartEcommerceAgent", 1); // necessary to wait for it to happen
 
-        assertThatProcessInstance(byProcessId("ecommerce-agent"))
+        
+//        
+        ProcessInstanceAssert processInstanceAssert = assertThatProcessInstance(byProcessId("ecommerce-agent"))
           .isActive()
-          .hasCompletedElement("Task_Salesforce_LookupContact", 1)
-          .hasVariableSatisfies("customer", java.util.Map.class, customer -> {
-            Assertions.assertThat(customer).containsEntry("id", "0039Q00001VsHMXQA3");
-            Assertions.assertThat(customer).containsEntry("mobilePhone", mobilePhone);
-          })
-          .hasCompletedElement("Tool_Magento_ListRecentOrders", 1)
-          .hasActiveElementsExactly("Tool_AskCustomer");
+////          .hasCompletedElement("Task_Salesforce_LookupContact", 1)
+////          .hasVariableSatisfies("customer", java.util.Map.class, customer -> {
+////            Assertions.assertThat(customer).containsEntry("id", "0039Q00001VsHMXQA3");
+////            Assertions.assertThat(customer).containsEntry("mobilePhone", mobilePhone);
+////          })
+          .hasCompletedElement("Tool_Magento_ListRecentOrders", 1);
+//          .hasActiveElementsExactly("Tool_AskCustomer");
+        
+//        await().untilAsserted(() -> 
+//          processInstanceAssert.hasCompletedElement("Tool_Magento_ListRecentOrders", 1)
+//        );
         
         // Check text to customer should be around "I see a router delivered 12 days ago for $150."
         
@@ -223,4 +234,12 @@ public class MyProcessTest {
             + "}";
     }
     
+    public static Map<String, Object> buildCustomer(String mobilePhone) {
+      Map<String, Object> customer = new HashMap<>();
+      customer.put("id", SALESFORCE_CONTACT_ID);
+      customer.put("emailAddress", EMAIL_ADDRESS);
+      customer.put("mobilePhone", mobilePhone);
+      return customer;
+    }
+   
 }

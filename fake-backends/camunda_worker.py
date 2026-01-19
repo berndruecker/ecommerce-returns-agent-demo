@@ -617,8 +617,26 @@ def _get(vars: Dict[str, Any], *keys: str, default: Any = None) -> Any:
     return default
 
 
+def _replace_secrets(value: str) -> str:
+    """
+    Replace secret placeholders in strings.
+    Replaces {{secrets.DEMO_BACKEND_BASE_URL}} with the actual base URL from env vars.
+    """
+    if not isinstance(value, str):
+        return value
+    
+    # Get the actual base URL from environment
+    demo_backend_url = _get_env("DEMO_BACKEND_BASE_URL", "http://localhost:8100")
+    
+    # Replace placeholder
+    return value.replace("{{secrets.DEMO_BACKEND_BASE_URL}}", demo_backend_url)
+
+
+
 def _handle_operation(operation: str, vars: Dict[str, Any]) -> Dict[str, Any]:
     base = _get(vars, "apiBaseUrl", default=_get_env("MAGENTO_API_BASE", DEFAULT_API_BASE))
+    # Replace any secret placeholders if not already resolved by Camunda
+    base = _replace_secrets(base)
 
     match operation:
         case "listOrders":

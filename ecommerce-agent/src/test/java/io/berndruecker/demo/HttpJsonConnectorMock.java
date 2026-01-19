@@ -68,10 +68,15 @@ public class HttpJsonConnectorMock implements JobHandler {
     httpResult.put("status", mapping.response.status);
     httpResult.put("body", mapping.response.body);
     httpResult.put("reason", "OK");
+    
+
+    Map<String, Object> resultVariables = new HashMap<>();
+    resultVariables.put("httpResult", httpResult);
+    resultVariables.putAll(mapping.response.variables);
 
     client
         .newCompleteCommand(job)
-        .variables(Map.of("httpResult", httpResult))
+        .variables(resultVariables)
         .send()
         .join();
   }
@@ -101,6 +106,7 @@ public class HttpJsonConnectorMock implements JobHandler {
   public static class ResponseDefinitionBuilder {
     private int status;
     private String body;
+    private Map<String, Object> variables = new HashMap<String, Object>();
 
     public ResponseDefinitionBuilder withStatus(int status) {
       this.status = status;
@@ -111,7 +117,12 @@ public class HttpJsonConnectorMock implements JobHandler {
       this.body = body;
       return this;
     }
-  }
+
+    public ResponseDefinitionBuilder withResultVariable(String varName, Object value) {
+      this.variables.put(varName, value);
+      return this;
+    }
+}
 
   public static class StubMapping {
     private final String method;
