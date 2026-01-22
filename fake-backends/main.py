@@ -14,6 +14,7 @@ import uvicorn
 logging.getLogger('uvicorn.access').setLevel(logging.WARNING)
 
 from routers import commerce, erp, wms, policy, returns_provider, payments, notifications, admin
+from routers import inbound
 from data_store import data_store
 
 
@@ -66,6 +67,7 @@ app.include_router(returns_provider.router, prefix="/returns", tags=["Returns Pr
 app.include_router(payments.router, prefix="/payments", tags=["Payments"])
 app.include_router(notifications.router, prefix="/notify", tags=["Notifications"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"]) 
+app.include_router(inbound.router, prefix="/inbound", tags=["Inbound Proxy"]) 
 
 # Templates for homepage
 templates = Jinja2Templates(directory="templates")

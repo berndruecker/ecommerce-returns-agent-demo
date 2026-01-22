@@ -3,6 +3,7 @@ package io.berndruecker.demo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.matches;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -57,10 +58,10 @@ public class HttpJsonConnectorMock implements JobHandler {
     String method = asString(vars.get("method")).toUpperCase();
     String url = asString(vars.get("url")).toLowerCase();
 
-    assertEquals(mapping.method, method, "Unexpected HTTP method");
+    assertEquals(mapping.method, method, "Unexpected HTTP method. Actual call: " + method + " " + url + " compared to " + mapping.method + " " + mapping.urlContains);
     assertTrue(
         url.contains(mapping.urlContains),
-        "Unexpected URL. Expected to contain [" + mapping.urlContains + "] but was [" + url + "]"
+        "Unexpected URL. Expected to contain [" + mapping.urlContains + "] but was [" + url + "]. Actual call: " + method + " " + url + " compared to " + mapping.method + " " + mapping.urlContains
     );
 
     // Simulated connector result

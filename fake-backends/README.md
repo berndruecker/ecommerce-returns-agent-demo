@@ -196,6 +196,15 @@ The application is pre-loaded with sample data for the following scenario:
 ### Notifications
 - `POST /notify/email` - Send email with attachments
 
+### Inbound Proxy (Camunda Webhooks)
+- `ANY /inbound/twilio` - Proxies requests to `http://localhost:8086/inbound/twilio` (no transformation)
+- `ANY /inbound/voice` - Proxies to `http://localhost:8086/inbound/voice` and converts XML request bodies to JSON
+- `ANY /inbound/voice-answer` - Proxies to `http://localhost:8086/inbound/voice-answer` and converts XML request bodies to JSON
+
+Notes:
+- XML→JSON conversion is triggered when `Content-Type` contains `xml`.
+- For non-XML payloads, bodies are forwarded unchanged.
+
 ## 📊 Data Management
 
 All data is stored in-memory and can be modified at runtime through the API. Data includes:

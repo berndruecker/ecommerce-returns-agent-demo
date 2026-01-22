@@ -5,7 +5,7 @@
     <bpmn:startEvent id="Event_0aolqb7" name="Customer communication received">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="={&#10;    &#34;subject&#34;: &#34;WhatsApp Request&#34;,&#10;    &#34;request&#34;: message.text, &#10;    &#34;originalMessage&#34;: message,&#10;    &#34;communicationContext&#34;: {&#10;        &#34;channel&#34; : &#34;whatsApp&#34;,&#10;        &#34;from&#34;: message.from,                &#10;        &#34;lastMessageId&#34;: message.id,&#10;        &#34;mobilePhone&#34;: message.mobilePhone&#10;    }&#10;}" target="supportCase" />
+          <zeebe:output source="={&#10;    &#34;subject&#34;: &#34;WhatsApp Request&#34;,&#10;    &#34;request&#34;: message.text, &#10;    &#34;originalMessage&#34;: message,&#10;    &#34;communicationContext&#34;: {&#10;        &#34;channel&#34; : message.channel,&#10;        &#34;from&#34;: message.from,                &#10;        &#34;lastMessageId&#34;: message.id,&#10;        &#34;mobilePhone&#34;: message.mobilePhone,&#10;        &#34;correlationId&#34;: message.correlationId&#10;    }&#10;}" target="supportCase" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_0bgr4oc</bpmn:outgoing>
@@ -94,7 +94,7 @@
           <zeebe:taskDefinition type="io.camunda:sendMessage:1" retries="3" />
           <zeebe:ioMapping>
             <zeebe:input source="ecommerceAgentNotify" target="messageName" />
-            <zeebe:input source="=supportCase.communicationContext.mobilePhone" target="correlationKey" />
+            <zeebe:input source="=supportCase.communicationContext.correlationId" target="correlationKey" />
             <zeebe:input source="={&#10;  &#34;communicationResult&#34;: {&#10;    status: &#34;success&#34;,&#10;    originalText: fromAi(toolCall.customerMessageInFull),&#10;    text: fromAi(toolCall.customerIntent)&#10;  }&#10;}" target="variables" />
             <zeebe:input source="publish" target="correlationType.type" />
             <zeebe:input source="PT60S" target="correlationType.timeToLive" />
@@ -111,7 +111,7 @@
           <zeebe:taskDefinition type="io.camunda:sendMessage:1" retries="3" />
           <zeebe:ioMapping>
             <zeebe:input source="ecommerceAgentStart" target="messageName" />
-            <zeebe:input source="=supportCase.communicationContext.mobilePhone" target="correlationKey" />
+            <zeebe:input source="=supportCase.communicationContext.correlationId" target="correlationKey" />
             <zeebe:input source="={&#10;  &#34;supportCase&#34;: supportCase,&#10;  &#34;customer&#34;: customer,&#10;  &#34;request&#34;: fromAi(toolCall.customerDesireToPassToTheAgent)&#10;}" target="variables" />
             <zeebe:input source="publish" target="correlationType.type" />
             <zeebe:input source="PT60S" target="correlationType.timeToLive" />
@@ -175,14 +175,31 @@
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT24H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:endEvent id="Event_0c6un6p" name="Cases timed out">
+    <bpmn:endEvent id="Event_0c6un6p" name="Case timed out">
       <bpmn:incoming>Flow_0k0v80t</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0k0v80t" sourceRef="Event_0vu3qvq" targetRef="Event_0c6un6p" />
-    <bpmn:endEvent id="Event_1msk788" name="Case resolved">
-      <bpmn:incoming>Flow_0ej315i</bpmn:incoming>
+    <bpmn:endEvent id="EndEvent_CaseResolved" name="Case resolved">
+      <bpmn:incoming>Flow_0a93vn6</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0ej315i" sourceRef="SubProcess_CommunicationAgent" targetRef="Event_1msk788" />
+    <bpmn:sequenceFlow id="Flow_0ej315i" sourceRef="SubProcess_CommunicationAgent" targetRef="Task_SendAgentEndedMessage" />
+    <bpmn:sendTask id="Task_SendAgentEndedMessage" name="Communication Agent ended" zeebe:modelerTemplate="io.camunda.connectors.message.sendtask.v1" zeebe:modelerTemplateVersion="0" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZwogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHdpZHRoPSIyMDAwIgogICBoZWlnaHQ9IjIwMDAiCiAgIHZpZXdCb3g9IjAgMCAyMDAwIDIwMDAiCiAgIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4KICA8cGF0aAogICAgIHN0eWxlPSJjb2xvcjojMDAwMDAwIgogICAgIGQ9Im0gMCwyODQgMjAwMCwwIC0xMDAwLDU1NCB6Ii8+CiAgPHBhdGgKICAgICBzdHlsZT0iY29sb3I6IzAwMDAwMCIKICAgICBkPSJtIDAsNDUyIDEwMDAsNTQ4IDEwMDAsLTU0OCAwLDEwOTYgLTIwMDAsMCB6Ii8+Cjwvc3ZnPgo=">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:sendMessage:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="CommunicationAgentEnded" target="messageName" />
+          <zeebe:input source="publish" target="correlationType.type" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="elementTemplateVersion" value="0" />
+          <zeebe:header key="elementTemplateId" value="io.camunda.connectors.message.v1" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ej315i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a93vn6</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0a93vn6" sourceRef="Task_SendAgentEndedMessage" targetRef="EndEvent_CaseResolved" />
   </bpmn:process>
   <bpmn:message id="Message_07i0alk" name="chat">
     <bpmn:extensionElements>
@@ -208,17 +225,17 @@
   <bpmn:message id="Message_1r1v4qd" name="WhatsApp2" />
   <bpmn:message id="Message_2obe48c" name="CustomerCommunicationReceived">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="=supportCase.communicationContext.mobilePhone" />
+      <zeebe:subscription correlationKey="=supportCase.communicationContext.correlationId" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:message id="Message_29lh69a" name="CustomerCommunicationRequired">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="=supportCase.communicationContext.mobilePhone" />
+      <zeebe:subscription correlationKey="=supportCase.communicationContext.correlationId" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:message id="Message_0tibq0q" name="AgentFinished">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="=supportCase.communicationContext.mobilePhone" />
+      <zeebe:subscription correlationKey="=supportCase.communicationContext.correlationId" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -237,6 +254,16 @@
         <dc:Bounds x="352" y="132" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="344" y="175" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nsoc45_di" bpmnElement="Task_SendAgentEndedMessage">
+        <dc:Bounds x="980" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1msk788_di" bpmnElement="EndEvent_CaseResolved">
+        <dc:Bounds x="1132" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1115" y="315" width="71" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0vgvidi" bpmnElement="SubProcess_CommunicationAgent" isExpanded="true">
@@ -296,13 +323,7 @@
       <bpmndi:BPMNShape id="Event_0c6un6p_di" bpmnElement="Event_0c6un6p">
         <dc:Bounds x="1032" y="462" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1010" y="505" width="80" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1msk788_di" bpmnElement="Event_1msk788">
-        <dc:Bounds x="1022" y="262" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1005" y="305" width="71" height="14" />
+          <dc:Bounds x="1013" y="505" width="75" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1j55a7c" bpmnElement="Event_0vu3qvq">
@@ -329,7 +350,11 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ej315i_di" bpmnElement="Flow_0ej315i">
         <di:waypoint x="900" y="280" />
-        <di:waypoint x="1022" y="280" />
+        <di:waypoint x="980" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a93vn6_di" bpmnElement="Flow_0a93vn6">
+        <di:waypoint x="1080" y="290" />
+        <di:waypoint x="1132" y="290" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
