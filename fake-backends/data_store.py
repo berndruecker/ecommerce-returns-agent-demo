@@ -142,6 +142,33 @@ class DataStore:
             in_stock=True,
             stock_quantity=78
         )
+
+        # Vacuums (mirrors router EOL scenario)
+        self.products["VAC-EASY-180"] = Product(
+            sku="VAC-EASY-180",
+            name="EasyVac 180",
+            category=ProductCategory.APPLIANCES,
+            price=179.99,
+            wifi_standard=None,
+            tags=["vacuum", "upright", "clearance"],
+            description="Lightweight EasyVac 180 (EOL / clearance)",
+            lifecycle_status="clearance",
+            in_stock=False,
+            stock_quantity=0
+        )
+
+        self.products["VAC-EASY-PET-PRO"] = Product(
+            sku="VAC-EASY-PET-PRO",
+            name="EasyVac Pet Pro",
+            category=ProductCategory.APPLIANCES,
+            price=239.99,
+            wifi_standard=None,
+            tags=["vacuum", "pet", "pet-friendly", "hair", "carpet", "anti-tangle", "powerful", "suction", "upgrade", "dog", "cat"],
+            description="Upgraded pet-focused vacuum with anti-tangle brushroll, powerful suction, and HEPA filter; ideal for pet hair",
+            lifecycle_status="active",
+            in_stock=True,
+            stock_quantity=28
+        )
         
         # Sample Order for Salesforce contact - HomeStream Basic Router
         sfdc_customer_address = Address(
@@ -248,6 +275,32 @@ class DataStore:
             tax=5.20,
             shipping=0.00,
             total=70.18,
+            shipping_address=sfdc_customer_address
+        ))
+
+        # Fourth order - vacuum (EasyVac 180, now EOL) for pet hair complaint
+        delivery_date_sfdc_4 = datetime.now() - timedelta(days=6)
+        order_date_sfdc_4 = delivery_date_sfdc_4 - timedelta(days=2)
+
+        self.orders.append(Order(
+            order_id="ORD-2025-007894",
+            customer_id="0039Q00001VsHMXQA3",
+            order_date=order_date_sfdc_4,
+            delivery_date=delivery_date_sfdc_4,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="VAC-EASY-180",
+                    product_name="EasyVac 180",
+                    quantity=1,
+                    unit_price=179.99,
+                    total_price=179.99
+                )
+            ],
+            subtotal=179.99,
+            tax=14.40,
+            shipping=0.00,
+            total=194.39,
             shipping_address=sfdc_customer_address
         ))
         
@@ -357,6 +410,166 @@ class DataStore:
             shipping=0.00,
             total=70.18,
             shipping_address=sfdc_customer_2_address
+        ))
+
+        # Fourth order for second contact - EasyVac 180 (EOL) struggling with pet hair
+        delivery_date_sfdc2_4 = datetime.now() - timedelta(days=5)
+        order_date_sfdc2_4 = delivery_date_sfdc2_4 - timedelta(days=2)
+
+        self.orders.append(Order(
+            order_id="ORD-2025-008894",
+            customer_id="0039Q00001VcSaVQAV",
+            order_date=order_date_sfdc2_4,
+            delivery_date=delivery_date_sfdc2_4,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="VAC-EASY-180",
+                    product_name="EasyVac 180",
+                    quantity=1,
+                    unit_price=179.99,
+                    total_price=179.99
+                )
+            ],
+            subtotal=179.99,
+            tax=14.40,
+            shipping=0.00,
+            total=194.39,
+            shipping_address=sfdc_customer_2_address
+        ))
+
+        # Duplicate orders for third Salesforce contact: 0039Q00001WsSE6QAN
+        sfdc_customer_3_address = Address(
+            street="135 Harbor Blvd",
+            city="Los Angeles",
+            state="CA",
+            postal_code="90001",
+            country="USA"
+        )
+
+        # First order - older one (Deluxe Router + accessories)
+        delivery_date_sfdc3_1 = datetime.now() - timedelta(days=46)
+        order_date_sfdc3_1 = delivery_date_sfdc3_1 - timedelta(days=2)
+
+        self.orders.append(Order(
+            order_id="ORD-2025-009891",
+            customer_id="0039Q00001WsSE6QAN",
+            order_date=order_date_sfdc3_1,
+            delivery_date=delivery_date_sfdc3_1,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="RTR-HS-DELUXE",
+                    product_name="HomeStream Deluxe Router",
+                    quantity=1,
+                    unit_price=199.99,
+                    total_price=199.99
+                ),
+                OrderItem(
+                    sku="ACC-PWR-CABLE",
+                    product_name="Replacement Power Cable",
+                    quantity=2,
+                    unit_price=15.99,
+                    total_price=31.98
+                )
+            ],
+            subtotal=231.97,
+            tax=18.56,
+            shipping=0.00,
+            total=250.53,
+            shipping_address=sfdc_customer_3_address
+        ))
+
+        # Second order - most recent (HomeStream Basic Router)
+        delivery_date_sfdc3_2 = datetime.now() - timedelta(days=2)
+        order_date_sfdc3_2 = delivery_date_sfdc3_2 - timedelta(days=2)
+
+        self.orders.append(Order(
+            order_id="ORD-2025-009892",
+            customer_id="0039Q00001WsSE6QAN",
+            order_date=order_date_sfdc3_2,
+            delivery_date=delivery_date_sfdc3_2,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="RTR-HS-BASIC",
+                    product_name="HomeStream Basic Router",
+                    quantity=1,
+                    unit_price=149.99,
+                    total_price=149.99
+                ),
+                OrderItem(
+                    sku="ACC-ETHERNET",
+                    product_name="CAT6 Ethernet Cable 10ft",
+                    quantity=1,
+                    unit_price=12.99,
+                    total_price=12.99
+                )
+            ],
+            subtotal=162.98,
+            tax=13.04,
+            shipping=0.00,
+            total=175.02,
+            shipping_address=sfdc_customer_3_address
+        ))
+
+        # Third order - accessories
+        delivery_date_sfdc3_3 = datetime.now() - timedelta(days=13)
+        order_date_sfdc3_3 = delivery_date_sfdc3_3 - timedelta(days=1)
+
+        self.orders.append(Order(
+            order_id="ORD-2025-009893",
+            customer_id="0039Q00001WsSE6QAN",
+            order_date=order_date_sfdc3_3,
+            delivery_date=delivery_date_sfdc3_3,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="ACC-WIFI-ADAPTER",
+                    product_name="USB WiFi Adapter",
+                    quantity=1,
+                    unit_price=29.99,
+                    total_price=29.99
+                ),
+                OrderItem(
+                    sku="ACC-SURGE-PROTECTOR",
+                    product_name="Smart Surge Protector",
+                    quantity=1,
+                    unit_price=34.99,
+                    total_price=34.99
+                )
+            ],
+            subtotal=64.98,
+            tax=5.20,
+            shipping=0.00,
+            total=70.18,
+            shipping_address=sfdc_customer_3_address
+        ))
+
+        # Fourth order - vacuum (EasyVac 180 EOL)
+        delivery_date_sfdc3_4 = datetime.now() - timedelta(days=7)
+        order_date_sfdc3_4 = delivery_date_sfdc3_4 - timedelta(days=2)
+
+        self.orders.append(Order(
+            order_id="ORD-2025-009894",
+            customer_id="0039Q00001WsSE6QAN",
+            order_date=order_date_sfdc3_4,
+            delivery_date=delivery_date_sfdc3_4,
+            status=OrderStatus.DELIVERED,
+            items=[
+                OrderItem(
+                    sku="VAC-EASY-180",
+                    product_name="EasyVac 180",
+                    quantity=1,
+                    unit_price=179.99,
+                    total_price=179.99
+                )
+            ],
+            subtotal=179.99,
+            tax=14.40,
+            shipping=0.00,
+            total=194.39,
+            shipping_address=sfdc_customer_3_address
         ))
     
     def generate_id(self, prefix: str) -> str:

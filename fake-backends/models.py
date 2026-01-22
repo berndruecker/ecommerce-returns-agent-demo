@@ -19,6 +19,7 @@ class ProductCategory(str, Enum):
     MODEMS = "modems"
     SWITCHES = "switches"
     ACCESSORIES = "accessories"
+    APPLIANCES = "appliances"
 
 # ========== Customer & Address Models ==========
 

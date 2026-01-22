@@ -91,7 +91,7 @@ async def create_expected_return(
     # Detect EOL / clearance SKU
     product = data_store.products.get(sku) if sku else None
     lifecycle = (product.lifecycle_status.lower() if product and product.lifecycle_status else "")
-    is_eol = sku == "RTR-HS-BASIC" or lifecycle in {"clearance", "discontinued", "eol"}
+    is_eol = sku in {"RTR-HS-BASIC", "VAC-EASY-180"} or lifecycle in {"clearance", "discontinued", "eol"}
 
     # Normalize overrides to a list - handle JSON array string or plain string
     normalized_overrides: list[str] = []

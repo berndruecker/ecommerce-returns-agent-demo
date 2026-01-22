@@ -55,16 +55,21 @@ async def search_products(
             or any(query_lower in tag.lower() for tag in p.tags)
         ]
     
-    # Filter by category
+    # Filter by category (flexible matching: "home appliances" matches "appliances")
     if category:
-        results = [p for p in results if p.category.value == category]
-    
-    # Filter by tags (comma-separated)
-    if tags:
-        tag_list = [t.strip() for t in tags.split(",")]
+        cat_lower = category.lower()
         results = [
-            p for p in results 
-            if any(tag in p.tags for tag in tag_list)
+            p for p in results
+            if p.category.value.lower() in cat_lower or cat_lower in p.category.value.lower()
+        ]
+    
+    # Filter by tags (comma-separated, require exact matches)
+    if tags:
+        tag_list = [t.strip().lower() for t in tags.split(",")]
+        results = [
+            p
+            for p in results
+            if any(tag.lower() in tag_list for tag in p.tags)
         ]
     
     # Sort by price descending (show premium options first)

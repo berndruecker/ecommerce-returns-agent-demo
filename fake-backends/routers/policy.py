@@ -31,6 +31,8 @@ async def evaluate_return_policy(request: PolicyEvaluationRequest):
     refund_type = "store_credit"
     notes = ""
     
+    reason_lower = request.reason.lower() if request.reason else ""
+
     # Check for discontinued/clearance exception
     if request.lifecycle_status in ["discontinued", "clearance"]:
         approved = True
@@ -40,7 +42,7 @@ async def evaluate_return_policy(request: PolicyEvaluationRequest):
         policy_matched = "EXCEPTION_POLICY"
     
     # Check reason for additional policies
-    if "defective" in request.reason.lower() or "broken" in request.reason.lower():
+    if "defective" in reason_lower or "broken" in reason_lower:
         approved = True
         exception_applied = "DEFECTIVE_PRODUCT"
         refund_type = "original_payment"
@@ -48,11 +50,11 @@ async def evaluate_return_policy(request: PolicyEvaluationRequest):
         notes = "Defective product - full refund to original payment method"
     
     # Performance issues
-    if "performance" in request.reason.lower() or "slow" in request.reason.lower():
+    if any(term in reason_lower for term in ["performance", "slow", "hair", "pet", "dog"]):
         approved = True
         refund_type = "store_credit"
         restocking_fee = 0.0
-        notes = "Performance issues reported - store credit for exchange recommended"
+        notes = "Performance issues reported (including pet hair pickup) - store credit for exchange recommended"
     
     response = PolicyEvaluationResponse(
         approved=approved,
