@@ -197,3 +197,15 @@ ecommerce-returns-agent-demo/
 ## License
 
 See LICENSE file for details.
+
+
+## Todo
+
+* If it gets a second message like "just that" because it stops to listen to early - "just that" stops the waiting - the comm agent drops it - the ecommerce agent doesn't ask a new question - so comm is stuck 
+* Add message id from request.headers.i-twilio-idempotency-token
+* When the customers hangs up -> catch the error (bad request) and let the agent choose a different comm channel
+* Improve timing (also on speaking pauses)
+
+What we could also show:
+* The agent could send WhatsApp additional to voice (e.g. for links or photos)
+* Dropped calls - probably even call back?

@@ -63,13 +63,44 @@ async def search_products(
             if p.category.value.lower() in cat_lower or cat_lower in p.category.value.lower()
         ]
     
-    # Filter by tags (comma-separated, require exact matches)
+    # Filter by tags (comma-separated, fuzzy matching)
     if tags:
-        tag_list = [t.strip().lower() for t in tags.split(",")]
+        search_tags = [t.strip().lower() for t in tags.split(",")]
+        
+        def fuzzy_tag_match(search_tag: str, product_tags: list) -> bool:
+            """Check if search tag matches any product tag with fuzzy logic"""
+            # Normalize search tag (remove spaces/hyphens)
+            normalized_search = search_tag.replace(" ", "").replace("-", "")
+            
+            for prod_tag in product_tags:
+                prod_tag_lower = prod_tag.lower()
+                normalized_prod = prod_tag_lower.replace(" ", "").replace("-", "")
+                
+                # Exact match after normalization
+                if normalized_search == normalized_prod:
+                    return True
+                
+                # Check if one contains the other (normalized)
+                if normalized_search in normalized_prod or normalized_prod in normalized_search:
+                    return True
+                
+                # Check if search tag appears in product tag (original strings)
+                if search_tag in prod_tag_lower or prod_tag_lower in search_tag:
+                    return True
+            
+            # Split search tag into words and check if all words exist somewhere in product tags
+            search_words = search_tag.split()
+            if len(search_words) > 1:
+                product_tags_combined = " ".join([t.lower() for t in product_tags])
+                if all(word in product_tags_combined for word in search_words):
+                    return True
+            
+            return False
+        
         results = [
             p
             for p in results
-            if any(tag.lower() in tag_list for tag in p.tags)
+            if all(fuzzy_tag_match(search_tag, p.tags) for search_tag in search_tags)
         ]
     
     # Sort by price descending (show premium options first)
