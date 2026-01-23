@@ -198,7 +198,7 @@
           <zeebe:input source="=&#34;{{secrets.TWILIO_AUTH_TOKEN}}&#34;" target="authentication.password" />
           <zeebe:input source="=&#34;https://api.twilio.com/2010-04-01/Accounts/{{secrets.TWILIO_ACCOUNT_SID}}/Calls/&#34;+communicationContext.correlationId+&#34;.json&#34;" target="url" />
           <zeebe:input source="20" target="connectionTimeoutInSeconds" />
-          <zeebe:input source="=&#34;&#60;Response&#62;&#10;        &#60;Gather action=\&#34;https://catarina-unnicked-famishedly.ngrok-free.dev/inbound/voice-answer\&#34; timeout=\&#34;30\&#34; input=\&#34;speech\&#34; method=\&#34;POST\&#34; language=\&#34;en-US\&#34; speechTimeout=\&#34;auto\&#34;&#62;&#10;                &#60;Say voice=\&#34;alice\&#34;&#62;&#34;+communicationContent.text+&#34;&#60;/Say&#62;&#10;        &#60;/Gather&#62;&#10;        &#60;Say voice=\&#34;alice\&#34;&#62;Sorry - I need to rest.&#60;/Say&#62;&#10;        &#60;Hangup&#62;&#60;/Hangup&#62;&#10;&#60;/Response&#62;&#34;" target="body.Twiml" />
+          <zeebe:input source="=&#34;&#60;Response&#62;&#10;        &#60;Gather action=\&#34;https://catarina-unnicked-famishedly.ngrok-free.dev/inbound/voice-answer\&#34; timeout=\&#34;30\&#34; input=\&#34;speech\&#34; method=\&#34;POST\&#34; language=\&#34;en-US\&#34; speechTimeout=\&#34;auto\&#34;&#62;&#10;                &#60;Say voice=\&#34;Polly.Danielle-Neural\&#34;&#62;&#34;+communicationContent.text+&#34;&#60;/Say&#62;&#10;        &#60;/Gather&#62;&#10;        &#60;Say voice=\&#34;Polly.Danielle-Neural\&#34;&#62;Thank you for your call - goodbye.&#60;/Say&#62;&#10;        &#60;Hangup&#62;&#60;/Hangup&#62;&#10;&#60;/Response&#62;&#34;" target="body.Twiml" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_133n3lb</bpmn:incoming>
@@ -222,15 +222,6 @@
           <dc:Bounds x="212" y="118" width="77" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ixo4ry_di" bpmnElement="Task_ChatReply">
-        <dc:Bounds x="460" y="140" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1ia32kg_di" bpmnElement="Event_AnswerReceived_Chat">
-        <dc:Bounds x="672" y="162" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="647" y="205" width="87" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0pn4ems_di" bpmnElement="Reply_with_email_to_customer">
         <dc:Bounds x="460" y="280" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -239,6 +230,25 @@
         <dc:Bounds x="672" y="302" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="647" y="345" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ixo4ry_di" bpmnElement="Task_ChatReply">
+        <dc:Bounds x="460" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1shl0zc_di" bpmnElement="Task_AskCustomer_Phone">
+        <dc:Bounds x="460" y="840" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0arwsmo_di" bpmnElement="Event_AnswerReceived_Other">
+        <dc:Bounds x="662" y="862" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="648" y="905" width="69" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ia32kg_di" bpmnElement="Event_AnswerReceived_Chat">
+        <dc:Bounds x="672" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="647" y="205" width="87" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1at4psu_di" bpmnElement="Activity_0q3ulxn">
@@ -271,26 +281,12 @@
           <dc:Bounds x="647" y="665" width="87" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1shl0zc_di" bpmnElement="Task_AskCustomer_Phone">
-        <dc:Bounds x="460" y="840" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0arwsmo_di" bpmnElement="Event_AnswerReceived_Other">
-        <dc:Bounds x="662" y="862" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="648" y="905" width="69" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0cugllz_di" bpmnElement="Event_0jyyu07">
         <dc:Bounds x="512" y="202" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="540" y="233" width="59" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0r70xpv_di" bpmnElement="Flow_0r70xpv">
-        <di:waypoint x="188" y="180" />
-        <di:waypoint x="225" y="180" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0j31jhn_di" bpmnElement="Flow_email">
         <di:waypoint x="250" y="205" />
         <di:waypoint x="250" y="320" />
@@ -330,25 +326,17 @@
           <dc:Bounds x="264" y="503" width="51" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_133n3lb_di" bpmnElement="Flow_133n3lb">
-        <di:waypoint x="250" y="205" />
-        <di:waypoint x="250" y="640" />
-        <di:waypoint x="460" y="640" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="276" y="613" width="27" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1w680ql_di" bpmnElement="Flow_1w680ql">
-        <di:waypoint x="560" y="180" />
-        <di:waypoint x="672" y="180" />
+      <bpmndi:BPMNEdge id="Flow_09gjg6u_di" bpmnElement="Flow_09gjg6u">
+        <di:waypoint x="560" y="320" />
+        <di:waypoint x="672" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ubp3c7_di" bpmnElement="Flow_0ubp3c7">
         <di:waypoint x="530" y="238" />
         <di:waypoint x="530" y="280" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_09gjg6u_di" bpmnElement="Flow_09gjg6u">
-        <di:waypoint x="560" y="320" />
-        <di:waypoint x="672" y="320" />
+      <bpmndi:BPMNEdge id="Flow_0ibbtmp_di" bpmnElement="Flow_0ibbtmp">
+        <di:waypoint x="560" y="880" />
+        <di:waypoint x="662" y="880" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0zrilv5_di" bpmnElement="Flow_0zrilv5">
         <di:waypoint x="560" y="420" />
@@ -358,13 +346,25 @@
         <di:waypoint x="560" y="530" />
         <di:waypoint x="672" y="530" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w680ql_di" bpmnElement="Flow_1w680ql">
+        <di:waypoint x="560" y="180" />
+        <di:waypoint x="672" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_133n3lb_di" bpmnElement="Flow_133n3lb">
+        <di:waypoint x="250" y="205" />
+        <di:waypoint x="250" y="640" />
+        <di:waypoint x="460" y="640" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="276" y="613" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0jy2fxj_di" bpmnElement="Flow_0jy2fxj">
         <di:waypoint x="560" y="640" />
         <di:waypoint x="672" y="640" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ibbtmp_di" bpmnElement="Flow_0ibbtmp">
-        <di:waypoint x="560" y="880" />
-        <di:waypoint x="662" y="880" />
+      <bpmndi:BPMNEdge id="Flow_0r70xpv_di" bpmnElement="Flow_0r70xpv">
+        <di:waypoint x="188" y="180" />
+        <di:waypoint x="225" y="180" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

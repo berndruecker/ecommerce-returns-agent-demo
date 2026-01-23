@@ -258,7 +258,7 @@ async def proxy_twilio(request: Request):
 
 HOLD_LOOP_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Say>One moment.</Say>
+    <Say voice="Polly.Danielle-Neural">One moment.</Say>
     <Pause length="5"/>
     <Pause length="5"/>
     <Pause length="5"/>
