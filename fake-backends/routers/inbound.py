@@ -287,6 +287,12 @@ async def proxy_voice_ask(request: Request):
     return await _forward(request, "/inbound/voice-ask", convert_xml=True, convert_response=True)
 
 
+@router.api_route("/voice-ended", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"]) 
+async def proxy_voice_ended(request: Request):
+    logger.info("Proxy /inbound/voice-ended (form/XML→JSON, JSON→XML) -> %s", f"{TARGET_BASE}/inbound/voice-ended")
+    return await _forward(request, "/inbound/voice-ended", convert_xml=True, convert_response=True)
+
+
 @router.api_route("/twilio/hold-loop", methods=["GET", "POST"]) 
 async def twilio_hold_loop():
     """Serve a static Twilio hold-loop TwiML."""
