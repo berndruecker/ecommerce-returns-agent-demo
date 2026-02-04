@@ -128,9 +128,9 @@ cp fake-backends/camunda-element-templates/*.json ~/.camunda/element-templates/
 
 If using SMS/WhatsApp support:
 
-1. Start ngrok to expose your local C8Run connector runtime:
+1. Start ngrok to expose your local Python App Port (which proxies access to the Connector Runtime):
 	```bash
-	ngrok http 8086
+	ngrok http 8100
 	```
 
 2. Configure Twilio webhook URL:
