@@ -263,6 +263,8 @@ HOLD_LOOP_XML = """<?xml version="1.0" encoding="UTF-8"?>
     <Pause length="5"/>
     <Pause length="5"/>
     <Pause length="5"/>
+    <Pause length="5"/>
+    <Pause length="5"/>
     <Redirect method="POST">https://catarina-unnicked-famishedly.ngrok-free.dev/inbound/twilio/hold-loop</Redirect>
 </Response>
 """

@@ -180,7 +180,7 @@ class DataStore:
         )
         
         # First order - older one
-        delivery_date_sfdc_1 = datetime.now() - timedelta(days=45)
+        delivery_date_sfdc_1 = datetime.now() - timedelta(days=14)
         order_date_sfdc_1 = delivery_date_sfdc_1 - timedelta(days=2)
         
         self.orders.append(Order(
@@ -213,7 +213,7 @@ class DataStore:
         ))
         
         # Second order - most recent (HomeStream Basic Router)
-        delivery_date_sfdc_2 = datetime.now() - timedelta(days=1)
+        delivery_date_sfdc_2 = datetime.now() - timedelta(days=14)
         order_date_sfdc_2 = delivery_date_sfdc_2 - timedelta(days=2)
         
         self.orders.append(Order(
@@ -246,7 +246,7 @@ class DataStore:
         ))
         
         # Third order - older than the router order (accessories)
-        delivery_date_sfdc_3 = datetime.now() - timedelta(days=12)
+        delivery_date_sfdc_3 = datetime.now() - timedelta(days=14)
         order_date_sfdc_3 = delivery_date_sfdc_3 - timedelta(days=1)
         
         self.orders.append(Order(
@@ -279,7 +279,7 @@ class DataStore:
         ))
 
         # Fourth order - vacuum (EasyVac 180, now EOL) for pet hair complaint
-        delivery_date_sfdc_4 = datetime.now() - timedelta(days=6)
+        delivery_date_sfdc_4 = datetime.now() - timedelta(days=14)
         order_date_sfdc_4 = delivery_date_sfdc_4 - timedelta(days=2)
 
         self.orders.append(Order(
@@ -314,7 +314,7 @@ class DataStore:
         )
         
         # First order - older one
-        delivery_date_sfdc2_1 = datetime.now() - timedelta(days=45)
+        delivery_date_sfdc2_1 = datetime.now() - timedelta(days=14)
         order_date_sfdc2_1 = delivery_date_sfdc2_1 - timedelta(days=2)
         
         self.orders.append(Order(
@@ -347,7 +347,7 @@ class DataStore:
         ))
         
         # Second order - most recent (HomeStream Basic Router)
-        delivery_date_sfdc2_2 = datetime.now() - timedelta(days=1)
+        delivery_date_sfdc2_2 = datetime.now() - timedelta(days=14)
         order_date_sfdc2_2 = delivery_date_sfdc2_2 - timedelta(days=2)
         
         self.orders.append(Order(
@@ -380,7 +380,7 @@ class DataStore:
         ))
         
         # Third order - older than the router order (accessories)
-        delivery_date_sfdc2_3 = datetime.now() - timedelta(days=12)
+        delivery_date_sfdc2_3 = datetime.now() - timedelta(days=14)
         order_date_sfdc2_3 = delivery_date_sfdc2_3 - timedelta(days=1)
         
         self.orders.append(Order(
@@ -413,7 +413,7 @@ class DataStore:
         ))
 
         # Fourth order for second contact - EasyVac 180 (EOL) struggling with pet hair
-        delivery_date_sfdc2_4 = datetime.now() - timedelta(days=5)
+        delivery_date_sfdc2_4 = datetime.now() - timedelta(days=14)
         order_date_sfdc2_4 = delivery_date_sfdc2_4 - timedelta(days=2)
 
         self.orders.append(Order(
@@ -448,7 +448,7 @@ class DataStore:
         )
 
         # First order - older one (Deluxe Router + accessories)
-        delivery_date_sfdc3_1 = datetime.now() - timedelta(days=46)
+        delivery_date_sfdc3_1 = datetime.now() - timedelta(days=14)
         order_date_sfdc3_1 = delivery_date_sfdc3_1 - timedelta(days=2)
 
         self.orders.append(Order(
@@ -481,7 +481,7 @@ class DataStore:
         ))
 
         # Second order - most recent (HomeStream Basic Router)
-        delivery_date_sfdc3_2 = datetime.now() - timedelta(days=2)
+        delivery_date_sfdc3_2 = datetime.now() - timedelta(days=14)
         order_date_sfdc3_2 = delivery_date_sfdc3_2 - timedelta(days=2)
 
         self.orders.append(Order(
@@ -514,7 +514,7 @@ class DataStore:
         ))
 
         # Third order - accessories
-        delivery_date_sfdc3_3 = datetime.now() - timedelta(days=13)
+        delivery_date_sfdc3_3 = datetime.now() - timedelta(days=14)
         order_date_sfdc3_3 = delivery_date_sfdc3_3 - timedelta(days=1)
 
         self.orders.append(Order(
@@ -547,7 +547,7 @@ class DataStore:
         ))
 
         # Fourth order - vacuum (EasyVac 180 EOL)
-        delivery_date_sfdc3_4 = datetime.now() - timedelta(days=7)
+        delivery_date_sfdc3_4 = datetime.now() - timedelta(days=14)
         order_date_sfdc3_4 = delivery_date_sfdc3_4 - timedelta(days=2)
 
         self.orders.append(Order(
